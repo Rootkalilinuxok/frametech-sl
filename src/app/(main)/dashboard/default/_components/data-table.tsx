@@ -27,7 +27,7 @@ import { DataTablePagination } from "../../../../../components/data-table/data-t
 import { DataTableViewOptions } from "../../../../../components/data-table/data-table-view-options";
 import { withDndColumn } from "../../../../../components/data-table/table-utils";
 
-import { dashboardColumns } from "./columns";
+import { dashboardColumns, type ReceiptRow } from "./columns";
 
 export const schema = z.object({
   id: z.number(),
@@ -39,12 +39,16 @@ export const schema = z.object({
   reviewer: z.string(),
 });
 
-export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[] }) {
+export function DataTable({ data: initialData }: { data: ReceiptRow[] }) {
   const dndEnabled = true;
 
-  const [data, setData] = React.useState(() => initialData);
+  const [data, setData] = React.useState<ReceiptRow[]>(() => initialData);
   const columns = dndEnabled ? withDndColumn(dashboardColumns) : dashboardColumns;
-  const table = useDataTableInstance({ data, columns, getRowId: (row) => row.id.toString() });
+  const table = useDataTableInstance<ReceiptRow, unknown>({
+    data,
+    columns,
+    getRowId: (row) => row.id.toString(),
+  });
   const sortableId = React.useId();
   const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
   const dataIds = React.useMemo<UniqueIdentifier[]>(() => data?.map(({ id }) => id) || [], [data]);
