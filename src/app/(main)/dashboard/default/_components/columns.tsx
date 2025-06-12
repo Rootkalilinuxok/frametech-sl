@@ -37,8 +37,8 @@ export interface ReceiptRow {
   name: string;          // intestazione / fornitore
   country?: string;      // IT, FR, US …
   currency: string;      // codice ISO (EUR, USD …)
-  total: number;         // importo originale
   tip?: number;          // eventuale mancia
+  total: number;         // importo originale
   exchange_rate?: number;// cambio verso EUR (1 unit currency = ? EUR)
   total_eur: number;     // importo convertito in €
   percent?: number;      // campo libero (+%)
@@ -127,19 +127,19 @@ export const dashboardColumns: ColumnDef<ReceiptRow>[] = [
     size: 90,
   },
   {
-    accessorKey: "total",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Totale" />
-    ),
-    cell: ({ row }) => fmtCurr(row.original.total, row.original.currency),
-    size: 110,
-  },
-  {
     accessorKey: "tip",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Tip/Mancia" />
     ),
     cell: ({ row }) => fmtNum(row.original.tip),
+    size: 110,
+  },
+  {
+    accessorKey: "total",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Totale" />
+    ),
+    cell: ({ row }) => fmtCurr(row.original.total, row.original.currency),
     size: 110,
   },
   {
