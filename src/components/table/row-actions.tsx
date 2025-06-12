@@ -2,6 +2,7 @@
 
 import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
 
+import type { ReceiptRow } from "@/app/(main)/dashboard/default/_components/columns";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,7 +12,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { ReceiptRow } from "@/app/(main)/dashboard/default/_components/columns";
 
 export function ReceiptRowActions({ row }: { row: ReceiptRow }) {
   return (
@@ -24,9 +24,7 @@ export function ReceiptRowActions({ row }: { row: ReceiptRow }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem
-          onClick={() => navigator.clipboard.writeText(row.id.toString())}
-        >
+        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(row.id.toString())}>
           <Copy className="size-4" />
           <span>Copy ID</span>
         </DropdownMenuItem>
