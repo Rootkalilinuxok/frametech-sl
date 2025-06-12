@@ -1,188 +1,177 @@
+/*
+  Colonne per la tabella "Costi" (receipts_live) – **versione 2**
+  ───────────────────────────────────────────────────────────────
+  Ordine richiesto dall’utente:
+    1. ID
+    2. Data
+    3. Ora
+    4. Nome
+    5. Nazione
+    6. Valuta
+    7. Totale (importo originale)
+    8. Tip / Mancia
+    9. Cambio
+   10. Totale (€)
+   11. + % (eventuale maggiorazione / IVA / mark‑up)
+
+  Plus:   • colonna selezione (checkbox) all’inizio
+          • colonna Azioni alla fine
+  ───────────────────────────────────────────────────────────────
+
+  Dipendenze: TanStack React‑Table v8  ·  shadcn/ui (DataTableColumnHeader)
+*/
+
 import { ColumnDef } from "@tanstack/react-table";
-import { CircleCheck, Loader, EllipsisVertical } from "lucide-react";
-import { toast } from "sonner";
-
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ReceiptRowActions } from "@/components/table/row-actions";
 
-import { DataTableColumnHeader } from "../../../../../components/data-table/data-table-column-header";
+// ────────────────────────────────────────────────────────────
+//  Tipi
+// ────────────────────────────────────────────────────────────
+export interface ReceiptRow {
+  id: string;
+  date: string;          // YYYY-MM-DD
+  time?: string;         // HH:mm
+  name: string;          // intestazione / fornitore
+  country?: string;      // IT, FR, US …
+  currency: string;      // codice ISO (EUR, USD …)
+  total: number;         // importo originale
+  tip?: number;          // eventuale mancia
+  exchange_rate?: number;// cambio verso EUR (1 unit currency = ? EUR)
+  total_eur: number;     // importo convertito in €
+  percent?: number;      // campo libero (+%)
+}
 
-import { TableCellViewer } from "./table-cell-viewer";
+// ────────────────────────────────────────────────────────────
+//  Helpers
+// ────────────────────────────────────────────────────────────
+const fmtDate = (d: string) => new Date(d).toLocaleDateString("it-IT");
+const fmtTime = (t?: string) => t ?? "—";
+const fmtCurr = (val: number, curr = "EUR") =>
+  Intl.NumberFormat("it-IT", { style: "currency", currency: curr }).format(val);
+const fmtNum  = (val?: number) => (val ?? "—");
 
-export const dashboardColumns: ColumnDef<any>[] = [
+// ────────────────────────────────────────────────────────────
+//  Definizione colonne
+// ────────────────────────────────────────────────────────────
+export const columns: ColumnDef<ReceiptRow>[] = [
+  // Checkbox di selezione (fissa)
   {
     id: "select",
     header: ({ table }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      </div>
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Seleziona tutto"
+      />
     ),
     cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      </div>
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Seleziona riga"
+      />
     ),
     enableSorting: false,
     enableHiding: false,
+    size: 40,
   },
   {
-    accessorKey: "header",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Header" />,
-    cell: ({ row }) => {
-      return <TableCellViewer item={row.original} />;
-    },
-    enableSorting: false,
-  },
-  {
-    accessorKey: "type",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Section Type" />,
-    cell: ({ row }) => (
-      <div className="w-32">
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
-          {row.original.type}
-        </Badge>
-      </div>
+    accessorKey: "id",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="ID" />
     ),
-    enableSorting: false,
+    cell: ({ row }) => row.original.id,
+    size: 140,
   },
   {
-    accessorKey: "status",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
-    cell: ({ row }) => (
-      <Badge variant="outline" className="text-muted-foreground px-1.5">
-        {row.original.status === "Done" ? (
-          <CircleCheck className="stroke-border fill-green-500 dark:fill-green-400" />
-        ) : (
-          <Loader />
-        )}
-        {row.original.status}
-      </Badge>
+    accessorKey: "date",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Data" />
     ),
-    enableSorting: false,
+    cell: ({ row }) => fmtDate(row.original.date),
+    size: 110,
   },
   {
-    accessorKey: "target",
-    header: ({ column }) => <DataTableColumnHeader className="w-full text-right" column={column} title="Target" />,
-    cell: ({ row }) => (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            loading: `Saving ${row.original.header}`,
-            success: "Done",
-            error: "Error",
-          });
-        }}
-      >
-        <Label htmlFor={`${row.original.id}-target`} className="sr-only">
-          Target
-        </Label>
-        <Input
-          className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent"
-          defaultValue={row.original.target}
-          id={`${row.original.id}-target`}
-        />
-      </form>
+    accessorKey: "time",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Ora" />
     ),
-    enableSorting: false,
+    cell: ({ row }) => fmtTime(row.original.time),
+    size: 80,
   },
   {
-    accessorKey: "limit",
-    header: ({ column }) => <DataTableColumnHeader className="w-full text-right" column={column} title="Limit" />,
-    cell: ({ row }) => (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            loading: `Saving ${row.original.header}`,
-            success: "Done",
-            error: "Error",
-          });
-        }}
-      >
-        <Label htmlFor={`${row.original.id}-limit`} className="sr-only">
-          Limit
-        </Label>
-        <Input
-          className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent"
-          defaultValue={row.original.limit}
-          id={`${row.original.id}-limit`}
-        />
-      </form>
+    accessorKey: "name",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Nome" />
     ),
-    enableSorting: false,
+    cell: ({ row }) => row.original.name,
+    size: 220,
   },
   {
-    accessorKey: "reviewer",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Reviewer" />,
-    cell: ({ row }) => {
-      const isAssigned = row.original.reviewer !== "Assign reviewer";
-
-      if (isAssigned) {
-        return row.original.reviewer;
-      }
-
-      return (
-        <>
-          <Label htmlFor={`${row.original.id}-reviewer`} className="sr-only">
-            Reviewer
-          </Label>
-          <Select>
-            <SelectTrigger
-              className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
-              size="sm"
-              id={`${row.original.id}-reviewer`}
-            >
-              <SelectValue placeholder="Assign reviewer" />
-            </SelectTrigger>
-            <SelectContent align="end">
-              <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
-              <SelectItem value="Jamik Tashpulatov">Jamik Tashpulatov</SelectItem>
-            </SelectContent>
-          </Select>
-        </>
-      );
-    },
-    enableSorting: false,
+    accessorKey: "country",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Nazione" />
+    ),
+    cell: ({ row }) => row.original.country ?? "—",
+    size: 100,
   },
+  {
+    accessorKey: "currency",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Valuta" />
+    ),
+    cell: ({ row }) => row.original.currency,
+    size: 90,
+  },
+  {
+    accessorKey: "total",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Totale" />
+    ),
+    cell: ({ row }) => fmtCurr(row.original.total, row.original.currency),
+    size: 110,
+  },
+  {
+    accessorKey: "tip",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Tip/Mancia" />
+    ),
+    cell: ({ row }) => fmtNum(row.original.tip),
+    size: 110,
+  },
+  {
+    accessorKey: "exchange_rate",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Cambio" />
+    ),
+    cell: ({ row }) => (row.original.exchange_rate ? row.original.exchange_rate.toFixed(4) : "—"),
+    size: 90,
+  },
+  {
+    accessorKey: "total_eur",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Totale (€)" />
+    ),
+    cell: ({ row }) => fmtCurr(row.original.total_eur, "EUR"),
+    size: 120,
+  },
+  {
+    accessorKey: "percent",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="+ %" />
+    ),
+    cell: ({ row }) => (row.original.percent !== undefined ? row.original.percent + "%" : "—"),
+    size: 70,
+  },
+  // Azioni (fissa a destra)
   {
     id: "actions",
-    cell: () => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="data-[state=open]:bg-muted text-muted-foreground flex size-8" size="icon">
-            <EllipsisVertical />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Make a copy</DropdownMenuItem>
-          <DropdownMenuItem>Favorite</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
+    header: () => <span className="sr-only">Azioni</span>,
+    cell: ({ row }) => <ReceiptRowActions row={row.original} />,
     enableSorting: false,
+    enableHiding: false,
+    size: 60,
   },
 ];
