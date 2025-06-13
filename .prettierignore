@@ -9,4 +9,4 @@ postcss.config.mjs
 README.md
 tsconfig.json
 .env
-src/components/ui
+src/components/ui/
