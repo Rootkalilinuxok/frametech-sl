@@ -44,19 +44,19 @@ export interface NavGroup {
 export const sidebarItems: NavGroup[] = [
   {
     id: 1,
-    label: "Dashboards",
+    label: "Contabilità",
     items: [
       {
-        title: "Dashboards",
-        url: "/dashboard",
+        title: "Contabilità",
+        url: "/contabilità",
         icon: Home,
         subItems: [
-          { title: "Default", url: "/dashboard/default", icon: ChartPie },
-          { title: "Costti", url: "/dashboard/costi", icon: Grid2X2 },
-          { title: "Analytics", url: "/dashboard/analytics", icon: ChartLine, comingSoon: true },
-          { title: "eCommerce", url: "/dashboard/e-commerce", icon: ShoppingBag, comingSoon: true },
-          { title: "Academy", url: "/dashboard/academy", icon: BookA, comingSoon: true },
-          { title: "Logistics", url: "/dashboard/logistics", icon: Forklift, comingSoon: true },
+          { title: "Andamento", url: "/contabilità/andamento", icon: ChartPie },
+          { title: "Archivio", url: "/contabilità/archivio", icon: Grid2X2 },
+          { title: "Fatture", url: "/contabilità/fatture", icon: ChartLine },
+          { title: "Scadenze", url: "/contabilità/scadenze", icon: ShoppingBag },
+          { title: "Rapportini", url: "/contabilità/rapportini", icon: BookA },
+          { title: "Commercialista", url: "/contabilità/commercialista", icon: Forklift },
         ],
       },
     ],
