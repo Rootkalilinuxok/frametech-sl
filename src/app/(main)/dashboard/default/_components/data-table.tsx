@@ -43,7 +43,7 @@ export function DataTable({ data: initialData }: { data: ReceiptRow[] }) {
   const dndEnabled = true;
 
   const [data, setData] = React.useState<ReceiptRow[]>(() => initialData);
-  const columns = dndEnabled ? withDndColumn(dashboardColumns) : dashboardColumns;
+  const columns = withDndColumn(dashboardColumns);
   const table = useDataTableInstance<ReceiptRow, unknown>({
     data,
     columns,
@@ -51,11 +51,11 @@ export function DataTable({ data: initialData }: { data: ReceiptRow[] }) {
   });
   const sortableId = React.useId();
   const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
-  const dataIds = React.useMemo<UniqueIdentifier[]>(() => data?.map(({ id }) => id) || [], [data]);
+  const dataIds = React.useMemo<UniqueIdentifier[]>(() => data.map(({ id }) => id), [data]);
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-    if (active && over && active.id !== over.id) {
+    if (over && active.id !== over.id) {
       setData((data) => {
         const oldIndex = dataIds.indexOf(active.id);
         const newIndex = dataIds.indexOf(over.id);
