@@ -1,16 +1,19 @@
+// src/middleware.ts
 import { NextResponse, type NextRequest } from "next/server";
 
-export function authMiddleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
-  const isLoggedIn = req.cookies.get("auth-token");
-
-  if (!isLoggedIn && pathname.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/auth/login", req.url));
-  }
-
-  if (isLoggedIn && pathname === "/auth/login") {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
-  }
-
+/**
+ * Middleware neutro: non applica alcuna logica di autenticazione.
+ * Lasciano passare tutto, eccetto le path tecniche già filtrate di default.
+ */
+export function middleware(req: NextRequest) {
+  // puoi comunque gestire eccezioni, rate-limit, ecc. qui dentro in futuro
   return NextResponse.next();
 }
+
+/**
+ * Facoltativo: limita il middleware solo a certe route
+ * (se lo lasci così, viene comunque eseguito ma non fa nulla).
+ */
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+};
