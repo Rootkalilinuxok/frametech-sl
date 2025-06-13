@@ -1,11 +1,18 @@
-import { NextRequest } from "next/server";
+// src/middleware.ts
+import { NextRequest, NextResponse } from "next/server";
 
-import { authMiddleware } from "./middleware/auth-middleware";
-
-export function middleware(req: NextRequest) {
-  return authMiddleware(req);
+/**
+ * Middleware neutro: lascia passare tutte le richieste
+ * senza fare controlli di autenticazione.
+ */
+export function middleware(_req: NextRequest) {
+  return NextResponse.next();
 }
 
+/**
+ * Limita l’esecuzione del middleware solo alle route dell’app (esclude asset Next.js)
+ * – puoi anche eliminare completamente questo export se non ti serve.
+ */
 export const config = {
-  matcher: ["/dashboard/:path*", "/auth/login"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
