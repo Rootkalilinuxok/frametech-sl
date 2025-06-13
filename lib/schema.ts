@@ -1,7 +1,12 @@
 import { pgTable, uuid, varchar, numeric, timestamp, text } from "drizzle-orm/pg-core";
 
-/* --- live ------------------------------------------------ */
-export const receiptsLive = pgTable("receipts_live", {
+/*
+ * Columns shared between the live and archive tables. Drizzle relies on the
+ * column definitions passed directly to `pgTable` to infer the table shape
+ * when generating migrations, so we keep these definitions in a standalone
+ * object that can be spread into both table definitions.
+ */
+const receiptColumns = {
   id: uuid("id").primaryKey().defaultRandom(),
   date: timestamp("date", { mode: "date" }).notNull(),
   time: varchar("time", 8),
@@ -17,10 +22,13 @@ export const receiptsLive = pgTable("receipts_live", {
   status: varchar("status", 20).default("new"),
   sourceHash: text("source_hash").notNull().unique(),
   createdAt: timestamp("created_at").defaultNow(),
-});
+};
+
+/* --- live ------------------------------------------------ */
+export const receiptsLive = pgTable("receipts_live", receiptColumns);
 
 /* --- archivio ------------------------------------------- */
 export const receiptsArchive = pgTable("receipts_archive", {
-  ...receiptsLive.columns,
+  ...receiptColumns,
   archivedAt: timestamp("archived_at").defaultNow(),
 });
