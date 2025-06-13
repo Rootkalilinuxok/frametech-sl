@@ -10,8 +10,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky",
-    "generate:migrations": "drizzle-kit generate:pg",
-    "push:migrations": "drizzle-kit push:pg"
+    "generate:migrations": "drizzle-kit generate --schema=./lib/schema.ts --out=./drizzle",
+    "push:migrations": "drizzle-kit push --schema=./lib/schema.ts --out=./drizzle"
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": [
