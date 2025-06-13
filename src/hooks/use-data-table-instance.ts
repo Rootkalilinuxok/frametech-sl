@@ -5,6 +5,7 @@ import {
   ColumnFiltersState,
   SortingState,
   VisibilityState,
+  Row,
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
@@ -20,7 +21,7 @@ type UseDataTableInstanceProps<TData, TValue> = {
   enableRowSelection?: boolean;
   defaultPageIndex?: number;
   defaultPageSize?: number;
-  getRowId?: (row: TData, index: number) => string;
+  getRowId?: (row: TData, index: number, parent?: Row<TData>) => string;
 };
 
 export function useDataTableInstance<TData, TValue>({
@@ -51,7 +52,9 @@ export function useDataTableInstance<TData, TValue>({
       pagination,
     },
     enableRowSelection,
-    getRowId: getRowId ?? ((row: TData & { id: string | number }) => String(row.id)),
+    getRowId:
+      getRowId ??
+      ((row: TData, index: number, parent?: Row<TData>) => String((row as unknown as { id: string | number }).id)),
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
