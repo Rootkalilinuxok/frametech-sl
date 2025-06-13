@@ -14,7 +14,7 @@ await db.insert(receiptsLive).values([
     percent: 10,
     paymentMethod: "Carta",
     sourceHash: "seed-1",
-  },
+  } as any,
 ]);
 console.log("Seed OK");
 process.exit(0);
