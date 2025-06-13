@@ -48,15 +48,15 @@ export const sidebarItems: NavGroup[] = [
     items: [
       {
         title: "Contabilità",
-        url: "/dashboards",
+        url: "/dashboard",
         icon: Home,
         subItems: [
-          { title: "Andamento", url: "/dashboards/andamento", icon: ChartPie },
-          { title: "Archivio", url: "/dashboards/archivio", icon: Grid2X2 },
-          { title: "Fatture", url: "/contabilità/fatture", icon: ChartLine },
-          { title: "Scadenze", url: "/contabilità/scadenze", icon: ShoppingBag },
-          { title: "Rapportini", url: "/contabilità/rapportini", icon: BookA },
-          { title: "Commercialista", url: "/contabilità/commercialista", icon: Forklift },
+          { title: "Andamento", url: "/dashboard/andamento", icon: ChartPie },
+          { title: "Archivio", url: "/dashboard/archivio", icon: Grid2X2 },
+          { title: "Fatture", url: "/dashboard/fatture", icon: ChartLine },
+          { title: "Scadenze", url: "/dashboard/scadenze", icon: ShoppingBag },
+          { title: "Rapportini", url: "/dashboard/rapportini", icon: BookA },
+          { title: "Commercialista", url: "/dashboard/commercialista", icon: Forklift },
         ],
       },
     ],
