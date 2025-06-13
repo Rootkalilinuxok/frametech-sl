@@ -8,7 +8,7 @@ import securityPlugin from "eslint-plugin-security";
 import prettier from "eslint-plugin-prettier";
 import unicorn from "eslint-plugin-unicorn";
 import sonarjs from "eslint-plugin-sonarjs";
-import eslintPluginNext from "eslint-plugin-next";
+import eslintPluginNext from "@next/eslint-plugin-next";
 
 const compat = new FlatCompat({
   baseDirectory: import.meta.dirname,
@@ -17,7 +17,7 @@ const compat = new FlatCompat({
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
-  { ignores: [".github/", ".husky/", "node_modules/", ".next/", "src/components/ui", "*.config.ts", "*.mjs"] },
+  { ignores: [".github/", ".husky/", "node_modules/", ".next/", "src/components/ui", "*.config.ts"] },
   {
     languageOptions: {
       globals: globals.browser,
@@ -38,7 +38,7 @@ export default [
       unicorn: unicorn,
       react: pluginReact,
       sonarjs: sonarjs,
-      next: eslintPluginNext,
+      "@next/next": eslintPluginNext,
     },
   },
   pluginJs.configs.recommended,

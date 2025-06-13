@@ -195,6 +195,9 @@ importers:
       '@eslint/js':
         specifier: ^9.16.0
         version: 9.28.0
+      '@next/eslint-plugin-next':
+        specifier: ^15.3.3
+        version: 15.3.3
       '@tailwindcss/postcss':
         specifier: ^4.1.9
         version: 4.1.10
@@ -222,9 +225,6 @@ importers:
       eslint-plugin-import:
         specifier: ^2.31.0
         version: 2.31.0(@typescript-eslint/parser@8.34.0(eslint@9.28.0(jiti@2.4.2))(typescript@5.8.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.28.0(jiti@2.4.2))
-      eslint-plugin-next:
-        specifier: npm:@next/eslint-plugin-next@^15.3.3
-        version: '@next/eslint-plugin-next@15.3.3'
       eslint-plugin-prettier:
         specifier: ^5.4.1
         version: 5.4.1(eslint@9.28.0(jiti@2.4.2))(prettier@3.5.3)
