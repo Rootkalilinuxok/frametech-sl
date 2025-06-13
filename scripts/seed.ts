@@ -14,7 +14,7 @@ await db.insert(receiptsLive).values([
     percent: 10,
     paymentMethod: "Carta",
     sourceHash: "seed-1",
-  },
+  } satisfies typeof receiptsLive.$inferInsert,
 ]);
 console.log("Seed OK");
 process.exit(0);

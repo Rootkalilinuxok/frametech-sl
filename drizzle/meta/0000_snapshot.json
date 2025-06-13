@@ -1,5 +1,5 @@
 {
-  "id": "bea0826e-1a66-4008-9a9e-b2a75535b808",
+  "id": "9872cd7f-1784-438f-b2b9-25e668a4098c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -43,25 +43,25 @@
         },
         "time": {
           "name": "time",
-          "type": "varchar",
+          "type": "varchar(8)",
           "primaryKey": false,
           "notNull": false
         },
         "name": {
           "name": "name",
-          "type": "varchar",
+          "type": "varchar(120)",
           "primaryKey": false,
           "notNull": true
         },
         "country": {
           "name": "country",
-          "type": "varchar",
+          "type": "varchar(60)",
           "primaryKey": false,
           "notNull": false
         },
         "currency": {
           "name": "currency",
-          "type": "varchar",
+          "type": "varchar(6)",
           "primaryKey": false,
           "notNull": true
         },
@@ -97,13 +97,13 @@
         },
         "payment_method": {
           "name": "payment_method",
-          "type": "varchar",
+          "type": "varchar(40)",
           "primaryKey": false,
           "notNull": false
         },
         "status": {
           "name": "status",
-          "type": "varchar",
+          "type": "varchar(20)",
           "primaryKey": false,
           "notNull": false,
           "default": "'new'"
