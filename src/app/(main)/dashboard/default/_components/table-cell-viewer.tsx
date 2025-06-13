@@ -39,23 +39,41 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-type TableCellViewerProps<TItem> = {
+type TableCellViewerProps<
+  TItem extends {
+    header: string;
+    type: string;
+    status: string;
+    target: string;
+    limit: string;
+    reviewer: string;
+  },
+> = {
   item: TItem;
 };
 
-export function TableCellViewer<TItem>({ item }: TableCellViewerProps<TItem>) {
+export function TableCellViewer<
+  TItem extends {
+    header: string;
+    type: string;
+    status: string;
+    target: string;
+    limit: string;
+    reviewer: string;
+  },
+>({ item }: TableCellViewerProps<TItem>) {
   const isMobile = useIsMobile();
 
   return (
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
         <Button variant="link" className="text-foreground w-fit px-0 text-left">
-          {(item as any).header}
+          {item.header}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="gap-1">
-          <DrawerTitle>{(item as any).header}</DrawerTitle>
+          <DrawerTitle>{item.header}</DrawerTitle>
           <DrawerDescription>Showing total visitors for the last 6 months</DrawerDescription>
         </DrawerHeader>
         <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
@@ -114,12 +132,12 @@ export function TableCellViewer<TItem>({ item }: TableCellViewerProps<TItem>) {
           <form className="flex flex-col gap-4">
             <div className="flex flex-col gap-3">
               <Label htmlFor="header">Header</Label>
-              <Input id="header" defaultValue={(item as any).header} />
+              <Input id="header" defaultValue={item.header} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
                 <Label htmlFor="type">Type</Label>
-                <Select defaultValue={(item as any).type}>
+                <Select defaultValue={item.type}>
                   <SelectTrigger id="type" className="w-full">
                     <SelectValue placeholder="Select a type" />
                   </SelectTrigger>
@@ -137,7 +155,7 @@ export function TableCellViewer<TItem>({ item }: TableCellViewerProps<TItem>) {
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="status">Status</Label>
-                <Select defaultValue={(item as any).status}>
+                <Select defaultValue={item.status}>
                   <SelectTrigger id="status" className="w-full">
                     <SelectValue placeholder="Select a status" />
                   </SelectTrigger>
@@ -152,16 +170,16 @@ export function TableCellViewer<TItem>({ item }: TableCellViewerProps<TItem>) {
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
                 <Label htmlFor="target">Target</Label>
-                <Input id="target" defaultValue={(item as any).target} />
+                <Input id="target" defaultValue={item.target} />
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="limit">Limit</Label>
-                <Input id="limit" defaultValue={(item as any).limit} />
+                <Input id="limit" defaultValue={item.limit} />
               </div>
             </div>
             <div className="flex flex-col gap-3">
               <Label htmlFor="reviewer">Reviewer</Label>
-              <Select defaultValue={(item as any).reviewer}>
+              <Select defaultValue={item.reviewer}>
                 <SelectTrigger id="reviewer" className="w-full">
                   <SelectValue placeholder="Select a reviewer" />
                 </SelectTrigger>
