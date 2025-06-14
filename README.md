@@ -140,6 +140,16 @@ To set up and run this admin dashboard locally, follow these steps:
 
 Once running, the app will be available at [http://localhost:3000](http://localhost:3000)
 
+## Dashboard Metrics
+
+The dashboard exposes `/api/dashboard/costi-metrics`, which aggregates cost
+data from the `receipts_live` table.
+
+```ts
+const data = await fetch("/api/dashboard/costi-metrics").then((res) =>
+  res.json()
+);
+```
 
 ---
 
