@@ -130,10 +130,15 @@ To set up and run this admin dashboard locally, follow these steps:
    ```bash
     npm install
    ```
-   > While installing, you may be prompted to use the `--force` or `--legacy-peer-deps` flag.  
+   > While installing, you may be prompted to use the `--force` or `--legacy-peer-deps` flag.
    > This is expected and safe — it’s due to a dependency from the Shadcn registry that references a breaking library version.
 
-3. **Start the development server**
+3. **Configure environment variables**
+   ```bash
+   cp .env.example .env
+   # then edit .env and set real values
+   ```
+4. **Start the development server**
    ```bash
    npm run dev
    ```
