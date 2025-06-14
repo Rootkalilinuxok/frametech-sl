@@ -42,7 +42,7 @@ export function KpiCardGroup({ items }: KpiCardGroupProps) {
             <div className="text-muted-foreground">{item.subtext}</div>
           </CardFooter>
         </Card>
-      ))
+      ))}
     </div>
   );
 }
