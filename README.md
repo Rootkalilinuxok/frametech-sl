@@ -3,6 +3,9 @@
   A modern admin dashboard template using Next.js 15, Tailwind CSS v4, App Router, TypeScript, and Shadcn UI.
 </div>
 
+
+![CI](https://github.com/<TuoUser>/<TuoRepo>/actions/workflows/ci.yml/badge.svg)
+
 <br />
 
 <div align="center">
