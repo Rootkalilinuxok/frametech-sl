@@ -44,7 +44,7 @@ export interface NavGroup {
 export const sidebarItems: NavGroup[] = [
   {
     id: 1,
-    label: "Dashboard",
+    label: "Principale",
     items: [
       {
         title: "Contabilità",
@@ -65,19 +65,19 @@ export const sidebarItems: NavGroup[] = [
   },
   {
     id: 2,
-    label: "Pages",
+    label: "Servizi",
     items: [
       {
-        title: "Authentication",
+        title: "Autorizzati",
         url: "/auth",
         icon: Fingerprint,
         subItems: [
           { title: "FrameTech SL", url: "/auth/v1/login", newTab: true },
-          { title: "JP La Villa Asesores", url: "/auth/v1/register", newTab: true },
+          { title: "JP La Villa", url: "/auth/v1/register", newTab: true },
         ],
       },
       {
-        title: "JP La Villa Asesores",
+        title: "JP La Villa",
         url: "/mail",
         icon: Mail,
         comingSoon: true,
