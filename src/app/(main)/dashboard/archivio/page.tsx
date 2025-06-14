@@ -1,15 +1,14 @@
-// src/app/(main)/dashboard/archivio/page.tsx
 "use client";
 
 export default function ArchivioPage() {
   return (
     <main className="min-h-screen w-full bg-[url('/images/sfondo-matrix.jpg')] bg-cover bg-center bg-no-repeat">
-      {/* Optional dark overlay */}
+      {/* Optional dark overlay to tone down the background */}
       <div className="absolute inset-0 bg-black/40" aria-hidden />
 
-      {/* Page content */}
+      {/* Real page content goes here */}
       <div className="relative z-10 flex flex-col gap-6 p-6">
-        {/* …contenuto dell’archivio… */}
+        {/* …Archivio UI components… */}
       </div>
     </main>
   );
