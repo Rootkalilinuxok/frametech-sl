@@ -48,7 +48,7 @@ The current version uses the [Tweakcn Tangerine](https://tweakcn.com/) theme for
 🚧 Coming Soon
 
 ### Dashboards
-- ✅ Default
+- ✅ Andamento
 - 🚧 CRM
 - 🚧 Analytics
 - 🚧 eCommerce
@@ -77,7 +77,7 @@ src/
 │   ├── (main)/               # Main application layout
 │   │   ├── dashboard/
 │   │   │   ├── layout.tsx    # Shared layout for dashboard routes
-│   │   │   ├── default/      # Default overview dashboard
+│   │   │   ├── andamento/    # Main overview dashboard
 │   │   │   │   ├── components/
 │   │   │   │   └── page.tsx
 │   │   │   ├── ecommerce/
