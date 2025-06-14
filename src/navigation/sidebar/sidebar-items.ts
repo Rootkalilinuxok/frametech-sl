@@ -47,11 +47,11 @@ export const sidebarItems: NavGroup[] = [
     label: "Dashboard",
     items: [
       {
-        title: "Dashboard",
+        title: "Contabilità",
         url: "/dashboard",
         icon: Home,
         subItems: [
-          { title: "Andamento", url: "/dashboard/andamento", icon: ChartPie },
+          { title: "Andamento", url: "/dashboard", icon: ChartPie },
           { title: "Costi", url: "/dashboard/costi", icon: Grid2X2 },
           { title: "Costi Periodici", url: "/dashboard/costi-periodici", icon: ChartLine },
           { title: "Profitti", url: "/dashboard/profitti", icon: ShoppingBag },
