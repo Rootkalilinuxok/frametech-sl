@@ -1,7 +1,25 @@
 import { KpiCardGroup, type KpiItem } from "../_components/kpi-card-group";
 
+function absoluteUrl(path: string) {
+  // in Cloud Run/Preview VERCEL_URL è definito senza protocollo
+  const base =
+    process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000";
+  return `${base}${path}`;
+}
+
 export default async function Page() {
-  const res = await fetch("/api/dashboard/costi-metrics");
+  const res = await fetch(absoluteUrl("/api/dashboard/costi-metrics"), {
+    // evita la cache se i dati cambiano spesso
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    // fallback: puoi loggare o mostrare un messaggio d’errore
+    throw new Error(`API error ${res.status}`);
+  }
+
   const data: {
     totalRevenue: number;
     newCustomers: number;
