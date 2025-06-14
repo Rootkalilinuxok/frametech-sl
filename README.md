@@ -133,7 +133,14 @@ To set up and run this admin dashboard locally, follow these steps:
    > While installing, you may be prompted to use the `--force` or `--legacy-peer-deps` flag.  
    > This is expected and safe — it’s due to a dependency from the Shadcn registry that references a breaking library version.
 
-3. **Start the development server**
+3. **Configure environment variables**
+   Set up a `.env.local` file (or export variables in your shell) with your database connection string:
+   ```bash
+   DATABASE_URL=<your-postgres-connection>
+   ```
+   Some providers expose this value as `POSTGRES_URL`. If so, rename or duplicate it as `DATABASE_URL`.
+
+4. **Start the development server**
    ```bash
    npm run dev
    ```
