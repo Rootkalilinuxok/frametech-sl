@@ -2,14 +2,19 @@ import { ChartAreaInteractive } from "./_components/chart-area-interactive";
 import type { ReceiptRow } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
 import data from "./_components/data.json";
-import { SectionCards } from "./_components/section-cards";
+import { KpiCardGroup } from "@/components/kpi/KpiCardGroup";
+import useSWR from "swr";
 
-export default function Page() {
+const fetcher = (url: string) => fetch(url).then((r) => r.json());
+
+export default function Andamento() {
+  const { data: metrics } = useSWR("/api/dashboard/metrics", fetcher);
+
   return (
-    <div className="@container/main flex flex-col gap-4 md:gap-6">
-      <SectionCards />
+    <main className="p-4 md:p-8 flex flex-col gap-6">
+      <KpiCardGroup data={metrics?.overview ?? []} />
       <ChartAreaInteractive />
       <DataTable data={data as unknown as ReceiptRow[]} />
-    </div>
+    </main>
   );
 }
