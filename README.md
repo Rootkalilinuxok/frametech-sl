@@ -133,10 +133,34 @@ To set up and run this admin dashboard locally, follow these steps:
    ```bash
    pnpm install
    ```
-   > If you install with `npm`, you may be prompted to use the `--force` or `--legacy-peer-deps` flag.
+
+   > While installing, you may be prompted to use the `--force` or `--legacy-peer-deps` flag.
+
    > This is expected and safe — it’s due to a dependency from the Shadcn registry that references a breaking library version.
 
-3. **Start the development server**
+### 3. **Configure environment variables**
+
+You have two equivalent ways to provide the required environment variables – choose the one that best fits your workflow:
+
+1. **Copy the sample file and edit it**
+
+   ```bash
+   cp .env.example .env
+   # then open .env and set your real values
+   ```
+
+2. **Create (or append to) a local‑only environment file**
+
+   Set up a file such as `.env.local` (or export variables directly in your shell) with at least your database connection string:
+
+   ```bash
+   # example .env.local
+   DATABASE_URL=<your-postgres-connection>
+   ```
+
+   > **Note** Some providers expose this value as `POSTGRES_URL`. If so, rename or duplicate it as `DATABASE_URL` so the application can find it.
+
+4. **Start the development server**
    ```bash
    pnpm dev
    ```
