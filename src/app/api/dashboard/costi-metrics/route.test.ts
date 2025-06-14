@@ -1,13 +1,16 @@
 import { describe, it, expect, vi } from "vitest";
 
 vi.mock("@/lib/db", () => {
-  const mockFrom = vi.fn().mockResolvedValue([
-    { totalEur: "10", total: "10", newCustomers: "1", activeAccounts: "1" },
-  ]);
+  const mockFrom = vi.fn().mockResolvedValue([{ totalEur: "10", total: "10", newCustomers: "1", activeAccounts: "1" }]);
   const mockSelect = vi.fn(() => ({ from: mockFrom }));
   return { db: { select: mockSelect } };
 });
 vi.mock("@/lib/schema", () => ({ receiptsLive: {} }));
+vi.mock("drizzle-orm/sql", () => ({
+  sum: vi.fn(),
+  count: vi.fn(),
+  countDistinct: vi.fn(),
+}));
 
 import { GET } from "./route";
 
