@@ -15,7 +15,7 @@
  -----------------------------------------------------------------
    Inline theme tokens (unchanged from original file)
    -----------------------------------------------------------------   */
-@theme inline {   
+@themeinline {   
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-sidebar-ring: var(--sidebar-ring);
