@@ -1,39 +1,18 @@
 /* ──────────────────────────────────────────────────────────────
-   src/app/globals.css  – v2
-   Global stylesheet for the Next.js app (Tailwind v4)
+   src/app/globals.css – v2
+   Global stylesheet for the Next.js app (Tailwind v4)
+   ----------------------------------------------------------- */
 
-   ✱ CHANGES
-   ──────────────────────────────────────────────────────────────
-   1. **Removed** the line `@import "tw-animate-css";` which produced the
-      invalid placeholder path `url("./...")` and broke the Vercel build.
-   2. **Replaced** old `@import "tailwindcss";` with Tailwind’s official
-      directive trio `@tailwind base;`, `components;`, `utilities;`.
-   3.  Everything else (custom-variant, design‑tokens, dark‑mode overrides,
-      base layer rules) is preserved exactly as in your original file.
-
-   👉  If you still need pre‑built CSS animations, install the
-       `tailwindcss-animate` plugin instead:
-
-       ```bash
-       pnpm add -D tailwindcss-animate
-       ```
-
-       Then add it to `tailwind.config.ts` ➜ `plugins: [require("tailwindcss-animate")]`
-       and use the utility classes (`animate-fade`, etc.) without any
-       CSS `@import`.
-   ────────────────────────────────────────────────────────────── */
-
+/* Tailwind directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* -----------------------------------------------------------------
-   Experimental variant – kept from the original file
-   ----------------------------------------------------------------- */
+/* Experimental dark variant (kept from original) */
 @custom-variant dark (&:is(.dark *));
 
 /* -----------------------------------------------------------------
-   Inline theme tokens (unchanged)
+   Inline theme tokens (unchanged from original file)
    ----------------------------------------------------------------- */
 @theme inline {
   --color-background: var(--background);
@@ -75,36 +54,36 @@
 
 :root {
   --radius: 0.625rem;
-  --card: oklch(1.00 0 0);
+  --card: oklch(1 0 0);
   --card-foreground: oklch(0.32 0 0);
-  --popover: oklch(1.00 0 0);
+  --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.32 0 0);
   --primary: oklch(0.64 0.17 36.44);
-  --primary-foreground: oklch(1.00 0 0);
-  --secondary: oklch(0.97 0.00 264.54);
-  --secondary-foreground: oklch(0.45 0.03 256.80);
-  --muted: oklch(0.98 0.00 247.84);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.97 0 264.54);
+  --secondary-foreground: oklch(0.45 0.03 256.8);
+  --muted: oklch(0.98 0 247.84);
   --muted-foreground: oklch(0.55 0.02 264.36);
   --accent: oklch(0.91 0.02 243.82);
   --accent-foreground: oklch(0.38 0.14 265.52);
   --destructive: oklch(0.64 0.21 25.33);
-  --border: oklch(0.90 0.01 247.88);
-  --input: oklch(0.97 0.00 264.54);
+  --border: oklch(0.9 0.01 247.88);
+  --input: oklch(0.97 0 264.54);
   --ring: oklch(0.64 0.17 36.44);
   --chart-1: oklch(0.72 0.06 248.68);
   --chart-2: oklch(0.79 0.09 35.96);
   --chart-3: oklch(0.58 0.08 254.16);
-  --chart-4: oklch(0.50 0.08 259.49);
-  --chart-5: oklch(0.42 0.10 264.03);
-  --sidebar: oklch(0.90 0.00 258.33);
+  --chart-4: oklch(0.5 0.08 259.49);
+  --chart-5: oklch(0.42 0.1 264.03);
+  --sidebar: oklch(0.9 0 258.33);
   --sidebar-foreground: oklch(0.32 0 0);
   --sidebar-primary: oklch(0.64 0.17 36.44);
-  --sidebar-primary-foreground: oklch(1.00 0 0);
+  --sidebar-primary-foreground: oklch(1 0 0);
   --sidebar-accent: oklch(0.91 0.02 243.82);
   --sidebar-accent-foreground: oklch(0.38 0.14 265.52);
   --sidebar-border: oklch(0.93 0.01 264.53);
   --sidebar-ring: oklch(0.64 0.17 36.44);
-  --background: oklch(0.94 0.00 236.50);
+  --background: oklch(0.94 0 236.5);
   --foreground: oklch(0.32 0 0);
 }
 
@@ -113,10 +92,10 @@
   --foreground: oklch(0.92 0 0);
   --card: oklch(0.31 0.03 268.64);
   --card-foreground: oklch(0.92 0 0);
-  --popover: oklch(0.29 0.02 268.40);
+  --popover: oklch(0.29 0.02 268.4);
   --popover-foreground: oklch(0.92 0 0);
   --primary: oklch(0.64 0.17 36.44);
-  --primary-foreground: oklch(1.00 0 0);
+  --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.31 0.03 266.71);
   --secondary-foreground: oklch(0.92 0 0);
   --muted: oklch(0.31 0.03 266.71);
@@ -130,12 +109,12 @@
   --chart-1: oklch(0.72 0.06 248.68);
   --chart-2: oklch(0.77 0.09 34.19);
   --chart-3: oklch(0.58 0.08 254.16);
-  --chart-4: oklch(0.50 0.08 259.49);
-  --chart-5: oklch(0.42 0.10 264.03);
+  --chart-4: oklch(0.5 0.08 259.49);
+  --chart-5: oklch(0.42 0.1 264.03);
   --sidebar: oklch(0.31 0.03 267.74);
   --sidebar-foreground: oklch(0.92 0 0);
   --sidebar-primary: oklch(0.64 0.17 36.44);
-  --sidebar-primary-foreground: oklch(1.00 0 0);
+  --sidebar-primary-foreground: oklch(1 0 0);
   --sidebar-accent: oklch(0.34 0.06 267.59);
   --sidebar-accent-foreground: oklch(0.88 0.06 254.13);
   --sidebar-border: oklch(0.38 0.03 269.73);
@@ -143,13 +122,12 @@
 }
 
 /* -----------------------------------------------------------------
-   Base layer overrides – unchanged
+   Base layer overrides – unchanged
    ----------------------------------------------------------------- */
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-
   body {
     @apply bg-background text-foreground overscroll-none;
   }
