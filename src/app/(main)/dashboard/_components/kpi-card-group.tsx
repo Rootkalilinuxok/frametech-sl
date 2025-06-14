@@ -23,9 +23,7 @@ export function KpiCardGroup({ items }: KpiCardGroupProps) {
         <Card key={item.title} className="@container/card">
           <CardHeader>
             <CardDescription>{item.title}</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {item.value}
-            </CardTitle>
+            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">{item.value}</CardTitle>
             {item.delta && (
               <CardAction>
                 <Badge variant="outline">
@@ -37,7 +35,8 @@ export function KpiCardGroup({ items }: KpiCardGroupProps) {
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              {item.message} {item.trend === "up" ? <TrendingUp className="size-4" /> : <TrendingDown className="size-4" />}
+              {item.message}{" "}
+              {item.trend === "up" ? <TrendingUp className="size-4" /> : <TrendingDown className="size-4" />}
             </div>
             <div className="text-muted-foreground">{item.subtext}</div>
           </CardFooter>
