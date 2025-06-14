@@ -10,7 +10,7 @@ import React, { ReactNode } from "react";
 interface ArchivioPageProps {
   /**
    * Keep any existing children or page sections here.
-   * If you already render specific components on this page, 
+   * If you already render specific components on this page,
    * simply move them inside the <MainContent> wrapper below.
    */
   children?: ReactNode;
@@ -18,9 +18,7 @@ interface ArchivioPageProps {
 
 export default function ArchivioPage({ children }: ArchivioPageProps) {
   return (
-    <main
-      className="min-h-screen w-full bg-[url('/sfondo-matrix.png')] bg-cover bg-center bg-no-repeat"
-    >
+    <main className="min-h-screen w-full bg-[url('/sfondo-matrix.png')] bg-cover bg-center bg-no-repeat">
       {/* Overlay (optional) – remove if you don’t need a dark tint */}
       <div className="absolute inset-0 bg-black/40" aria-hidden="true" />
 
