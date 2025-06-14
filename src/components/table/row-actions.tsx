@@ -2,7 +2,7 @@
 
 import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
 
-import type { ReceiptRow } from "@/app/(main)/dashboard/default/_components/columns";
+import type { ReceiptRow } from "@/app/(main)/dashboard/andamento/_components/columns";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
