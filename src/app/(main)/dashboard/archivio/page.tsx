@@ -1,6 +1,3 @@
-export default function Page() {
-  return <div className="@container/main flex flex-col gap-4 md:gap-6" />;
-}
 // src/app/(main)/dashboard/archivio/page.tsx
 // Updated to apply the "sfondo‑matrix" background to the whole page.
 // Make sure the image file (e.g. sfondo-matrix.png or .jpg) lives in `/public`.
