@@ -11,7 +11,8 @@
     "format:check": "prettier --check .",
     "prepare": "husky",
     "generate:migrations": "drizzle-kit generate --schema=./lib/schema.ts --out=./drizzle",
-    "push:migrations": "drizzle-kit push --schema=./lib/schema.ts --out=./drizzle"
+    "push:migrations": "drizzle-kit push --schema=./lib/schema.ts --out=./drizzle",
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": [
