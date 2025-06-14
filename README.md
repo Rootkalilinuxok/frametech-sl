@@ -121,6 +121,9 @@ If you want to dive deeper into this architecture pattern, check out [this repo]
 
 To set up and run this admin dashboard locally, follow these steps:
 
+> **Note**
+> This project uses **pnpm** as the preferred package manager. If you don't have it installed, run `npm install -g pnpm` first.
+
 1. **Clone the repository**
    ```bash
    git clone https://github.com/arhamkhnz/next-shadcn-admin-dashboard.git
@@ -128,14 +131,14 @@ To set up and run this admin dashboard locally, follow these steps:
    
 2. **Install dependencies**
    ```bash
-    npm install
+   pnpm install
    ```
-   > While installing, you may be prompted to use the `--force` or `--legacy-peer-deps` flag.  
+   > If you install with `npm`, you may be prompted to use the `--force` or `--legacy-peer-deps` flag.
    > This is expected and safe — it’s due to a dependency from the Shadcn registry that references a breaking library version.
 
 3. **Start the development server**
    ```bash
-   npm run dev
+   pnpm dev
    ```
 
 Once running, the app will be available at [http://localhost:3000](http://localhost:3000)
