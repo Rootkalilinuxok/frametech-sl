@@ -1,8 +1,7 @@
-/* ──────────────────────────────────────────────────────────────Add commentMore actions
+/* ──────────────────────────────────────────────────────────────
    src/app/globals.css – v2
    Global stylesheet for the Next.js app (Tailwind v4)
    ----------------------------------------------------------- */
-
 
 /* Tailwind directives */
 @tailwind base;
@@ -10,7 +9,6 @@
 @tailwind utilities;
 
 /* Experimental dark variant (kept from original) */
-
 
 @custom-variant dark (&:is(.dark *));
 
@@ -129,7 +127,7 @@
    ----------------------------------------------------------------- */
 @layer base {
   * {
-    @apply border-border outline-ring/50;Add commentMore actions
+    @apply border-border outline-ring/50;
   }
 
   body {
