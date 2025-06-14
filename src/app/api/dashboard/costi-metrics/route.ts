@@ -1,6 +1,7 @@
+import { sum, count, countDistinct } from "drizzle-orm/sql";
+
 import { db } from "@/lib/db";
 import { receiptsLive } from "@/lib/schema";
-import { sum, count, countDistinct } from "drizzle-orm/sql";
 
 export async function GET() {
   const [row] = await db
