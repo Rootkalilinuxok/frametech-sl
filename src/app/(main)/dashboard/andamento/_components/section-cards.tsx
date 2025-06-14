@@ -5,7 +5,7 @@ export function SectionCards() {
     {
       title: "Total Revenue",
       value: "$1,250.00",
-      delta: "+12.5%",
+      delta: "+0%",
       trend: "up",
       message: "Trending up this month",
       subtext: "Visitors for the last 6 months",
@@ -13,7 +13,7 @@ export function SectionCards() {
     {
       title: "New Customers",
       value: "1,234",
-      delta: "-20%",
+      delta: "+0%",
       trend: "down",
       message: "Down 20% this period",
       subtext: "Acquisition needs attention",
@@ -21,7 +21,7 @@ export function SectionCards() {
     {
       title: "Active Accounts",
       value: "45,678",
-      delta: "+12.5%",
+      delta: "+0%",
       trend: "up",
       message: "Strong user retention",
       subtext: "Engagement exceed targets",
@@ -29,7 +29,7 @@ export function SectionCards() {
     {
       title: "Growth Rate",
       value: "4.5%",
-      delta: "+4.5%",
+      delta: "+0%",
       trend: "up",
       message: "Steady performance increase",
       subtext: "Meets growth projections",
