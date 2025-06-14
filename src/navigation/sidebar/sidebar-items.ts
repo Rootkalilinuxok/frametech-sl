@@ -44,21 +44,21 @@ export interface NavGroup {
 export const sidebarItems: NavGroup[] = [
   {
     id: 1,
-    label: "Contabilità",
+    label: "Dashboard",
     items: [
       {
-        title: "Contabilità",
-        url: "/contabilita",
+        title: "Dashboard",
+        url: "/dashboard",
         icon: Home,
         subItems: [
-          { title: "Andamento", url: "/contabilita/andamento", icon: ChartPie },
-          { title: "Costi", url: "/contabilita/costi", icon: Grid2X2 },
-          { title: "Costi Periodici", url: "/contabilita/costi-periodici", icon: ChartLine },
-          { title: "Profitti", url: "/contabilita/profitti", icon: ShoppingBag },
-          { title: "Archivio", url: "/contabilita/archivio", icon: BookA },
-          { title: "Fatture", url: "/contabilita/fatture", icon: Forklift },
-          { title: "Rapportini", url: "/contabilita/rapportini", icon: Forklift },
-          { title: "Scadenze", url: "/contabilita/scadenze", icon: Forklift },
+          { title: "Andamento", url: "/dashboard/andamento", icon: ChartPie },
+          { title: "Costi", url: "/dashboard/costi", icon: Grid2X2 },
+          { title: "Costi Periodici", url: "/dashboard/costi-periodici", icon: ChartLine },
+          { title: "Profitti", url: "/dashboard/profitti", icon: ShoppingBag },
+          { title: "Archivio", url: "/dashboard/archivio", icon: BookA },
+          { title: "Fatture", url: "/dashboard/fatture", icon: Forklift },
+          { title: "Rapportini", url: "/dashboard/rapportini", icon: Forklift },
+          { title: "Scadenze", url: "/dashboard/scadenze", icon: Forklift },
         ],
       },
     ],
