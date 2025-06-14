@@ -1,23 +1,25 @@
-import { KpiCardGroup, type KpiItem } from "../_components/kpi-card-group";
+"use client";
 
+// Utility to build an absolute URL that works both in Vercel and locally
 function absoluteUrl(path: string) {
-  // in Cloud Run/Preview VERCEL_URL è definito senza protocollo
   const base =
-    process.env.VERCEL_URL
+    typeof window === "undefined" && process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
-      : "http://localhost:3000";
+      : window?.location.origin ?? "http://localhost:3000";
   return `${base}${path}`;
 }
 
-export default async function Page() {
+import { KpiCardGroup, type KpiItem } from "../_components/kpi-card-group";
+
+export default async function CostiPage() {
   const res = await fetch(absoluteUrl("/api/dashboard/costi-metrics"), {
-    // evita la cache se i dati cambiano spesso
+    // Avoid stale data in static cache
     cache: "no-store",
   });
 
   if (!res.ok) {
-    // fallback: puoi loggare o mostrare un messaggio d’errore
-    throw new Error(`API error ${res.status}`);
+    // Fail fast with a readable error page (caught by Next error boundary)
+    throw new Error(`API responded ${res.status}`);
   }
 
   const data: {
