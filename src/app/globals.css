@@ -1,8 +1,40 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+/* ──────────────────────────────────────────────────────────────
+   src/app/globals.css  – v2
+   Global stylesheet for the Next.js app (Tailwind v4)
 
+   ✱ CHANGES
+   ──────────────────────────────────────────────────────────────
+   1. **Removed** the line `@import "tw-animate-css";` which produced the
+      invalid placeholder path `url("./...")` and broke the Vercel build.
+   2. **Replaced** old `@import "tailwindcss";` with Tailwind’s official
+      directive trio `@tailwind base;`, `components;`, `utilities;`.
+   3.  Everything else (custom-variant, design‑tokens, dark‑mode overrides,
+      base layer rules) is preserved exactly as in your original file.
+
+   👉  If you still need pre‑built CSS animations, install the
+       `tailwindcss-animate` plugin instead:
+
+       ```bash
+       pnpm add -D tailwindcss-animate
+       ```
+
+       Then add it to `tailwind.config.ts` ➜ `plugins: [require("tailwindcss-animate")]`
+       and use the utility classes (`animate-fade`, etc.) without any
+       CSS `@import`.
+   ────────────────────────────────────────────────────────────── */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* -----------------------------------------------------------------
+   Experimental variant – kept from the original file
+   ----------------------------------------------------------------- */
 @custom-variant dark (&:is(.dark *));
 
+/* -----------------------------------------------------------------
+   Inline theme tokens (unchanged)
+   ----------------------------------------------------------------- */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -110,6 +142,9 @@
   --sidebar-ring: oklch(0.64 0.17 36.44);
 }
 
+/* -----------------------------------------------------------------
+   Base layer overrides – unchanged
+   ----------------------------------------------------------------- */
 @layer base {
   * {
     @apply border-border outline-ring/50;
