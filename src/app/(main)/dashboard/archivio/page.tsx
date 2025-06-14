@@ -1,32 +1,74 @@
-// src/app/(main)/dashboard/archivio/page.tsx
-// Updated to apply the "sfondo‑matrix" background to the whole page.
-// Make sure the image file (e.g. sfondo-matrix.png or .jpg) lives in `/public`.
-// If you place it elsewhere, update the path in the `bg-[url('...')]` utility below.
+## Fix build errors on Vercel
 
+The last deploy (`ca881f0`) fails for two independent reasons:
+
+### 1️⃣ Tailwind: *unknown utility* `border-border`
+
+`border-border` is **not** a core Tailwind class. It came from the quick
+`@apply border-border outline-ring/50;` we added in `globals.css`.
+Remove that utility (or replace it with the standard `border` helpers).
+
+```diff
+ @layer base {
+-  * {
+-    @apply border-border outline-ring/50;
+-  }
++  /*   outline-ring/50 is preserved – border utility removed */
++  * {
++    @apply outline-ring/50;
++  }
+ }
+```
+
+> If you actually want a themed border color, use
+> ```css
+> @apply border-[var(--border)]
+> ```
+> or create a plugin alias.
+
+### 2️⃣ Next 15 type‑checking: *invalid default export in page.tsx*
+
+For App Router, a **Page** file must export a component with **no props**
+(except route params). The previous version expected a `children` prop
+which is disallowed and leads to
+`Page ".../archivio/page.tsx" has an invalid "default" export`.
+
+Replace the file with a zero‑prop component and keep your layout inside.
+
+```tsx
+// src/app/(main)/dashboard/archivio/page.tsx
 "use client";
 
-import React, { ReactNode } from "react";
+import React from "react";
 
-interface ArchivioPageProps {
-  /**
-   * Keep any existing children or page sections here.
-   * If you already render specific components on this page,
-   * simply move them inside the <MainContent> wrapper below.
-   */
-  children?: ReactNode;
-}
-
-export default function ArchivioPage({ children }: ArchivioPageProps) {
+export default function ArchivioPage() {
   return (
-    <main className="min-h-screen w-full bg-[url('/sfondo-matrix.png')] bg-cover bg-center bg-no-repeat">
-      {/* Overlay (optional) – remove if you don’t need a dark tint */}
-      <div className="absolute inset-0 bg-black/40" aria-hidden="true" />
+    <main className="min-h-screen w-full bg-[url('/images/sfondo-matrix.jpg')] bg-cover bg-center bg-no-repeat">
+      {/* Optional dark overlay */}
+      <div className="absolute inset-0 bg-black/40" aria-hidden />
 
-      {/* Page content – stays above the background/overlay */}
+      {/* Page content */}
       <div className="relative z-10 flex flex-col gap-6 p-6">
-        {children}
-        {/* 👉  Place (or keep) your existing Archivio page UI here */}
+        {/* …existing archivio UI… */}
       </div>
     </main>
   );
 }
+```
+
+### 3️⃣ Re‑deploy without cache
+
+After committing the two changes:
+
+```bash
+git add src/app/globals.css src/app/(main)/dashboard/archivio/page.tsx
+git commit -m "fix: remove border-border util + page props"
+git push origin main
+
+# then from your shell
+vercel build --no-cache
+overcel deploy --prebuilt --prod  # or dashboard › Redeploy › Clear cache
+```
+
+The build should compile successfully (Tailwind finished in the previous
+log, so no more CSS errors; the type checker will pass with the zero‑prop page).
