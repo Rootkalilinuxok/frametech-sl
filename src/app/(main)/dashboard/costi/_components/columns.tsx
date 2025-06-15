@@ -1,7 +1,4 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { CircleCheck, Loader } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 
 export type ReceiptRow = {
   id: number;
@@ -20,7 +17,11 @@ export type ReceiptRow = {
   editing: boolean;
 };
 
-export const columns: ColumnDef<ReceiptRow>[] = [
+export type ReceiptColumn = ColumnDef<ReceiptRow> & {
+  accessorKey: keyof ReceiptRow;
+};
+
+export const columns: ReceiptColumn[] = [
   {
     accessorKey: "id",
     header: "ID",
@@ -73,8 +74,6 @@ export const columns: ColumnDef<ReceiptRow>[] = [
     accessorKey: "image",
     header: "Immagine",
     cell: ({ row }) =>
-      row.original.image ? (
-        <img src={row.original.image} alt="img" style={{ maxWidth: 50 }} />
-      ) : null,
+      row.original.image ? <img src={row.original.image} alt="img" style={{ maxWidth: 50 }} /> : null,
   },
 ];
