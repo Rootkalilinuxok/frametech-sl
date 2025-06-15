@@ -1,9 +1,18 @@
 import { sum, count, countDistinct } from "drizzle-orm/sql";
 
-import { db } from "@/lib/db";
 import { receiptsLive } from "@/lib/schema";
 
 export async function GET() {
+  if (!process.env.DATABASE_URL) {
+    return Response.json({
+      totalRevenue: 0,
+      newCustomers: 0,
+      activeAccounts: 0,
+      growthRate: "+0%",
+    });
+  }
+
+  const { db } = await import("@/lib/db");
   const [row] = await db
     .select({
       totalEur: sum(receiptsLive.totalEur),
