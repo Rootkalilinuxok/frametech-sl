@@ -1,6 +1,6 @@
-import { KpiCardGroup } from "./kpi-card-group";
+import { KpiCardGroup, type KpiItem } from "./kpi-card-group";
 
-const kpiItems = [
+const kpiItems: KpiItem[] = [
   {
     title: "Totale Costi",
     value: "€ 8.340,00",
@@ -33,7 +33,7 @@ const kpiItems = [
     message: "Margine ridotto",
     subtext: "Rispetta i limiti di spesa",
   },
-] as const;
+];
 
 export function SectionCards() {
   return <KpiCardGroup items={kpiItems} />;
