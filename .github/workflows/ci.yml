@@ -21,7 +21,7 @@ jobs:
       - name: Install pnpm
         run: |
           npm install -g pnpm
-          echo "::add-path::$(npm root -g)/pnpm"
+          echo "$(npm root -g)/pnpm" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: pnpm install
