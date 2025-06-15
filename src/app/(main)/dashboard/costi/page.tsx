@@ -1,12 +1,12 @@
-import { SectionCardsCosti } from "./_components/section-cards-costi";
-import type { ReceiptRow } from "../andamento/_components/columns";
-import { DataTable } from "../andamento/_components/data-table";
-import data from "../andamento/_components/data.json";
+import { SectionCards } from "./_components/section-cards";
+import type { ReceiptRow } from "./_components/columns";
+import { DataTable } from "./_components/data-table";
+import data from "./_components/data.json";
 
 export default function Page() {
   return (
     <div className="@container/main flex flex-col gap-4 md:gap-6">
-      <SectionCardsCosti />
+      <SectionCards />
       <DataTable data={data as unknown as ReceiptRow[]} />
     </div>
   );
