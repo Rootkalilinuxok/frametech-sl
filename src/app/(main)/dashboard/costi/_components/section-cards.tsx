@@ -1,4 +1,4 @@
-import { KpiCardGroup } from "./kpi-card-group"; // se lo condividi, altrimenti duplica anche questo file!
+import { KpiCardGroup } from "./kpi-card-group";
 
 const kpiItems = [
   {
@@ -33,7 +33,7 @@ const kpiItems = [
     message: "Margine ridotto",
     subtext: "Rispetta i limiti di spesa",
   },
-];
+] as const;
 
 export function SectionCards() {
   return <KpiCardGroup items={kpiItems} />;
