@@ -1,4 +1,4 @@
-import { KpiCardGroup } from "@/app/(main)/dashboard/andamento/_components/kpi-card-group"; // se lo condividi, altrimenti duplica anche questo file!
+import { KpiCardGroup } from "./kpi-card-group"; // se lo condividi, altrimenti duplica anche questo file!
 
 const kpiItems = [
   {
