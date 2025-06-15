@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { columns as staticColumns, ReceiptRow } from "./columns";
 
