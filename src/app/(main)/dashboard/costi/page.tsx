@@ -1,7 +1,7 @@
-import { SectionCards } from "./_components/section-cards";
 import type { ReceiptRow } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
 import data from "./_components/data.json";
+import { SectionCards } from "./_components/section-cards";
 
 export default function Page() {
   return (

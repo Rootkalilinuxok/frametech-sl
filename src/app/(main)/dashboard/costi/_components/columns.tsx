@@ -1,7 +1,4 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { CircleCheck, Loader } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 
 export type ReceiptRow = {
   id: number;
