@@ -20,7 +20,11 @@ export type ReceiptRow = {
   editing: boolean;
 };
 
-export const columns: ColumnDef<ReceiptRow>[] = [
+export interface ReceiptColumn extends ColumnDef<ReceiptRow> {
+  accessorKey: keyof ReceiptRow;
+}
+
+export const columns: ReceiptColumn[] = [
   {
     accessorKey: "id",
     header: "ID",

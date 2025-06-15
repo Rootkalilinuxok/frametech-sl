@@ -1,6 +1,12 @@
 "use client";
 import { useState } from "react";
-import { columns as staticColumns, ReceiptRow } from "./columns";
+import {
+  columns,
+  type ReceiptRow,
+  type ReceiptColumn,
+} from "./columns";
+
+const staticColumns: ReceiptColumn[] = columns;
 
 interface DataTableProps {
   data: ReceiptRow[];
@@ -68,7 +74,9 @@ export function DataTable({ data }: DataTableProps) {
                       <input
                         className="bg-transparent w-full outline-none"
                         type="text"
-                        value={row[col.accessorKey as keyof ReceiptRow] ?? ""}
+                        value={String(
+                          row[col.accessorKey as keyof ReceiptRow] ?? ""
+                        )}
                         onChange={(e) =>
                           handleCellChange(
                             rowIdx,
