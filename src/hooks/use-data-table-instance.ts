@@ -1,74 +1,40 @@
-import * as React from "react";
-
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
+  useReactTable,
   getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  type ColumnDef,
   type Row,
-} from "@tanstack/react-table";
+  type RowData,
+  type TableOptions,
+} from "@dnd-kit/core";
 
-type UseDataTableInstanceProps<TData, TValue> = {
+interface UseDataTableInstanceProps<TData extends RowData> extends TableOptions<TData> {
+  columns: ColumnDef<TData>[];
   data: TData[];
-  columns: ColumnDef<TData, TValue>[];
-  enableRowSelection?: boolean;
-  defaultPageIndex?: number;
-  defaultPageSize?: number;
   getRowId?: (row: TData, index: number) => string;
-};
+  enableRowSelection?: boolean;
+}
 
-export function useDataTableInstance<TData, TValue>({
-  data,
+export function useDataTableInstance<TData extends RowData>({
   columns,
-  enableRowSelection = true,
-  defaultPageIndex,
-  defaultPageSize,
+  data,
   getRowId,
-}: UseDataTableInstanceProps<TData, TValue>) {
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [pagination, setPagination] = React.useState({
-    pageIndex: defaultPageIndex ?? 0,
-    pageSize: defaultPageSize ?? 10,
-  });
-
+  enableRowSelection,
+  ...tableOptions
+}: UseDataTableInstanceProps<TData>) {
   const table = useReactTable({
     data,
     columns,
-    state: {
-      sorting,
-      columnVisibility,
-      rowSelection,
-      columnFilters,
-      pagination,
-    },
-    enableRowSelection,
-    getRowId: getRowId
-      ? (row: TData, index: number, parent?: Row<TData>) =>
-          getRowId(row, index)
-      : (row: TData, index: number, parent?: Row<TData>) =>
-          String((row as { id: string | number }).id),
-    onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
+    ...tableOptions,
+    getRowId: getRowId
+      ? (row: TData, index: number) => getRowId(row, index)
+      : (row: TData) => String((row as { id: string | number }).id),
+    enableRowSelection,
   });
 
-  return table;
+  return { table };
 }
