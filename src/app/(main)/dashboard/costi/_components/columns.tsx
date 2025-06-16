@@ -1,4 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
+import { TableCellViewer } from "./table-cell-viewer";
 
 export type ReceiptRow = {
   id: number;
@@ -33,6 +34,18 @@ export const columns: ColumnDef<ReceiptRow>[] = [
   {
     accessorKey: "intestazione",
     header: "Intestazione",
+    cell: ({ row }) => (
+      <TableCellViewer
+        item={{
+          header: row.original.intestazione,
+          type: "",
+          status: "",
+          target: "",
+          limit: "",
+          reviewer: "",
+        }}
+      />
+    ),
   },
   {
     accessorKey: "nazione",
@@ -71,7 +84,7 @@ export const columns: ColumnDef<ReceiptRow>[] = [
     header: "Immagine",
     cell: ({ row }) =>
       row.original.image ? (
-        <img src={row.original.image} alt="img" style={{ maxWidth: 50 }} />
+        <img src={row.original.image} alt="img" className="max-w-[50px]" />
       ) : null,
   },
 ];
