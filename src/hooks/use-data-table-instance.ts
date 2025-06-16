@@ -4,37 +4,25 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   type ColumnDef,
-  type Row,
   type RowData,
   type TableOptions,
-} from "@dnd-kit/core";
-
-interface UseDataTableInstanceProps<TData extends RowData> extends TableOptions<TData> {
-  columns: ColumnDef<TData>[];
-  data: TData[];
-  getRowId?: (row: TData, index: number) => string;
-  enableRowSelection?: boolean;
-}
+} from "@tanstack/react-table"; // Cambiato da @dnd-kit/core a @tanstack/react-table
 
 export function useDataTableInstance<TData extends RowData>({
-  columns,
   data,
+  columns,
   getRowId,
-  enableRowSelection,
   ...tableOptions
-}: UseDataTableInstanceProps<TData>) {
+}: TableOptions<TData>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getRowId: getRowId || ((row: TData) => String((row as { id: string | number }).id)),
     ...tableOptions,
-    getRowId: getRowId
-      ? (row: TData, index: number) => getRowId(row, index)
-      : (row: TData) => String((row as { id: string | number }).id),
-    enableRowSelection,
   });
 
-  return { table };
+  return table; // Restituisce direttamente la table, non un oggetto
 }
