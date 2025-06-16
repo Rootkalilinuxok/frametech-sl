@@ -27,7 +27,7 @@ import { DataTablePagination } from "../../../../../components/data-table/data-t
 import { DataTableViewOptions } from "../../../../../components/data-table/data-table-view-options";
 import { withDndColumn } from "../../../../../components/data-table/table-utils";
 
-import { dashboardColumns, type ReceiptRow } from "./columns";
+import { dashboardColumns } from "./columns";
 
 export const schema = z.object({
   id: z.number(),
@@ -39,23 +39,19 @@ export const schema = z.object({
   reviewer: z.string(),
 });
 
-export function DataTable({ data: initialData }: { data: ReceiptRow[] }) {
+export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[] }) {
   const dndEnabled = true;
 
-  const [data, setData] = React.useState<ReceiptRow[]>(() => initialData);
-  const columns = withDndColumn(dashboardColumns);
-  const table = useDataTableInstance<ReceiptRow, unknown>({
-    data,
-    columns,
-    getRowId: (row) => row.id.toString(),
-  });
+  const [data, setData] = React.useState(() => initialData);
+  const columns = dndEnabled ? withDndColumn(dashboardColumns) : dashboardColumns;
+  const table = useDataTableInstance({ data, columns, getRowId: (row) => row.id.toString() });
   const sortableId = React.useId();
   const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
-  const dataIds = React.useMemo<UniqueIdentifier[]>(() => data.map(({ id }) => id), [data]);
+  const dataIds = React.useMemo<UniqueIdentifier[]>(() => data?.map(({ id }) => id) || [], [data]);
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-    if (over && active.id !== over.id) {
+    if (active && over && active.id !== over.id) {
       setData((data) => {
         const oldIndex = dataIds.indexOf(active.id);
         const newIndex = dataIds.indexOf(over.id);
