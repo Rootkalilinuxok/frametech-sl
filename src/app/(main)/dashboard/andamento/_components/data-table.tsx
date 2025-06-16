@@ -13,7 +13,6 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { Plus } from "lucide-react";
-import { z } from "zod";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,19 +26,9 @@ import { DataTablePagination } from "../../../../../components/data-table/data-t
 import { DataTableViewOptions } from "../../../../../components/data-table/data-table-view-options";
 import { withDndColumn } from "../../../../../components/data-table/table-utils";
 
-import { dashboardColumns } from "./columns";
+import { dashboardColumns, type SectionRow } from "./columns";
 
-export const schema = z.object({
-  id: z.number(),
-  header: z.string(),
-  type: z.string(),
-  status: z.string(),
-  target: z.string(),
-  limit: z.string(),
-  reviewer: z.string(),
-});
-
-export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[] }) {
+export function DataTable({ data: initialData }: { data: SectionRow[] }) {
   const dndEnabled = true;
 
   const [data, setData] = React.useState(() => initialData);
