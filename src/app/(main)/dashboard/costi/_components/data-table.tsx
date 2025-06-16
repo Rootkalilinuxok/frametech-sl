@@ -11,11 +11,13 @@ interface DataTableProps {
 }
 
 export function DataTable({ data }: DataTableProps) {
-  const { table } = useDataTable({
-    data,
-    columns,
-    getRowId: (row) => row.id.toString(),
-  });
+  const { table } = useDataTableInstance({
+  data,
+  columns,
+  getRowId: (row) => row.id.toString(), // Ora funzionerà correttamente
+  enableRowSelection: true
+});
+
 
   return (
     <div className="space-y-4">
