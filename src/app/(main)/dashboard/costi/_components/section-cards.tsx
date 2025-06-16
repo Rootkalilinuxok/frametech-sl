@@ -1,11 +1,6 @@
-import { KpiCardGroup, type KpiItem } from "./kpi-card-group";
+import { KpiCardGroup } from "@/components/kpi-card-group";
 
-interface SectionCardsProps {
-  items?: KpiItem[];
-  className?: string;
-}
-
-const defaultItems: KpiItem[] = [
+const items = [
   {
     title: "Totale Costi",
     value: "€ 8.340,00",
@@ -40,6 +35,6 @@ const defaultItems: KpiItem[] = [
   },
 ];
 
-export function SectionCards({ items, className }: SectionCardsProps) {
-  return <KpiCardGroup items={items || defaultItems} className={className} />;
+export function SectionCards() {
+  return <KpiCardGroup items={items} />;
 }
