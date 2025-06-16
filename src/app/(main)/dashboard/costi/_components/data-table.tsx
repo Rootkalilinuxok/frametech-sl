@@ -31,10 +31,10 @@ export function DataTable({ data, editable = true }: DataTableProps) {
           <tr>
             {staticColumns.map((col) => (
               <th
-                key={col.accessorKey as string}
+                key={col.id || col.accessorKey}
                 className="px-4 py-2 text-left font-bold"
               >
-                {col.header as string}
+                {col.header}
               </th>
             ))}
           </tr>
@@ -44,29 +44,27 @@ export function DataTable({ data, editable = true }: DataTableProps) {
             <tr key={row.id}>
               {staticColumns.map((col) => {
                 if (col.cell) {
-                  return <td key={col.accessorKey as string}>{col.cell({ row })}</td>;
+                  return (
+                    <td key={col.id || col.accessorKey} className="px-4 py-2 border-t">
+                      {col.cell({ row })}
+                    </td>
+                  );
                 }
 
+                const accessor = col.accessorKey as keyof ReceiptRow;
                 return (
-                  <td
-                    key={col.accessorKey as string}
-                    className="px-4 py-2 border-t"
-                  >
+                  <td key={accessor} className="px-4 py-2 border-t">
                     {editable ? (
                       <input
                         className="bg-transparent w-full outline-none"
                         type="text"
-                        value={row[col.accessorKey as keyof ReceiptRow] ?? ""}
+                        value={row[accessor] ?? ""}
                         onChange={(e) =>
-                          handleCellChange(
-                            rowIdx,
-                            col.accessorKey as keyof ReceiptRow,
-                            e.target.value
-                          )
+                          handleCellChange(rowIdx, accessor, e.target.value)
                         }
                       />
                     ) : (
-                      <span>{row[col.accessorKey as keyof ReceiptRow]}</span>
+                      <span>{row[accessor]}</span>
                     )}
                   </td>
                 );
