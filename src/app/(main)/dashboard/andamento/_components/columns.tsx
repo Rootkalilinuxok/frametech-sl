@@ -24,39 +24,26 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
-import { ReceiptRowActions } from "@/components/table/row-actions";
+import { SectionRowActions } from "@/components/table/row-actions";
 import { Checkbox } from "@/components/ui/checkbox";
 
 // ────────────────────────────────────────────────────────────
 //  Tipi
 // ────────────────────────────────────────────────────────────
-export interface ReceiptRow {
-  id: string;
-  date: string; // YYYY-MM-DD
-  time?: string; // HH:mm
-  name: string; // intestazione / fornitore
-  country?: string; // IT, FR, US …
-  currency: string; // codice ISO (EUR, USD …)
-  tip?: number; // eventuale mancia
-  total: number; // importo originale
-  exchange_rate?: number; // cambio verso EUR (1 unit currency = ? EUR)
-  total_eur: number; // importo convertito in €
-  percent?: number; // campo libero (+%)
+export interface SectionRow {
+  id: number;
+  header: string;
+  type: string;
+  status: string;
+  target: string;
+  limit: string;
+  reviewer: string;
 }
-
-// ────────────────────────────────────────────────────────────
-//  Helpers
-// ────────────────────────────────────────────────────────────
-const fmtDate = (d: string) => new Date(d).toLocaleDateString("it-IT");
-const fmtTime = (t?: string) => t ?? "—";
-const fmtCurr = (val: number, curr = "EUR") =>
-  Intl.NumberFormat("it-IT", { style: "currency", currency: curr }).format(val);
-const fmtNum = (val?: number) => val ?? "—";
 
 // ────────────────────────────────────────────────────────────
 //  Definizione colonne
 // ────────────────────────────────────────────────────────────
-export const dashboardColumns: ColumnDef<ReceiptRow>[] = [
+export const dashboardColumns: ColumnDef<SectionRow>[] = [
   // Checkbox di selezione (fissa)
   {
     id: "select",
@@ -82,73 +69,49 @@ export const dashboardColumns: ColumnDef<ReceiptRow>[] = [
     accessorKey: "id",
     header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
     cell: ({ row }) => row.original.id,
-    size: 140,
-  },
-  {
-    accessorKey: "date",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Data" />,
-    cell: ({ row }) => fmtDate(row.original.date),
-    size: 110,
-  },
-  {
-    accessorKey: "time",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Ora" />,
-    cell: ({ row }) => fmtTime(row.original.time),
     size: 80,
   },
   {
-    accessorKey: "name",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Nome" />,
-    cell: ({ row }) => row.original.name,
+    accessorKey: "header",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Header" />,
+    cell: ({ row }) => row.original.header,
     size: 220,
   },
   {
-    accessorKey: "country",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Nazione" />,
-    cell: ({ row }) => row.original.country ?? "—",
-    size: 100,
+    accessorKey: "type",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Type" />,
+    cell: ({ row }) => row.original.type,
+    size: 150,
   },
   {
-    accessorKey: "currency",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Valuta" />,
-    cell: ({ row }) => row.original.currency,
+    accessorKey: "status",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+    cell: ({ row }) => row.original.status,
+    size: 150,
+  },
+  {
+    accessorKey: "target",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Target" />,
+    cell: ({ row }) => row.original.target,
     size: 90,
   },
   {
-    accessorKey: "tip",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Tip/Mancia" />,
-    cell: ({ row }) => fmtNum(row.original.tip),
-    size: 110,
-  },
-  {
-    accessorKey: "total",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Totale" />,
-    cell: ({ row }) => fmtCurr(row.original.total, row.original.currency),
-    size: 110,
-  },
-  {
-    accessorKey: "exchange_rate",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Cambio" />,
-    cell: ({ row }) => (row.original.exchange_rate ? row.original.exchange_rate.toFixed(4) : "—"),
+    accessorKey: "limit",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Limit" />,
+    cell: ({ row }) => row.original.limit,
     size: 90,
   },
   {
-    accessorKey: "total_eur",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Totale (€)" />,
-    cell: ({ row }) => fmtCurr(row.original.total_eur, "EUR"),
-    size: 120,
-  },
-  {
-    accessorKey: "percent",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="+ %" />,
-    cell: ({ row }) => (row.original.percent !== undefined ? row.original.percent + "%" : "—"),
-    size: 70,
+    accessorKey: "reviewer",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Reviewer" />,
+    cell: ({ row }) => row.original.reviewer,
+    size: 180,
   },
   // Azioni (fissa a destra)
   {
     id: "actions",
     header: () => <span className="sr-only">Azioni</span>,
-    cell: ({ row }) => <ReceiptRowActions row={row.original} />,
+    cell: ({ row }) => <SectionRowActions row={row.original} />,
     enableSorting: false,
     enableHiding: false,
     size: 60,
