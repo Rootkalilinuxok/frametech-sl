@@ -1,14 +1,14 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TrendingUp, TrendingDown } from "lucide-react";
 
-interface KpiItem {
+export type KpiItem = {
   title: string;
   value: string;
   delta?: string;
   trend?: "up" | "down";
   message?: string;
   subtext?: string;
-}
+};
 
 interface KpiCardGroupProps {
   items: KpiItem[];
@@ -26,7 +26,7 @@ export function KpiCardGroup({ items }: KpiCardGroupProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{item.value}</div>
-            {item.delta && (
+            {item.delta && item.trend && (
               <div className={`flex items-center mt-2 ${
                 item.trend === "up" ? "text-green-500" : "text-red-500"
               }`}>
