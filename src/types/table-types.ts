@@ -1,6 +1,7 @@
-import { RowData, Table } from "@tanstack/react-table";
+import { RowData } from "@tanstack/react-table";
 
-export interface SectionRow extends RowData {
+// Usando "type" e tutte le proprietà desiderate
+export type SectionRow = RowData & {
   id: number;
   header: string;
   type: string;
@@ -8,4 +9,4 @@ export interface SectionRow extends RowData {
   target: string;
   limit: string;
   reviewer: string;
-}
+};
