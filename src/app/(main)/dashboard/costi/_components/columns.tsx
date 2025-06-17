@@ -1,4 +1,4 @@
-/* Colonne per la tabella "Costi" (receipts_live) – versione 2 */
+/* Colonne per la tabella "Costi" (receipts_live) – versione autonoma per pagina costi */
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
@@ -6,7 +6,7 @@ import { SectionRowActions } from "@/components/table/row-actions";
 import { Checkbox } from "@/components/ui/checkbox";
 
 // Tipi
-export interface ReceiptRow {
+export interface CostiRow {
   id: string;
   date: string; // YYYY-MM-DD
   time?: string; // HH:mm
@@ -28,7 +28,7 @@ const fmtCurr = (val: number, curr = "EUR") =>
 const fmtNum = (val?: number) => val ?? "—";
 
 // Definizione colonne per la tabella Costi
-export const costiColumns: ColumnDef<ReceiptRow>[] = [
+export const costiColumns: ColumnDef<CostiRow>[] = [
   {
     id: "select",
     header: ({ table }) => (
