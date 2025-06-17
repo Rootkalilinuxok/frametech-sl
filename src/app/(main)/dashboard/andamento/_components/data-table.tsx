@@ -33,7 +33,7 @@ export function DataTable({ data: initialData }: { data: ReceiptRow[] }) {
 
   const [data, setData] = React.useState(() => initialData);
   const columns = dndEnabled ? withDndColumn(dashboardColumns) : dashboardColumns;
-  const table = useDataTableInstance({ data, columns, getRowId: (row) => row.id.toString() });
+  const table = useDataTableInstance({ data, columns, getRowId: (row) => row.id.toString(), getCoreRowModel: getCoreRowModel(), });
   const sortableId = React.useId();
   const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
   const dataIds = React.useMemo<UniqueIdentifier[]>(() => data?.map(({ id }) => id) || [], [data]);
