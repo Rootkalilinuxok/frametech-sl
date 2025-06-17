@@ -6,6 +6,15 @@ import { SectionRowActions } from "@/components/table/row-actions";
 import { Checkbox } from "@/components/ui/checkbox";
 
 // ────────────────────────────────────────────────────────────
+//  Fix TypeScript: estendi TableMeta per updateData
+// ────────────────────────────────────────────────────────────
+declare module '@tanstack/react-table' {
+  interface TableMeta<TData extends object> {
+    updateData: (rowIndex: number, columnId: string, value: any) => void;
+  }
+}
+
+// ────────────────────────────────────────────────────────────
 //  Tipi
 // ────────────────────────────────────────────────────────────
 export interface CostiRow {
