@@ -1,35 +1,11 @@
-/*More actions
-  Colonne per la tabella "Costi" (receipts_live) – **versione 2**
-  ───────────────────────────────────────────────────────────────
-  Ordine richiesto dall’utente:
-    1. ID
-    2. Data
-    3. Ora
-    4. Nome
-    5. Nazione
-    6. Valuta
-    7. Totale (importo originale)
-    8. Tip / Mancia
-    9. Cambio
-   10. Totale (€)
-   11. + % (eventuale maggiorazione / IVA / mark‑up)
-
-  Plus:   • colonna selezione (checkbox) all’inizio
-          • colonna Azioni alla fine
-  ───────────────────────────────────────────────────────────────
-
-  Dipendenze: TanStack React‑Table v8  ·  shadcn/ui (DataTableColumnHeader)
-*/
+/* Colonne per la tabella "Costi" (receipts_live) – versione 2 */
 
 import { ColumnDef } from "@tanstack/react-table";
-
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { SectionRowActions } from "@/components/table/row-actions";
 import { Checkbox } from "@/components/ui/checkbox";
 
-// ────────────────────────────────────────────────────────────
-//  Tipi
-// ────────────────────────────────────────────────────────────
+// Tipi
 export interface ReceiptRow {
   id: string;
   date: string; // YYYY-MM-DD
@@ -44,20 +20,15 @@ export interface ReceiptRow {
   percent?: number; // campo libero (+%)
 }
 
-// ────────────────────────────────────────────────────────────
-//  Helpers
-// ────────────────────────────────────────────────────────────
+// Helpers
 const fmtDate = (d: string) => new Date(d).toLocaleDateString("it-IT");
 const fmtTime = (t?: string) => t ?? "—";
 const fmtCurr = (val: number, curr = "EUR") =>
   Intl.NumberFormat("it-IT", { style: "currency", currency: curr }).format(val);
 const fmtNum = (val?: number) => val ?? "—";
 
-// ────────────────────────────────────────────────────────────
-//  Definizione colonne
-// ────────────────────────────────────────────────────────────
-export const dashboardColumns: ColumnDef<ReceiptRow>[] = [
-  // Checkbox di selezione (fissa)
+// Definizione colonne per la tabella Costi
+export const costiColumns: ColumnDef<ReceiptRow>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -144,7 +115,6 @@ export const dashboardColumns: ColumnDef<ReceiptRow>[] = [
     cell: ({ row }) => (row.original.percent !== undefined ? row.original.percent + "%" : "—"),
     size: 70,
   },
-  // Azioni (fissa a destra)
   {
     id: "actions",
     header: () => <span className="sr-only">Azioni</span>,
