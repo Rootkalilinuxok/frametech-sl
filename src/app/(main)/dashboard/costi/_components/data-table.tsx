@@ -42,7 +42,7 @@ import { getCoreRowModel } from "@tanstack/react-table";
 export function DataTable({ data: initialData }: { data: CostiRow[] }) {
   const dndEnabled = true;
 
-  // Stato locale dei dati, per il drag-and-drop
+  // Stato locale dei dati, per drag-and-drop e per editabilità
   const [data, setData] = React.useState<CostiRow[]>(() => initialData);
 
   // Colonne con o senza colonna DnD
@@ -63,12 +63,22 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
     [data]
   );
 
-  // Istanza della tabella: include obbligatoriamente getCoreRowModel
+  // FUNZIONE DI UPDATE per rendere editabili le celle
+  const updateData = (rowIndex: number, columnId: string, value: any) => {
+    setData((old) =>
+      old.map((row, index) =>
+        index === rowIndex ? { ...row, [columnId]: value } : row
+      )
+    );
+  };
+
+  // Istanza della tabella: include getCoreRowModel e la funzione updateData nel meta
   const table = useDataTableInstance({
     data,
     columns,
     getRowId: (row) => row.id.toString(),
     getCoreRowModel: getCoreRowModel(),
+    meta: { updateData }, // fondamentale per l'editabilità!
   });
 
   // Handler per terminare il drag
