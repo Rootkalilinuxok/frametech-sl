@@ -13,46 +13,35 @@ jobs:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       VERCEL_TOKEN:     ${{ secrets.VERCEL_TOKEN }}
     steps:
-      # 1) Checkout del codice
       - uses: actions/checkout@v4
 
-      # 2) Install delle versioni di Node e Python
-      - name: Setup Node.js
+      - name: Setup Node.js & Python
         uses: actions/setup-node@v4
         with:
           node-version: "18"
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
-      # 3) Rendo eseguibili gli script Codex
-      - name: Make Codex scripts executable
+      - name: Make scripts executable
         run: chmod +x ./setup-codex.sh ./codex-analyze.sh
 
-      # 4) Install deps & Vercel dry-run build (skip pre-commit hooks)
-      - name: Install dependencies & Vercel build
+      - name: Install deps & Vercel build
         env:
-          # disabilita Husky in CI
           HUSKY_SKIP_HOOKS: 1
         run: |
-          # forza registry pubblico per evitare blocchi rete
-          npm config set registry https://registry.npmjs.org/
-          # lancia lo script unico di setup + dry-run build
+          # Salta lint/test e forza registry
           ./setup-codex.sh
 
-      # 5) Full-repo analysis & patch via Codex
       - name: Full-repo analysis & patch
         run: ./codex-analyze.sh
 
-      # 6) Commit & push delle modifiche di refactoring
       - name: Commit & Push refactoring branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "actions@github.com"
           git push --force --set-upstream origin codex/refactor-temp
 
-      # 7) Crea o aggiorna la Pull Request con le patch di Codex
       - name: Create or update Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
