@@ -19,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 
+// Dati fittizi di esempio per il chart: puoi personalizzare o collegare a dati reali dei costi
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
   { month: "February", desktop: 305, mobile: 200 },
@@ -39,29 +40,20 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-type TableCellViewerProps<
-  TItem extends {
-    header: string;
-    type: string;
-    status: string;
-    target: string;
-    limit: string;
-    reviewer: string;
-  },
-> = {
-  item: TItem;
+type CostiRow = {
+  header: string;
+  type: string;
+  status: string;
+  target: string;
+  limit: string;
+  reviewer: string;
 };
 
-export function TableCellViewer<
-  TItem extends {
-    header: string;
-    type: string;
-    status: string;
-    target: string;
-    limit: string;
-    reviewer: string;
-  },
->({ item }: TableCellViewerProps<TItem>) {
+type TableCellViewerProps = {
+  item: CostiRow;
+};
+
+export function TableCellViewer({ item }: TableCellViewerProps) {
   const isMobile = useIsMobile();
 
   return (
