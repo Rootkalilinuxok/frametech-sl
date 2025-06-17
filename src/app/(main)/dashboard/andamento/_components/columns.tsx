@@ -149,7 +149,7 @@ export const dashboardColumns: ColumnDef<ReceiptRow>[] = [
     id: "actions",
     header: () => <span className="sr-only">Azioni</span>,
     cell: ({ row }) => <ReceiptRowActions row={row.original} />,
-    enableSorting: false,Add commentMore actions
+    enableSorting: false,
     enableHiding: false,
     size: 60,
   },
