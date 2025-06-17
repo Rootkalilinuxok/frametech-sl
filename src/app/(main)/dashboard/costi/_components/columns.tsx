@@ -1,11 +1,11 @@
-/* Colonne per la tabella "Costi" (receipts_live) – versione autonoma per pagina costi */
+// src/app/(main)/dashboard/costi/_components/columns.ts
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { SectionRowActions } from "@/components/table/row-actions";
 import { Checkbox } from "@/components/ui/checkbox";
 
-// Tipi
+// Tipo autonomo per la tabella costi (identico a andamento)
 export interface CostiRow {
   id: string;
   date: string; // YYYY-MM-DD
@@ -20,14 +20,14 @@ export interface CostiRow {
   percent?: number; // campo libero (+%)
 }
 
-// Helpers
+// Helpers identici
 const fmtDate = (d: string) => new Date(d).toLocaleDateString("it-IT");
 const fmtTime = (t?: string) => t ?? "—";
 const fmtCurr = (val: number, curr = "EUR") =>
   Intl.NumberFormat("it-IT", { style: "currency", currency: curr }).format(val);
 const fmtNum = (val?: number) => val ?? "—";
 
-// Definizione colonne per la tabella Costi
+// Colonne identiche (solo costiColumns invece di dashboardColumns)
 export const costiColumns: ColumnDef<CostiRow>[] = [
   {
     id: "select",
