@@ -1,8 +1,4 @@
-/* Colonne per la tabella "Costi" (receipts_live) – versione autonoma per pagina costi
-   Ordine colonne e logica identici a andamento, solo i nomi sono autonomi
-   Dipendenze: TanStack React‑Table v8  ·  shadcn/ui (DataTableColumnHeader)
-*/
-
+import * as React from "react";
 import { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
@@ -16,14 +12,14 @@ export interface CostiRow {
   id: string;
   date: string; // YYYY-MM-DD
   time?: string; // HH:mm
-  name: string; // intestazione / fornitore
-  country?: string; // IT, FR, US …
-  currency: string; // codice ISO (EUR, USD …)
-  tip?: number; // eventuale mancia
-  total: number; // importo originale
-  exchange_rate?: number; // cambio verso EUR (1 unit currency = ? EUR)
-  total_eur: number; // importo convertito in €
-  percent?: number; // campo libero (+%)
+  name: string;
+  country?: string;
+  currency: string;
+  tip?: number;
+  total: number;
+  exchange_rate?: number;
+  total_eur: number;
+  percent?: number;
 }
 
 // ────────────────────────────────────────────────────────────
@@ -36,7 +32,7 @@ const fmtCurr = (val: number, curr = "EUR") =>
 const fmtNum = (val?: number) => val ?? "—";
 
 // ────────────────────────────────────────────────────────────
-//  Definizione colonne
+//  Definizione colonne (EDITABILI)
 // ────────────────────────────────────────────────────────────
 export const costiColumns: ColumnDef<CostiRow>[] = [
   // Checkbox di selezione (fissa)
@@ -69,61 +65,223 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
   {
     accessorKey: "date",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Data" />,
-    cell: ({ row }) => fmtDate(row.original.date),
+    cell: ({ row, table }) => {
+      const [value, setValue] = React.useState(row.original.date);
+      React.useEffect(() => { setValue(row.original.date); }, [row.original.date]);
+      return (
+        <input
+          type="date"
+          className="input input-sm border rounded px-2 py-1"
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          onBlur={() => {
+            if (value !== row.original.date) {
+              table.options.meta?.updateData(row.index, "date", value);
+            }
+          }}
+        />
+      );
+    },
     size: 110,
   },
   {
     accessorKey: "time",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Ora" />,
-    cell: ({ row }) => fmtTime(row.original.time),
+    cell: ({ row, table }) => {
+      const [value, setValue] = React.useState(row.original.time ?? "");
+      React.useEffect(() => { setValue(row.original.time ?? ""); }, [row.original.time]);
+      return (
+        <input
+          type="time"
+          className="input input-sm border rounded px-2 py-1"
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          onBlur={() => {
+            if (value !== (row.original.time ?? "")) {
+              table.options.meta?.updateData(row.index, "time", value);
+            }
+          }}
+        />
+      );
+    },
     size: 80,
   },
   {
     accessorKey: "name",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Nome" />,
-    cell: ({ row }) => row.original.name,
+    cell: ({ row, table }) => {
+      const [value, setValue] = React.useState(row.original.name);
+      React.useEffect(() => { setValue(row.original.name); }, [row.original.name]);
+      return (
+        <input
+          className="input input-sm border rounded px-2 py-1"
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          onBlur={() => {
+            if (value !== row.original.name) {
+              table.options.meta?.updateData(row.index, "name", value);
+            }
+          }}
+        />
+      );
+    },
     size: 220,
   },
   {
     accessorKey: "country",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Nazione" />,
-    cell: ({ row }) => row.original.country ?? "—",
+    cell: ({ row, table }) => {
+      const [value, setValue] = React.useState(row.original.country ?? "");
+      React.useEffect(() => { setValue(row.original.country ?? ""); }, [row.original.country]);
+      return (
+        <input
+          className="input input-sm border rounded px-2 py-1"
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          onBlur={() => {
+            if (value !== (row.original.country ?? "")) {
+              table.options.meta?.updateData(row.index, "country", value || undefined);
+            }
+          }}
+        />
+      );
+    },
     size: 100,
   },
   {
     accessorKey: "currency",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Valuta" />,
-    cell: ({ row }) => row.original.currency,
+    cell: ({ row, table }) => {
+      const [value, setValue] = React.useState(row.original.currency);
+      React.useEffect(() => { setValue(row.original.currency); }, [row.original.currency]);
+      return (
+        <input
+          className="input input-sm border rounded px-2 py-1"
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          onBlur={() => {
+            if (value !== row.original.currency) {
+              table.options.meta?.updateData(row.index, "currency", value);
+            }
+          }}
+        />
+      );
+    },
     size: 90,
   },
   {
     accessorKey: "tip",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Tip/Mancia" />,
-    cell: ({ row }) => fmtNum(row.original.tip),
+    cell: ({ row, table }) => {
+      const [value, setValue] = React.useState(row.original.tip ?? "");
+      React.useEffect(() => { setValue(row.original.tip ?? ""); }, [row.original.tip]);
+      return (
+        <input
+          type="number"
+          className="input input-sm border rounded px-2 py-1"
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          onBlur={() => {
+            const num = value === "" ? undefined : Number(value);
+            if (num !== row.original.tip) {
+              table.options.meta?.updateData(row.index, "tip", num);
+            }
+          }}
+        />
+      );
+    },
     size: 110,
   },
   {
     accessorKey: "total",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Totale" />,
-    cell: ({ row }) => fmtCurr(row.original.total, row.original.currency),
+    cell: ({ row, table }) => {
+      const [value, setValue] = React.useState(row.original.total);
+      React.useEffect(() => { setValue(row.original.total); }, [row.original.total]);
+      return (
+        <input
+          type="number"
+          className="input input-sm border rounded px-2 py-1"
+          value={value}
+          onChange={e => setValue(Number(e.target.value))}
+          onBlur={() => {
+            if (value !== row.original.total) {
+              table.options.meta?.updateData(row.index, "total", value);
+            }
+          }}
+        />
+      );
+    },
     size: 110,
   },
   {
     accessorKey: "exchange_rate",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Cambio" />,
-    cell: ({ row }) => (row.original.exchange_rate ? row.original.exchange_rate.toFixed(4) : "—"),
+    cell: ({ row, table }) => {
+      const [value, setValue] = React.useState(row.original.exchange_rate ?? "");
+      React.useEffect(() => { setValue(row.original.exchange_rate ?? ""); }, [row.original.exchange_rate]);
+      return (
+        <input
+          type="number"
+          step="0.0001"
+          className="input input-sm border rounded px-2 py-1"
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          onBlur={() => {
+            const num = value === "" ? undefined : Number(value);
+            if (num !== row.original.exchange_rate) {
+              table.options.meta?.updateData(row.index, "exchange_rate", num);
+            }
+          }}
+        />
+      );
+    },
     size: 90,
   },
   {
     accessorKey: "total_eur",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Totale (€)" />,
-    cell: ({ row }) => fmtCurr(row.original.total_eur, "EUR"),
+    cell: ({ row, table }) => {
+      const [value, setValue] = React.useState(row.original.total_eur);
+      React.useEffect(() => { setValue(row.original.total_eur); }, [row.original.total_eur]);
+      return (
+        <input
+          type="number"
+          className="input input-sm border rounded px-2 py-1"
+          value={value}
+          onChange={e => setValue(Number(e.target.value))}
+          onBlur={() => {
+            if (value !== row.original.total_eur) {
+              table.options.meta?.updateData(row.index, "total_eur", value);
+            }
+          }}
+        />
+      );
+    },
     size: 120,
   },
   {
     accessorKey: "percent",
     header: ({ column }) => <DataTableColumnHeader column={column} title="+ %" />,
-    cell: ({ row }) => (row.original.percent !== undefined ? row.original.percent + "%" : "—"),
+    cell: ({ row, table }) => {
+      const [value, setValue] = React.useState(row.original.percent ?? "");
+      React.useEffect(() => { setValue(row.original.percent ?? ""); }, [row.original.percent]);
+      return (
+        <input
+          type="number"
+          step="0.01"
+          className="input input-sm border rounded px-2 py-1"
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          onBlur={() => {
+            const num = value === "" ? undefined : Number(value);
+            if (num !== row.original.percent) {
+              table.options.meta?.updateData(row.index, "percent", num);
+            }
+          }}
+        />
+      );
+    },
     size: 70,
   },
   // Azioni (fissa a destra)
