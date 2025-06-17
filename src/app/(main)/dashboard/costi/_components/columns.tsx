@@ -1,11 +1,17 @@
-// src/app/(main)/dashboard/costi/_components/columns.ts
+/* Colonne per la tabella "Costi" (receipts_live) – versione autonoma per pagina costi
+   Ordine colonne e logica identici a andamento, solo i nomi sono autonomi
+   Dipendenze: TanStack React‑Table v8  ·  shadcn/ui (DataTableColumnHeader)
+*/
 
 import { ColumnDef } from "@tanstack/react-table";
+
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { SectionRowActions } from "@/components/table/row-actions";
 import { Checkbox } from "@/components/ui/checkbox";
 
-// Tipo autonomo per la tabella costi (identico a andamento)
+// ────────────────────────────────────────────────────────────
+//  Tipi
+// ────────────────────────────────────────────────────────────
 export interface CostiRow {
   id: string;
   date: string; // YYYY-MM-DD
@@ -20,15 +26,20 @@ export interface CostiRow {
   percent?: number; // campo libero (+%)
 }
 
-// Helpers identici
+// ────────────────────────────────────────────────────────────
+//  Helpers
+// ────────────────────────────────────────────────────────────
 const fmtDate = (d: string) => new Date(d).toLocaleDateString("it-IT");
 const fmtTime = (t?: string) => t ?? "—";
 const fmtCurr = (val: number, curr = "EUR") =>
   Intl.NumberFormat("it-IT", { style: "currency", currency: curr }).format(val);
 const fmtNum = (val?: number) => val ?? "—";
 
-// Colonne identiche (solo costiColumns invece di dashboardColumns)
+// ────────────────────────────────────────────────────────────
+//  Definizione colonne
+// ────────────────────────────────────────────────────────────
 export const costiColumns: ColumnDef<CostiRow>[] = [
+  // Checkbox di selezione (fissa)
   {
     id: "select",
     header: ({ table }) => (
@@ -115,6 +126,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
     cell: ({ row }) => (row.original.percent !== undefined ? row.original.percent + "%" : "—"),
     size: 70,
   },
+  // Azioni (fissa a destra)
   {
     id: "actions",
     header: () => <span className="sr-only">Azioni</span>,
