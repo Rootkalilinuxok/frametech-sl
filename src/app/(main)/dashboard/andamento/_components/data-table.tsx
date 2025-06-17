@@ -26,9 +26,9 @@ import { DataTablePagination } from "../../../../../components/data-table/data-t
 import { DataTableViewOptions } from "../../../../../components/data-table/data-table-view-options";
 import { withDndColumn } from "../../../../../components/data-table/table-utils";
 
-import { dashboardColumns, type SectionRow } from "./columns";
+import { dashboardColumns, type ReceiptRow } from "./columns";
 
-export function DataTable({ data: initialData }: { data: SectionRow[] }) {
+export function DataTable({ data: initialData }: { data: ReceiptRow[] }) {
   const dndEnabled = true;
 
   const [data, setData] = React.useState(() => initialData);
