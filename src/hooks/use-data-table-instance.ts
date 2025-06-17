@@ -3,7 +3,6 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  type ColumnDef,
   type RowData,
   type TableOptions,
 } from "@tanstack/react-table";
