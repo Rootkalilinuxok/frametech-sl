@@ -24,7 +24,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
-import { ReceiptRowActions } from "@/components/table/row-actions";
+import { SectionRowActions } from "@/components/table/row-actions";
 import { Checkbox } from "@/components/ui/checkbox";
 
 // ────────────────────────────────────────────────────────────
