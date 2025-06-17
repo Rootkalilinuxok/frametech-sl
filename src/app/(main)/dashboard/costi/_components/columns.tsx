@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ColumnDef, type RowData } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { SectionRowActions } from "@/components/table/row-actions";
@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 //  Fix TypeScript: estendi TableMeta per updateData
 // ────────────────────────────────────────────────────────────
 declare module '@tanstack/react-table' {
-  interface TableMeta<TData extends RowData> {
+  interface TableMeta<TData extends object> {
     updateData: (rowIndex: number, columnId: string, value: any) => void;
   }
 }
@@ -41,7 +41,7 @@ const fmtCurr = (val: number, curr = "EUR") =>
 const fmtNum = (val?: number) => val ?? "—";
 
 // ────────────────────────────────────────────────────────────
-//  Definizione colonne (EDITABILI)
+//  Definizione colonne (EDITABILI e AUTO-REGOLABILI)
 // ────────────────────────────────────────────────────────────
 export const costiColumns: ColumnDef<CostiRow>[] = [
   // Checkbox di selezione (fissa)
@@ -69,7 +69,9 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
     accessorKey: "id",
     header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
     cell: ({ row }) => row.original.id,
-    size: 140,
+    size: 80,
+    minSize: 60,
+    maxSize: 110,
   },
   {
     accessorKey: "date",
@@ -81,6 +83,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         <input
           type="date"
           className="input input-sm border rounded px-2 py-1"
+          style={{ width: "10ch", minWidth: "8ch", maxWidth: "12ch" }}
           value={value}
           onChange={e => setValue(e.target.value)}
           onBlur={() => {
@@ -92,6 +95,8 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
       );
     },
     size: 110,
+    minSize: 80,
+    maxSize: 130,
   },
   {
     accessorKey: "time",
@@ -103,6 +108,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         <input
           type="time"
           className="input input-sm border rounded px-2 py-1"
+          style={{ width: "8ch", minWidth: "6ch", maxWidth: "10ch" }}
           value={value}
           onChange={e => setValue(e.target.value)}
           onBlur={() => {
@@ -114,6 +120,8 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
       );
     },
     size: 80,
+    minSize: 60,
+    maxSize: 100,
   },
   {
     accessorKey: "name",
@@ -124,6 +132,9 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
       return (
         <input
           className="input input-sm border rounded px-2 py-1"
+          style={{ width: "14ch", minWidth: "8ch", maxWidth: "20ch" }}
+          maxLength={20}
+          size={14}
           value={value}
           onChange={e => setValue(e.target.value)}
           onBlur={() => {
@@ -134,7 +145,9 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    size: 220,
+    minSize: 64, // 8ch (8*8)
+    size: 112,   // 14ch
+    maxSize: 160, // 20ch
   },
   {
     accessorKey: "country",
@@ -145,6 +158,9 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
       return (
         <input
           className="input input-sm border rounded px-2 py-1"
+          style={{ width: "4ch", minWidth: "3ch", maxWidth: "4ch" }}
+          maxLength={4}
+          size={3}
           value={value}
           onChange={e => setValue(e.target.value)}
           onBlur={() => {
@@ -155,7 +171,9 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    size: 100,
+    minSize: 24,
+    size: 32,
+    maxSize: 32,
   },
   {
     accessorKey: "currency",
@@ -166,6 +184,9 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
       return (
         <input
           className="input input-sm border rounded px-2 py-1"
+          style={{ width: "4ch", minWidth: "3ch", maxWidth: "4ch" }}
+          maxLength={4}
+          size={3}
           value={value}
           onChange={e => setValue(e.target.value)}
           onBlur={() => {
@@ -176,7 +197,9 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    size: 90,
+    minSize: 24,
+    size: 32,
+    maxSize: 32,
   },
   {
     accessorKey: "tip",
@@ -188,6 +211,9 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         <input
           type="number"
           className="input input-sm border rounded px-2 py-1"
+          style={{ width: "10ch", minWidth: "5ch", maxWidth: "10ch" }}
+          maxLength={10}
+          size={7}
           value={value}
           onChange={e => setValue(e.target.value)}
           onBlur={() => {
@@ -199,7 +225,9 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    size: 110,
+    minSize: 40,
+    size: 72,
+    maxSize: 80,
   },
   {
     accessorKey: "total",
@@ -211,6 +239,9 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         <input
           type="number"
           className="input input-sm border rounded px-2 py-1"
+          style={{ width: "10ch", minWidth: "5ch", maxWidth: "10ch" }}
+          maxLength={10}
+          size={7}
           value={value}
           onChange={e => setValue(Number(e.target.value))}
           onBlur={() => {
@@ -221,7 +252,9 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    size: 110,
+    minSize: 40,
+    size: 72,
+    maxSize: 80,
   },
   {
     accessorKey: "exchange_rate",
@@ -234,6 +267,9 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
           type="number"
           step="0.0001"
           className="input input-sm border rounded px-2 py-1"
+          style={{ width: "6ch", minWidth: "4ch", maxWidth: "6ch" }}
+          maxLength={6}
+          size={5}
           value={value}
           onChange={e => setValue(e.target.value)}
           onBlur={() => {
@@ -245,7 +281,9 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    size: 90,
+    minSize: 32,
+    size: 48,
+    maxSize: 48,
   },
   {
     accessorKey: "total_eur",
@@ -257,6 +295,9 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         <input
           type="number"
           className="input input-sm border rounded px-2 py-1"
+          style={{ width: "10ch", minWidth: "5ch", maxWidth: "10ch" }}
+          maxLength={10}
+          size={7}
           value={value}
           onChange={e => setValue(Number(e.target.value))}
           onBlur={() => {
@@ -267,7 +308,9 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    size: 120,
+    minSize: 40,
+    size: 72,
+    maxSize: 80,
   },
   {
     accessorKey: "percent",
@@ -280,6 +323,9 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
           type="number"
           step="0.01"
           className="input input-sm border rounded px-2 py-1"
+          style={{ width: "4ch", minWidth: "3ch", maxWidth: "4ch" }}
+          maxLength={4}
+          size={3}
           value={value}
           onChange={e => setValue(e.target.value)}
           onBlur={() => {
@@ -291,7 +337,9 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    size: 70,
+    minSize: 24,
+    size: 32,
+    maxSize: 32,
   },
   // Azioni (fissa a destra)
   {
@@ -301,5 +349,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
     enableSorting: false,
     enableHiding: false,
     size: 60,
+    minSize: 50,
+    maxSize: 90,
   },
 ];
