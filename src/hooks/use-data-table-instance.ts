@@ -14,13 +14,13 @@ export function useDataTableInstance<TData extends RowData>({
   ...tableOptions
 }: TableOptions<TData>) {
   const table = useReactTable({
+    ...tableOptions,
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getRowId: getRowId ?? ((row: TData) => String((row as { id: string | number }).id)),
-    ...tableOptions,
   });
 
   return table;
