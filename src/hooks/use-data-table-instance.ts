@@ -6,7 +6,7 @@ import {
   type ColumnDef,
   type RowData,
   type TableOptions,
-} from "@tanstack/react-table"; // Cambiato da @dnd-kit/core a @tanstack/react-table
+} from "@tanstack/react-table";
 
 export function useDataTableInstance<TData extends RowData>({
   data,
@@ -20,9 +20,9 @@ export function useDataTableInstance<TData extends RowData>({
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getRowId: getRowId || ((row: TData) => String((row as { id: string | number }).id)),
+    getRowId: getRowId ?? ((row: TData) => String((row as { id: string | number }).id)),
     ...tableOptions,
   });
 
-  return table; // Restituisce direttamente la table, non un oggetto
+  return table;
 }
