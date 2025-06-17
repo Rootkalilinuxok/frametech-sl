@@ -32,8 +32,8 @@ import { DataTableViewOptions } from "@/components/data-table/data-table-view-op
 import { withDndColumn } from "@/components/data-table/table-utils";
 
 import {
-  costiColumns,        // <-- colonne specifiche per costi
-  type CostiRow,        // <-- tipo specifico per costi
+  costiColumns,
+  type CostiRow,
 } from "./columns";
 
 // Import di getCoreRowModel da TanStack React-Table
