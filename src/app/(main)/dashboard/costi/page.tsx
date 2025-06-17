@@ -1,15 +1,15 @@
-import { ChartAreaInteractive } from "./_components/chart-area-interactive";
-import type { ReceiptRow } from "./_components/columns";
-import { DataTable } from "./_components/data-table";
-import data from "./_components/data.json";
-import { SectionCards } from "./_components/section-cards";
+// src/app/(main)/dashboard/costi/page.tsx
 
-export default function Page() {
+import { SectionCards } from "./_components/section-cards";
+import { DataTable } from "./_components/data-table";
+import { costiColumns } from "./_components/columns";
+import costiData from "./_components/data.json";
+
+export default function CostiPage() {
   return (
-    <div className="@container/main flex flex-col gap-4 md:gap-6">
+    <div className="flex flex-col gap-8">
       <SectionCards />
-      <ChartAreaInteractive />
-      <DataTable data={data as unknown as ReceiptRow[]} />
+      <DataTable columns={costiColumns} data={costiData} />
     </div>
   );
 }
