@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, type RowData } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { SectionRowActions } from "@/components/table/row-actions";
@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 //  Fix TypeScript: estendi TableMeta per updateData
 // ────────────────────────────────────────────────────────────
 declare module '@tanstack/react-table' {
-  interface TableMeta<TData extends object> {
+  interface TableMeta<TData extends RowData> {
     updateData: (rowIndex: number, columnId: string, value: any) => void;
   }
 }
