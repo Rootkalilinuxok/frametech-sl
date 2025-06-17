@@ -2,7 +2,7 @@
 
 import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
 
-import type { SectionRow } from "@/app/(main)/dashboard/andamento/_components/columns";
+import type { ReceiptRow } from "@/app/(main)/dashboard/andamento/_components/columns";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function SectionRowActions({ row }: { row: SectionRow }) {
+export function SectionRowActions({ row }: { row: ReceiptRow }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
