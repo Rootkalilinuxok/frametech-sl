@@ -31,39 +31,29 @@ import { DataTablePagination } from "@/components/data-table/data-table-paginati
 import { DataTableViewOptions } from "@/components/data-table/data-table-view-options";
 import { withDndColumn } from "@/components/data-table/table-utils";
 
-import {
-  dashboardColumns,
-  type ReceiptRow,
-} from "./columns";
-
-// Import di getCoreRowModel da TanStack React-Table
+import { costiColumns, type ReceiptRow } from "./columns";
 import { getCoreRowModel } from "@tanstack/react-table";
 
 export function DataTable({ data: initialData }: { data: ReceiptRow[] }) {
   const dndEnabled = true;
 
-  // Stato locale dei dati, per il drag-and-drop
   const [data, setData] = React.useState<ReceiptRow[]>(() => initialData);
 
-  // Colonne con o senza colonna DnD
   const columns = dndEnabled
-    ? withDndColumn(dashboardColumns)
-    : dashboardColumns;
+    ? withDndColumn(costiColumns)
+    : costiColumns;
 
-  // Sensori drag-and-drop
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
   );
 
-  // Lista di UniqueIdentifier per l’ordinamento
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data.map((row) => row.id),
     [data]
   );
 
-  // Istanza della tabella: include obbligatoriamente getCoreRowModel
   const table = useDataTableInstance({
     data,
     columns,
@@ -71,7 +61,6 @@ export function DataTable({ data: initialData }: { data: ReceiptRow[] }) {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  // Handler per terminare il drag
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active.id !== over?.id) {
@@ -134,7 +123,6 @@ export function DataTable({ data: initialData }: { data: ReceiptRow[] }) {
         <DataTablePagination table={table} />
       </TabsContent>
 
-      {/* Le altre view rimangono inalterate */}
       <TabsContent value="past-performance" className="flex flex-col">
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed" />
       </TabsContent>
