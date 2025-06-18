@@ -1,5 +1,3 @@
-import { ChartAreaInteractive } from "../andamento/_components/chart-area-interactive";
-
 import type { CostiRow } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
 import data from "./_components/data.json";
