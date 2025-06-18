@@ -183,7 +183,7 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
                 <th
                   key={header.id}
                   style={{
-                    width: header.getSize(),
+                    width: header.column.getSize(),
                     minWidth: header.column.columnDef.minSize,
                     maxWidth: header.column.columnDef.maxSize,
                   }}
@@ -191,10 +191,7 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
                 >
                   {header.isPlaceholder
                     ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                    : flexRender(header.column.columnDef.header, header.getContext())}
                 </th>
               ))}
             </tr>
@@ -207,7 +204,7 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
                 <td
                   key={cell.id}
                   style={{
-                    width: cell.getSize(),
+                    width: cell.column.getSize(),
                     minWidth: cell.column.columnDef.minSize,
                     maxWidth: cell.column.columnDef.maxSize,
                   }}
