@@ -1,0 +1,8 @@
+{
+  "name": "FrameTech SL Dev",
+  "image": "openai/codex-universal:latest",
+  "remoteUser": "coder",
+  "forwardPorts": [3000],
+  "runArgs": ["--network", "host"],
+  "postCreateCommand": "pnpm install"
+}
