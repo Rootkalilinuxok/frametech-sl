@@ -1,4 +1,3 @@
-// src/app/(main)/dashboard/costi/_components/DataTableResizable.tsx
 "use client";
 
 import React, { useMemo } from "react";
@@ -8,14 +7,12 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { Checkbox } from "@/components/ui/checkbox";
 
-// Approximate character width in pixels
+// carattere medio ≈ 8px
 const CHAR_WIDTH = 8;
 
-// Row type for "Costi" table
 export interface CostRow {
   id: number;
   name: string;
@@ -29,7 +26,6 @@ export interface CostRow {
 }
 
 export default function DataTableResizable({ data }: { data: CostRow[] }) {
-  // Define columns with min/max widths and resizing enabled
   const columns = useMemo<ColumnDef<CostRow>[]>(
     () => [
       {
@@ -62,9 +58,9 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        size: CHAR_WIDTH * 12,
-        minSize: CHAR_WIDTH * 8,
-        maxSize: CHAR_WIDTH * 20,
+        size: CHAR_WIDTH * 8,
+        minSize: CHAR_WIDTH * 8,   // 8 caratteri vuoti
+        maxSize: CHAR_WIDTH * 20,  // fino a 20
       },
       {
         accessorKey: "country",
@@ -128,9 +124,10 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        size: CHAR_WIDTH * 6,
-        minSize: CHAR_WIDTH * 4,
-        maxSize: CHAR_WIDTH * 10,
+        // header "Totale (€)" è lungo 9 caratteri, quindi minSize 10
+        size: CHAR_WIDTH * 10,
+        minSize: CHAR_WIDTH * 10,
+        maxSize: CHAR_WIDTH * 12,
       },
       {
         accessorKey: "percent",
@@ -140,7 +137,7 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         enableResizing: true,
         enableHiding: false,
         size: CHAR_WIDTH * 4,
-        minSize: CHAR_WIDTH * 3,
+        minSize: CHAR_WIDTH * 4,
         maxSize: CHAR_WIDTH * 4,
       },
       {
@@ -165,7 +162,6 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
     []
   );
 
-  // Create the table instance
   const table = useReactTable({
     data,
     columns,
@@ -183,7 +179,7 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
                 <th
                   key={header.id}
                   style={{
-                    width: header.column.getSize(),
+                    width: header.getSize(),
                     minWidth: header.column.columnDef.minSize,
                     maxWidth: header.column.columnDef.maxSize,
                   }}
@@ -191,7 +187,10 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
                 >
                   {header.isPlaceholder
                     ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                 </th>
               ))}
             </tr>
@@ -204,7 +203,7 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
                 <td
                   key={cell.id}
                   style={{
-                    width: cell.column.getSize(),
+                    width: cell.getSize(),
                     minWidth: cell.column.columnDef.minSize,
                     maxWidth: cell.column.columnDef.maxSize,
                   }}
