@@ -32,19 +32,9 @@ export interface CostiRow {
 }
 
 // ────────────────────────────────────────────────────────────
-//  Helpers
-// ────────────────────────────────────────────────────────────
-const fmtDate = (d: string) => new Date(d).toLocaleDateString("it-IT");
-const fmtTime = (t?: string) => t ?? "—";
-const fmtCurr = (val: number, curr = "EUR") =>
-  Intl.NumberFormat("it-IT", { style: "currency", currency: curr }).format(val);
-const fmtNum = (val?: number) => val ?? "—";
-
-// ────────────────────────────────────────────────────────────
 //  Definizione colonne (EDITABILI e AUTO-REGOLABILI)
 // ────────────────────────────────────────────────────────────
 export const costiColumns: ColumnDef<CostiRow>[] = [
-  // Checkbox di selezione (fissa)
   {
     id: "select",
     header: ({ table }) => (
@@ -69,7 +59,6 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
     accessorKey: "id",
     header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
     cell: ({ row }) => row.original.id,
-    size: 80,
     minSize: 60,
     maxSize: 110,
   },
@@ -83,7 +72,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         <input
           type="date"
           className="input input-sm border rounded px-2 py-1"
-          style={{ width: "10ch", minWidth: "8ch", maxWidth: "12ch" }}
+          style={{ width: "120px", minWidth: "110px", maxWidth: "130px" }}
           value={value}
           onChange={e => setValue(e.target.value)}
           onBlur={() => {
@@ -94,8 +83,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    size: 110,
-    minSize: 80,
+    minSize: 110,
     maxSize: 130,
   },
   {
@@ -108,7 +96,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         <input
           type="time"
           className="input input-sm border rounded px-2 py-1"
-          style={{ width: "8ch", minWidth: "6ch", maxWidth: "10ch" }}
+          style={{ width: "90px", minWidth: "80px", maxWidth: "100px" }}
           value={value}
           onChange={e => setValue(e.target.value)}
           onBlur={() => {
@@ -119,8 +107,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    size: 80,
-    minSize: 60,
+    minSize: 80,
     maxSize: 100,
   },
   {
@@ -131,10 +118,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
       React.useEffect(() => { setValue(row.original.name); }, [row.original.name]);
       return (
         <input
-          className="input input-sm border rounded px-2 py-1"
-          style={{ width: "14ch", minWidth: "8ch", maxWidth: "20ch" }}
-          maxLength={20}
-          size={14}
+          className="input input-sm border rounded px-2 py-1 w-full"
           value={value}
           onChange={e => setValue(e.target.value)}
           onBlur={() => {
@@ -145,9 +129,8 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    minSize: 64, // 8ch (8*8)
-    size: 112,   // 14ch
-    maxSize: 160, // 20ch
+    minSize: 60,   // "Nome"
+    maxSize: 260,
   },
   {
     accessorKey: "country",
@@ -157,10 +140,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
       React.useEffect(() => { setValue(row.original.country ?? ""); }, [row.original.country]);
       return (
         <input
-          className="input input-sm border rounded px-2 py-1"
-          style={{ width: "4ch", minWidth: "3ch", maxWidth: "4ch" }}
-          maxLength={4}
-          size={3}
+          className="input input-sm border rounded px-2 py-1 w-full"
           value={value}
           onChange={e => setValue(e.target.value)}
           onBlur={() => {
@@ -171,9 +151,8 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    minSize: 24,
-    size: 32,
-    maxSize: 32,
+    minSize: 80,   // "Nazione"
+    maxSize: 180,
   },
   {
     accessorKey: "currency",
@@ -183,10 +162,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
       React.useEffect(() => { setValue(row.original.currency); }, [row.original.currency]);
       return (
         <input
-          className="input input-sm border rounded px-2 py-1"
-          style={{ width: "4ch", minWidth: "3ch", maxWidth: "4ch" }}
-          maxLength={4}
-          size={3}
+          className="input input-sm border rounded px-2 py-1 w-full"
           value={value}
           onChange={e => setValue(e.target.value)}
           onBlur={() => {
@@ -197,9 +173,8 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    minSize: 24,
-    size: 32,
-    maxSize: 32,
+    minSize: 80,   // "Valuta"
+    maxSize: 180,
   },
   {
     accessorKey: "tip",
@@ -210,10 +185,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
       return (
         <input
           type="number"
-          className="input input-sm border rounded px-2 py-1"
-          style={{ width: "10ch", minWidth: "5ch", maxWidth: "10ch" }}
-          maxLength={10}
-          size={7}
+          className="input input-sm border rounded px-2 py-1 w-full"
           value={value}
           onChange={e => setValue(e.target.value)}
           onBlur={() => {
@@ -225,9 +197,8 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    minSize: 40,
-    size: 72,
-    maxSize: 80,
+    minSize: 100,  // "Tip/Mancia"
+    maxSize: 180,
   },
   {
     accessorKey: "total",
@@ -238,10 +209,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
       return (
         <input
           type="number"
-          className="input input-sm border rounded px-2 py-1"
-          style={{ width: "10ch", minWidth: "5ch", maxWidth: "10ch" }}
-          maxLength={10}
-          size={7}
+          className="input input-sm border rounded px-2 py-1 w-full"
           value={value}
           onChange={e => setValue(Number(e.target.value))}
           onBlur={() => {
@@ -252,9 +220,8 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    minSize: 40,
-    size: 72,
-    maxSize: 80,
+    minSize: 80,   // "Totale"
+    maxSize: 180,
   },
   {
     accessorKey: "exchange_rate",
@@ -266,10 +233,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         <input
           type="number"
           step="0.0001"
-          className="input input-sm border rounded px-2 py-1"
-          style={{ width: "6ch", minWidth: "4ch", maxWidth: "6ch" }}
-          maxLength={6}
-          size={5}
+          className="input input-sm border rounded px-2 py-1 w-full"
           value={value}
           onChange={e => setValue(e.target.value)}
           onBlur={() => {
@@ -281,9 +245,8 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    minSize: 32,
-    size: 48,
-    maxSize: 48,
+    minSize: 80,   // "Cambio"
+    maxSize: 180,
   },
   {
     accessorKey: "total_eur",
@@ -294,10 +257,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
       return (
         <input
           type="number"
-          className="input input-sm border rounded px-2 py-1"
-          style={{ width: "10ch", minWidth: "5ch", maxWidth: "10ch" }}
-          maxLength={10}
-          size={7}
+          className="input input-sm border rounded px-2 py-1 w-full"
           value={value}
           onChange={e => setValue(Number(e.target.value))}
           onBlur={() => {
@@ -308,9 +268,8 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    minSize: 40,
-    size: 72,
-    maxSize: 80,
+    minSize: 90,   // "Totale (€)"
+    maxSize: 180,
   },
   {
     accessorKey: "percent",
@@ -322,10 +281,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         <input
           type="number"
           step="0.01"
-          className="input input-sm border rounded px-2 py-1"
-          style={{ width: "4ch", minWidth: "3ch", maxWidth: "4ch" }}
-          maxLength={4}
-          size={3}
+          className="input input-sm border rounded px-2 py-1 w-full"
           value={value}
           onChange={e => setValue(e.target.value)}
           onBlur={() => {
@@ -337,19 +293,16 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    minSize: 24,
-    size: 32,
-    maxSize: 32,
+    minSize: 60,   // "+ %"
+    maxSize: 110,
   },
-  // Azioni (fissa a destra)
   {
     id: "actions",
     header: () => <span className="sr-only">Azioni</span>,
     cell: ({ row }) => <SectionRowActions row={row.original} />,
     enableSorting: false,
     enableHiding: false,
-    size: 60,
-    minSize: 50,
+    minSize: 60,
     maxSize: 90,
   },
 ];
