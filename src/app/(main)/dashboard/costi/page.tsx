@@ -1,4 +1,6 @@
-import type { ReceiptRow } from "./_components/columns";
+import { ChartAreaInteractive } from "../andamento/_components/chart-area-interactive";
+
+import type { CostiRow } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
 import data from "./_components/data.json";
 import { SectionCards } from "./_components/section-cards";
@@ -8,7 +10,7 @@ export default function Page() {
     <div className="@container/main flex flex-col gap-4 md:gap-6">
       <SectionCards />
       <ChartAreaInteractive />
-      <DataTable data={data as unknown as ReceiptRow[]} />
+      <DataTable data={data as unknown as CostiRow[]} />
     </div>
   );
 }
