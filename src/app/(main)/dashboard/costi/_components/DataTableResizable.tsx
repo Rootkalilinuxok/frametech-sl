@@ -209,4 +209,5 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
       </tbody>
     </table>
   </div>
-);
+);  
+}
