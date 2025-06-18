@@ -165,51 +165,48 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
   const pct = `${(100 / visibleCount).toFixed(2)}%`;
 
   return (
-    <div className="overflow-x-auto">
-      <table className="table-auto w-full border-collapse">
-        <thead>
-          {table.getHeaderGroups().map((hg) => (
-            <tr key={hg.id}>
-              {hg.headers.map((header) => (
-                <th
-                  key={header.id}
-                  style={{
-                    width: pct,
-                    minWidth: header.column.columnDef.minSize,
-                    maxWidth: header.column.columnDef.maxSize,
-                  }}
-                  className="px-4 py-2 text-left font-bold"
-                >
-                  {!header.isPlaceholder &&
-                    flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td
-                  key={cell.id}
-                  style={{
-                    width: pct,
-                    minWidth: cell.column.columnDef.minSize,
-                    maxWidth: cell.column.columnDef.maxSize,
-                  }}
-                  className="px-4 py-2 border-t"
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
+  <div className="overflow-x-auto">
+    <table className="table-auto w-full border-collapse">
+      <thead>
+        {table.getHeaderGroups().map((hg) => (
+          <tr key={hg.id}>
+            {hg.headers.map((header) => (
+              <th
+                key={header.id}
+                style={{
+                  minWidth: header.column.columnDef.minSize,
+                  maxWidth: header.column.columnDef.maxSize,
+                }}
+                className="px-4 py-2 text-left font-bold"
+              >
+                {!header.isPlaceholder &&
+                  flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
+              </th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody>
+        {table.getRowModel().rows.map((row) => (
+          <tr key={row.id}>
+            {row.getVisibleCells().map((cell) => (
+              <td
+                key={cell.id}
+                style={{
+                  minWidth: cell.column.columnDef.minSize,
+                  maxWidth: cell.column.columnDef.maxSize,
+                }}
+                className="px-4 py-2 border-t"
+              >
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
