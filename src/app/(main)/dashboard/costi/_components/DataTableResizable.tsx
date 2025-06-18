@@ -1,4 +1,3 @@
-// src/app/(main)/dashboard/costi/_components/DataTableResizable.tsx
 "use client";
 
 import React, { useMemo } from "react";
@@ -47,9 +46,8 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         enableSorting: false,
         enableHiding: false,
         enableResizing: true,
-        size: CHAR_WIDTH * 3,
-        minSize: CHAR_WIDTH * 3,
-        maxSize: CHAR_WIDTH * 4,
+        minSize: CHAR_WIDTH * 4,
+        maxSize: CHAR_WIDTH * 6,
       },
       {
         accessorKey: "name",
@@ -58,8 +56,8 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        minSize: CHAR_WIDTH * 8,
-        maxSize: CHAR_WIDTH * 20,
+        minSize: CHAR_WIDTH * 16,    // ADATTIVA E LARGA
+        maxSize: CHAR_WIDTH * 40,
       },
       {
         accessorKey: "country",
@@ -68,8 +66,8 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        minSize: CHAR_WIDTH * 3,
-        maxSize: CHAR_WIDTH * 4,
+        minSize: CHAR_WIDTH * 8,
+        maxSize: CHAR_WIDTH * 20,
       },
       {
         accessorKey: "currency",
@@ -78,8 +76,8 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        minSize: CHAR_WIDTH * 3,
-        maxSize: CHAR_WIDTH * 4,
+        minSize: CHAR_WIDTH * 8,
+        maxSize: CHAR_WIDTH * 16,
       },
       {
         accessorKey: "tip",
@@ -88,8 +86,8 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        minSize: CHAR_WIDTH * 4,
-        maxSize: CHAR_WIDTH * 10,
+        minSize: CHAR_WIDTH * 10,
+        maxSize: CHAR_WIDTH * 18,
       },
       {
         accessorKey: "total",
@@ -98,8 +96,8 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        minSize: CHAR_WIDTH * 4,
-        maxSize: CHAR_WIDTH * 10,
+        minSize: CHAR_WIDTH * 12,   // PIU’ SPAZIO
+        maxSize: CHAR_WIDTH * 28,
       },
       {
         accessorKey: "exchangeRate",
@@ -108,8 +106,8 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        minSize: CHAR_WIDTH * 4,
-        maxSize: CHAR_WIDTH * 6,
+        minSize: CHAR_WIDTH * 10,
+        maxSize: CHAR_WIDTH * 18,
       },
       {
         accessorKey: "totalEur",
@@ -118,8 +116,8 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        minSize: CHAR_WIDTH * 4,
-        maxSize: CHAR_WIDTH * 10,
+        minSize: CHAR_WIDTH * 12,   // PIU’ SPAZIO
+        maxSize: CHAR_WIDTH * 28,
       },
       {
         accessorKey: "percent",
@@ -128,8 +126,8 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        minSize: CHAR_WIDTH * 3,
-        maxSize: CHAR_WIDTH * 4,
+        minSize: CHAR_WIDTH * 8,
+        maxSize: CHAR_WIDTH * 16,
       },
       {
         id: "actions",
@@ -145,8 +143,8 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         enableSorting: false,
         enableHiding: false,
         enableResizing: true,
-        minSize: CHAR_WIDTH * 4,
-        maxSize: CHAR_WIDTH * 6,
+        minSize: CHAR_WIDTH * 10,
+        maxSize: CHAR_WIDTH * 18,
       },
     ],
     []
@@ -159,55 +157,50 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
     columnResizeMode: "onChange",
   });
 
-  // numero di colonne effettivamente visibili
-  const visibleCount = table.getVisibleLeafColumns().length;
-  // ciascuna ottiene questa percentuale di larghezza
-  const pct = `${(100 / visibleCount).toFixed(2)}%`;
-
   return (
-  <div className="overflow-x-auto">
-    <table className="table-auto w-full border-collapse">
-      <thead>
-        {table.getHeaderGroups().map((hg) => (
-          <tr key={hg.id}>
-            {hg.headers.map((header) => (
-              <th
-                key={header.id}
-                style={{
-                  minWidth: header.column.columnDef.minSize,
-                  maxWidth: header.column.columnDef.maxSize,
-                }}
-                className="px-4 py-2 text-left font-bold"
-              >
-                {!header.isPlaceholder &&
-                  flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody>
-        {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
-            {row.getVisibleCells().map((cell) => (
-              <td
-                key={cell.id}
-                style={{
-                  minWidth: cell.column.columnDef.minSize,
-                  maxWidth: cell.column.columnDef.maxSize,
-                }}
-                className="px-4 py-2 border-t"
-              >
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-);  
+    <div className="overflow-x-auto">
+      <table className="table-auto w-full border-collapse">
+        <thead>
+          {table.getHeaderGroups().map((hg) => (
+            <tr key={hg.id}>
+              {hg.headers.map((header) => (
+                <th
+                  key={header.id}
+                  style={{
+                    minWidth: header.column.columnDef.minSize,
+                    maxWidth: header.column.columnDef.maxSize,
+                  }}
+                  className="px-4 py-2 text-left font-bold"
+                >
+                  {!header.isPlaceholder &&
+                    flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <td
+                  key={cell.id}
+                  style={{
+                    minWidth: cell.column.columnDef.minSize,
+                    maxWidth: cell.column.columnDef.maxSize,
+                  }}
+                  className="px-4 py-2 border-t"
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
