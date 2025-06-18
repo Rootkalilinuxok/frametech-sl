@@ -1,9 +1,10 @@
 import { db } from "@/lib/db";
 import { receiptsLive } from "@/lib/schema";
+import type { InferInsertModel } from "drizzle-orm";
 
-await db.insert(receiptsLive).values([
+const seedData: InferInsertModel<typeof receiptsLive>[] = [
   {
-    date: "2025-06-12",
+    date: new Date("2025-06-12"),
     time: "13:15",
     name: "Ristorante Da Mario",
     country: "IT",
@@ -14,7 +15,9 @@ await db.insert(receiptsLive).values([
     percent: 10,
     paymentMethod: "Carta",
     sourceHash: "seed-1",
-  } as any,
-]);
+  },
+];
+
+await db.insert(receiptsLive).values(seedData);
 console.log("Seed OK");
 process.exit(0);
