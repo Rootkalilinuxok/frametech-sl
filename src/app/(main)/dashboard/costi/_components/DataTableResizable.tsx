@@ -168,52 +168,70 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
   });
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full border-collapse">
-        <thead>
-          {table.getHeaderGroups().map((hg) => (
-            <tr key={hg.id}>
-              {hg.headers.map((header) => (
-                <th
-                  key={header.id}
-                  style={{
-                    width: header.getSize(),
-                    minWidth: header.column.columnDef.minSize,
-                    maxWidth: header.column.columnDef.maxSize,
-                  }}
-                  className="px-4 py-2 text-left font-bold"
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td
-                  key={cell.id}
-                  style={{
-                    width: cell.column.getSize(),
-                    minWidth: cell.column.columnDef.minSize,
-                    maxWidth: cell.column.columnDef.maxSize,
-                  }}
-                  className="px-4 py-2 border-t"
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
+     <div className="overflow-x-auto">
+-      <table className="min-w-full border-collapse">
++      <table className="table-auto border-collapse">
+         <thead>
+           {table.getHeaderGroups().map((hg) => (
+             <tr key={hg.id}>
+               {hg.headers.map((header) => (
+-                <th
+-                  key={header.id}
+-                  style={{
+-                    width: header.getSize(),
+-                    minWidth: header.column.columnDef.minSize,
+-                    maxWidth: header.column.columnDef.maxSize,
+-                  }}
+-                  className="px-4 py-2 text-left font-bold"
+-                >
++                <th
++                  key={header.id}
++                  style={{
++                    width: header.getSize(),
++                    minWidth: header.column.columnDef.minSize,
++                    maxWidth: header.column.columnDef.maxSize,
++                  }}
++                  className="px-4 py-2 text-left font-bold"
++                >
+                   {header.isPlaceholder
+                     ? null
+                     : flexRender(
+                         header.column.columnDef.header,
+                         header.getContext()
+                       )}
+                 </th>
+               ))}
+             </tr>
+           ))}
+         </thead>
+         <tbody>
+           {table.getRowModel().rows.map((row) => (
+             <tr key={row.id}>
+               {row.getVisibleCells().map((cell) => (
+-                <td
+-                  key={cell.id}
+-                  style={{
+-                    width: cell.column.getSize(),
+-                    minWidth: cell.column.columnDef.minSize,
+-                    maxWidth: cell.column.columnDef.maxSize,
+-                  }}
+-                  className="px-4 py-2 border-t"
+-                >
++                <td
++                  key={cell.id}
++                  style={{
++                    width: cell.column.getSize(),
++                    minWidth: cell.column.columnDef.minSize,
++                    maxWidth: cell.column.columnDef.maxSize,
++                  }}
++                  className="px-4 py-2 border-t"
++                >
+                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                 </td>
+               ))}
+             </tr>
+           ))}
+         </tbody>
+       </table>
+     </div>
+   );
