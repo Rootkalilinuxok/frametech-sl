@@ -46,8 +46,8 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         enableSorting: false,
         enableHiding: false,
         enableResizing: true,
-        minSize: CHAR_WIDTH * 4,
-        maxSize: CHAR_WIDTH * 6,
+        minSize: CHAR_WIDTH * 8,
+        maxSize: CHAR_WIDTH * 10,
       },
       {
         accessorKey: "name",
