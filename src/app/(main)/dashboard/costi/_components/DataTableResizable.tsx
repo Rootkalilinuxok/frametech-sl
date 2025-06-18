@@ -1,3 +1,4 @@
+// src/app/(main)/dashboard/costi/_components/DataTableResizable.tsx
 "use client";
 
 import React, { useMemo } from "react";
@@ -57,7 +58,6 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        size: CHAR_WIDTH * 8,
         minSize: CHAR_WIDTH * 8,
         maxSize: CHAR_WIDTH * 20,
       },
@@ -68,7 +68,6 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        size: CHAR_WIDTH * 4,
         minSize: CHAR_WIDTH * 3,
         maxSize: CHAR_WIDTH * 4,
       },
@@ -79,7 +78,6 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        size: CHAR_WIDTH * 4,
         minSize: CHAR_WIDTH * 3,
         maxSize: CHAR_WIDTH * 4,
       },
@@ -90,7 +88,6 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        size: CHAR_WIDTH * 6,
         minSize: CHAR_WIDTH * 4,
         maxSize: CHAR_WIDTH * 10,
       },
@@ -101,7 +98,6 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        size: CHAR_WIDTH * 6,
         minSize: CHAR_WIDTH * 4,
         maxSize: CHAR_WIDTH * 10,
       },
@@ -112,7 +108,6 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        size: CHAR_WIDTH * 5,
         minSize: CHAR_WIDTH * 4,
         maxSize: CHAR_WIDTH * 6,
       },
@@ -123,9 +118,8 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        size: CHAR_WIDTH * 10,
-        minSize: CHAR_WIDTH * 10,
-        maxSize: CHAR_WIDTH * 12,
+        minSize: CHAR_WIDTH * 4,
+        maxSize: CHAR_WIDTH * 10,
       },
       {
         accessorKey: "percent",
@@ -134,8 +128,7 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        size: CHAR_WIDTH * 4,
-        minSize: CHAR_WIDTH * 4,
+        minSize: CHAR_WIDTH * 3,
         maxSize: CHAR_WIDTH * 4,
       },
       {
@@ -152,7 +145,6 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         enableSorting: false,
         enableHiding: false,
         enableResizing: true,
-        size: CHAR_WIDTH * 6,
         minSize: CHAR_WIDTH * 4,
         maxSize: CHAR_WIDTH * 6,
       },
@@ -167,9 +159,14 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
     columnResizeMode: "onChange",
   });
 
+  // numero di colonne effettivamente visibili
+  const visibleCount = table.getVisibleLeafColumns().length;
+  // ciascuna ottiene questa percentuale di larghezza
+  const pct = `${(100 / visibleCount).toFixed(2)}%`;
+
   return (
     <div className="overflow-x-auto">
-      <table className="table-auto border-collapse">
+      <table className="table-auto w-full border-collapse">
         <thead>
           {table.getHeaderGroups().map((hg) => (
             <tr key={hg.id}>
@@ -177,18 +174,17 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
                 <th
                   key={header.id}
                   style={{
-                    width: header.getSize(),
+                    width: pct,
                     minWidth: header.column.columnDef.minSize,
                     maxWidth: header.column.columnDef.maxSize,
                   }}
                   className="px-4 py-2 text-left font-bold"
                 >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                  {!header.isPlaceholder &&
+                    flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
                 </th>
               ))}
             </tr>
@@ -201,7 +197,7 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
                 <td
                   key={cell.id}
                   style={{
-                    width: cell.column.getSize(),
+                    width: pct,
                     minWidth: cell.column.columnDef.minSize,
                     maxWidth: cell.column.columnDef.maxSize,
                   }}
