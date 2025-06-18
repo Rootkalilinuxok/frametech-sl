@@ -10,7 +10,6 @@ import {
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { Checkbox } from "@/components/ui/checkbox";
 
-// carattere medio ≈ 8px
 const CHAR_WIDTH = 8;
 
 export interface CostRow {
@@ -59,8 +58,8 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         enableResizing: true,
         enableHiding: false,
         size: CHAR_WIDTH * 8,
-        minSize: CHAR_WIDTH * 8,   // 8 caratteri vuoti
-        maxSize: CHAR_WIDTH * 20,  // fino a 20
+        minSize: CHAR_WIDTH * 8,
+        maxSize: CHAR_WIDTH * 20,
       },
       {
         accessorKey: "country",
@@ -124,7 +123,6 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         ),
         enableResizing: true,
         enableHiding: false,
-        // header "Totale (€)" è lungo 9 caratteri, quindi minSize 10
         size: CHAR_WIDTH * 10,
         minSize: CHAR_WIDTH * 10,
         maxSize: CHAR_WIDTH * 12,
@@ -203,7 +201,7 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
                 <td
                   key={cell.id}
                   style={{
-                    width: cell.getSize(),
+                    width: cell.column.getSize(),
                     minWidth: cell.column.columnDef.minSize,
                     maxWidth: cell.column.columnDef.maxSize,
                   }}
