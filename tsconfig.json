@@ -10,13 +10,28 @@
       "@/components/*": ["./src/components/*"],
       "@/hooks/*": ["./src/hooks/*"]
     },
+    "jsx": "preserve",
     "strict": true,
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "esModuleInterop": true,
-    "jsx": "preserve",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "allowJs": true,
+    "plugins": [
+      { "name": "next" }
+    ]
   },
-  "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "out"
+  ]
 }
