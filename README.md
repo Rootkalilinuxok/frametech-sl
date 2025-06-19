@@ -146,17 +146,21 @@ You have two equivalent ways to provide the required environment variables – 
 
    ```bash
    cp .env.example .env
-   # then open .env and set your real values
+   # then open .env and set your real values for
+   # DATABASE_URL and GOOGLE_APPLICATION_CREDENTIALS_JSON
    ```
 
 2. **Create (or append to) a local‑only environment file**
 
-   Set up a file such as `.env.local` (or export variables directly in your shell) with at least your database connection string:
+   Set up a file such as `.env.local` (or export variables directly in your shell) with at least your database connection string and Google service account credentials:
 
    ```bash
    # example .env.local
    DATABASE_URL=<your-postgres-connection>
+   GOOGLE_APPLICATION_CREDENTIALS_JSON=<your-google-json>
    ```
+
+   `GOOGLE_APPLICATION_CREDENTIALS_JSON` stores the JSON for the Google Cloud Vision service account used by the OCR API route.
 
    > **Note** Some providers expose this value as `POSTGRES_URL`. If so, rename or duplicate it as `DATABASE_URL` so the application can find it.
 
