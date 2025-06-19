@@ -13,9 +13,11 @@ export async function GET(req: NextRequest) {
   // Costruisci condizioni dinamiche
   let where = undefined;
   if (from && to) {
-    where = and(
-      gte(receiptsLive.createdAt, from),
-      lte(receiptsLive.createdAt, to + "T23:59:59.999Z")
+  const fromDate = new Date(from + "T00:00:00.000Z");
+  const toDate = new Date(to + "T23:59:59.999Z");
+  where = and(
+    gte(receiptsLive.createdAt, fromDate),
+    lte(receiptsLive.createdAt, toDate)
     );
   }
 
