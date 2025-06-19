@@ -13,9 +13,7 @@ import {
 import { arrayMove } from "@dnd-kit/sortable";
 import { Plus } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -23,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { CalendarIcon, ArchiveIcon, FileIcon, ClockIcon } from "@radix-ui/react-icons";
 
 import { useDataTableInstance } from "@/hooks/use-data-table-instance";
@@ -49,31 +47,7 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
 
   // Stato locale dei dati, per drag-and-drop e per editabilità
   const [data, setData] = React.useState<CostiRow[]>(() => initialData);
-
-  // Colonne con o senza colonna DnD
-  const columns = dndEnabled
-    ? withDndColumn(costiColumns)
-    : costiColumns;
-
-  // Sensori drag-and-drop
-  const sensors = useSensors(
-    useSensor(MouseSensor, {}),
-    useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {})
-  );
-
-  // Lista di UniqueIdentifier per l’ordinamento
-  const dataIds = React.useMemo<UniqueIdentifier[]>(
-    () => data.map((row) => row.id),
-    [data]
-  );
-
-  // FUNZIONE DI UPDATE per rendere editabili le celle
-  const updateData = (rowIndex: number, columnId: string, value: any) => {
-    setData((old) =>
-      old.map((row, index) =>
-        index === rowIndex ? { ...row, [columnId]: value } : row
-      )
+@@ -77,92 +75,92 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
     );
   };
 
@@ -99,48 +73,49 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
   }
 
   // Filtri UI
-  const [filtro, setFiltro] = React.useState<string>("filtri");
-  const [showPeriodo, setShowPeriodo] = React.useState(false);
-  const [showArchivia, setShowArchivia] = React.useState(false);
-  const [showReport, setShowReport] = React.useState(false);
-  const [showCronologia, setShowCronologia] = React.useState(false);
+  const [filtro, setFiltro] = React.useState<string>("");
+const [showPeriodo, setShowPeriodo] = React.useState(false);
+const [showArchivia, setShowArchivia] = React.useState(false);
+const [showReport, setShowReport] = React.useState(false);
+const [showCronologia, setShowCronologia] = React.useState(false);
 
-  const handleFiltroChange = (value: string) => {
-    setFiltro(value);
-    if (value === "periodo") setShowPeriodo(true);
-    else if (value === "archivia") setShowArchivia(true);
-    else if (value === "report") setShowReport(true);
-    else if (value === "cronologia") setShowCronologia(true);
-  };
+const openUploadDialog = () => {
+  // TODO: implementa popup upload file
+};
+
+const handleFiltroChange = (value: string) => {
+  if (value === "periodo") setShowPeriodo(true);
+  else if (value === "archivia") setShowArchivia(true);
+  else if (value === "report") setShowReport(true);
+  else if (value === "cronologia") setShowCronologia(true);
+  setFiltro(""); // Reset per poter riselezionare un filtro
+};
 
   return (
     <Tabs defaultValue="filtri" className="w-full flex-col gap-6">
       <div className="flex items-center justify-between">
-        <Label htmlFor="filtri-selector" className="sr-only">
-          Filtri
-        </Label>
-        <Select value={filtro} onValueChange={handleFiltroChange}>
-          <SelectTrigger size="sm" id="filtri-selector" className="flex w-fit">
-            <SelectValue placeholder="Filtri" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="periodo">
-              <CalendarIcon className="mr-2" /> Periodo
-            </SelectItem>
-            <SelectItem value="archivia">
-              <ArchiveIcon className="mr-2" /> Archivia
-            </SelectItem>
-            <SelectItem value="report">
-              <FileIcon className="mr-2" /> Report
-            </SelectItem>
-            <SelectItem value="cronologia">
-              <ClockIcon className="mr-2" /> Cronologia
-            </SelectItem>
-          </SelectContent>
-        </Select>
-        <TabsList className="hidden @4xl/main:flex">
-          <TabsTrigger value="filtri">Filtri</TabsTrigger>
-        </TabsList>
+        <div className="flex items-center gap-2 mb-4">
+          {/* MENU FILTRI */}
+          <Select value={filtro} onValueChange={handleFiltroChange}>
+    <SelectTrigger size="sm" className="flex w-fit">
+      <SelectValue placeholder="Filtri" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="periodo">Periodo</SelectItem>
+      <SelectItem value="archivia">Archivia</SelectItem>
+      <SelectItem value="report">Report</SelectItem>
+      <SelectItem value="cronologia">Cronologia</SelectItem>
+    </SelectContent>
+  </Select>
+
+          {/* UPLOAD */}
+          <Button variant="outline" size="sm" onClick={openUploadDialog}>
+    <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12" />
+    </svg>
+    <span className="sr-only">Upload</span>
+  </Button>
+</div>
         <div className="flex items-center gap-2">
           <DataTableViewOptions table={table} />
           <Button variant="outline" size="sm">
