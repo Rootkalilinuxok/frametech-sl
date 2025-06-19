@@ -111,7 +111,9 @@ export default function HistoryTable() {
                   from: period.from || undefined,
                   to: period.to || undefined
                 }}
-                onSelect={({ from, to }) => setPeriod({ from: from || null, to: to || null })}
+                onSelect={(range) => setPeriod({
+                 from: range?.from ?? null,
+                 to: range?.to ?? null })}
                 numberOfMonths={2}
               />
               <Button
