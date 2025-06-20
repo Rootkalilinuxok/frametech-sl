@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { v1 as vision } from "@google-cloud/vision";
-import { protos } from "@google-cloud/vision/build/protos/protos";
+import { v1 as vision, protos } from "@google-cloud/vision";
 import { OpenAI } from "openai";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { v4 as uuidv4 } from "uuid";
