@@ -11,6 +11,7 @@ export default function Page() {
     <div className="@container/main flex flex-col gap-4 md:gap-6">
       <SectionCards />
       <ChartAreaInteractive />
+      <FileUploadTable />
       <DataTable data={data as unknown as CostiRow[]} />
     </div>
   );
