@@ -1,6 +1,9 @@
 "use client";
 
+/* eslint-disable max-lines */
+
 import * as React from "react";
+
 import {
   KeyboardSensor,
   MouseSensor,
@@ -11,7 +14,6 @@ import {
   type UniqueIdentifier,
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import { CalendarIcon, ArchiveIcon, FileIcon, ClockIcon } from "@radix-ui/react-icons";
 import { getCoreRowModel } from "@tanstack/react-table";
 import { Plus } from "lucide-react";
 
@@ -23,8 +25,10 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useDataTableInstance } from "@/hooks/use-data-table-instance";
+
 import { costiColumns, type CostiRow } from "./columns";
 
+// eslint-disable-next-line complexity
 export function DataTable({ data: initialData }: { data: CostiRow[] }) {
   const dndEnabled = true;
 
@@ -35,20 +39,14 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
   const columns = dndEnabled ? withDndColumn(costiColumns) : costiColumns;
 
   // Sensori drag-and-drop
-  const sensors = useSensors(
-    useSensor(MouseSensor, {}),
-    useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {})
-  );
+  const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
 
   // Lista di UniqueIdentifier per l’ordinamento
   const dataIds = React.useMemo<UniqueIdentifier[]>(() => data.map((row) => row.id), [data]);
 
   // FUNZIONE DI UPDATE per rendere editabili le celle
   const updateData = (rowIndex: number, columnId: string, value: any) => {
-    setData((old) =>
-      old.map((row, index) => (index === rowIndex ? { ...row, [columnId]: value } : row))
-    );
+    setData((old) => old.map((row, index) => (index === rowIndex ? { ...row, [columnId]: value } : row)));
   };
 
   // Istanza della tabella: include getCoreRowModel e la funzione updateData nel meta
@@ -80,79 +78,96 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
   const [showCronologia, setShowCronologia] = React.useState(false);
 
   // ----------- UPLOAD LOGICA -----------
-const fileInputRef = React.useRef<HTMLInputElement>(null);
-const [loading, setLoading] = React.useState(false);
-const [error, setError] = React.useState<string | null>(null);
-const [warnings, setWarnings] = React.useState<{ filename: string; reason: string }[]>([]);
-const [uploadProgress, setUploadProgress] = React.useState<number>(0);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [warnings, setWarnings] = React.useState<{ filename: string; reason: string }[]>([]);
+  const [uploadProgress, setUploadProgress] = React.useState<number>(0);
 
-const openUploadDialog = () => fileInputRef.current?.click();
+  const openUploadDialog = () => fileInputRef.current?.click();
 
-const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const files = e.target.files;
-  if (!files || files.length === 0) return;
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-  setLoading(true);
-  setError(null);
-  setWarnings([]);
-  setUploadProgress(0);
+    setLoading(true);
+    setError(null);
+    setWarnings([]);
+    setUploadProgress(0);
 
-  const newRows: CostiRow[] = [];
-  const warningList: { filename: string; reason: string }[] = [];
-  let current = 0;
+    const newRows: CostiRow[] = [];
+    const warningList: { filename: string; reason: string }[] = [];
+    let current = 0;
 
-  for (const file of Array.from(files)) {
-    // 1. Converti in base64
-    const base64 = await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve((reader.result as string).split(",")[1]);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-
-    // 2. Invia singola fetch per ogni file
-    try {
-      const res = await fetch("/api/ocr", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          base64,
-          fileName: file.name,
-          mimeType: file.type,
-        }),
+    for (const file of Array.from(files)) {
+      // 1. Converti in base64
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve((reader.result as string).split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
       });
 
-      if (!res.ok) throw new Error(`Errore OCR (${file.name})`);
-      const dati = await res.json();
+      // 2. Invia singola fetch per ogni file
+      try {
+        const res = await fetch("/api/ocr", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            base64,
+            fileName: file.name,
+            mimeType: file.type,
+          }),
+        });
 
-      if (!dati || !dati.id) {
-        warningList.push({ filename: file.name, reason: "Dati non estratti o mancanti" });
-      } else {
-        newRows.push(dati);
+        if (!res.ok) throw new Error(`Errore OCR (${file.name})`);
+        const dati = await res.json();
+
+        if (!dati || !dati.id) {
+          warningList.push({ filename: file.name, reason: "Dati non estratti o mancanti" });
+        } else {
+          newRows.push(dati);
+        }
+      } catch (err: any) {
+        warningList.push({ filename: file.name, reason: err.message ?? "Errore sconosciuto" });
       }
-    } catch (err: any) {
-      warningList.push({ filename: file.name, reason: err.message || "Errore sconosciuto" });
+      // Aggiorna barra avanzamento per ogni file
+      current++;
+      setUploadProgress(Math.round((current / files.length) * 100));
     }
-    // Aggiorna barra avanzamento per ogni file
-    current++;
-    setUploadProgress(Math.round((current / files.length) * 100));
-  }
 
-  setData((prev) => [...prev, ...newRows]);
-  setWarnings(warningList);
-  setLoading(false);
-  setTimeout(() => setUploadProgress(0), 500);
-  if (fileInputRef.current) fileInputRef.current.value = "";
-};
+    setData((prev) => [...prev, ...newRows]);
+    setWarnings(warningList);
+    setLoading(false);
+    setTimeout(() => setUploadProgress(0), 500);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
-const handleFiltroChange = (value: string) => {
-  if (value === "periodo") setShowPeriodo(true);
-  else if (value === "archivia") setShowArchivia(true);
-  else if (value === "report") setShowReport(true);
-  else if (value === "cronologia") setShowCronologia(true);
-  setFiltro(""); // Reset per poter riselezionare un filtro
-};
+  const handleFiltroChange = (value: string) => {
+    if (value === "periodo") setShowPeriodo(true);
+    else if (value === "archivia") setShowArchivia(true);
+    else if (value === "report") setShowReport(true);
+    else if (value === "cronologia") setShowCronologia(true);
+    setFiltro(""); // Reset per poter riselezionare un filtro
+  };
 
+  const archiveSelected = async () => {
+    const ids = table.getFilteredSelectedRowModel().rows.map((r) => r.original.id);
+    try {
+      if (ids.length > 0) {
+        await fetch("/api/receipts/archive", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ids }),
+        });
+        setData((prev) => prev.filter((row) => !ids.includes(row.id)));
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setShowArchivia(false);
+    }
+  };
 
   return (
     <Tabs defaultValue="filtri" className="w-full flex-col gap-6">
@@ -191,19 +206,14 @@ const handleFiltroChange = (value: string) => {
             onChange={handleFileChange}
           />
           {uploadProgress > 0 && uploadProgress < 100 && (
-            <div className="ml-2 flex items-center gap-2 w-[140px]">
-              <div className="flex-1 h-2 bg-gray-200 rounded">
-                <div
-                  className="h-2 bg-blue-500 rounded"
-                  style={{ width: `${uploadProgress}%` }}
-                ></div>
+            <div className="ml-2 flex w-[140px] items-center gap-2">
+              <div className="h-2 flex-1 rounded bg-gray-200">
+                <div className="h-2 rounded bg-blue-500" style={{ width: `${uploadProgress}%` }}></div>
               </div>
-              <span className="text-xs text-blue-700 min-w-[30px]">{uploadProgress}%</span>
+              <span className="min-w-[30px] text-xs text-blue-700">{uploadProgress}%</span>
             </div>
           )}
-          {loading && uploadProgress === 100 && (
-            <span className="ml-2 text-sm text-blue-500">Analisi in corso...</span>
-          )}
+          {loading && uploadProgress === 100 && <span className="ml-2 text-sm text-blue-500">Analisi in corso...</span>}
           {error && <span className="ml-2 text-sm text-red-500">{error}</span>}
         </div>
         <div className="flex items-center gap-2">
@@ -217,7 +227,7 @@ const handleFiltroChange = (value: string) => {
 
       {/* WARNING */}
       {warnings.length > 0 && (
-        <div className="mb-2 p-2 rounded bg-yellow-100 text-yellow-700 border border-yellow-300">
+        <div className="mb-2 rounded border border-yellow-300 bg-yellow-100 p-2 text-yellow-700">
           <b>Attenzione:</b>
           <ul className="ml-4 list-disc">
             {warnings.map((w, i) => (
@@ -253,13 +263,7 @@ const handleFiltroChange = (value: string) => {
               <Button onClick={() => setShowArchivia(false)} variant="outline">
                 Annulla
               </Button>
-              <Button
-                variant="default"
-                onClick={() => {
-                  // TODO: logica archiviazione
-                  setShowArchivia(false);
-                }}
-              >
+              <Button variant="default" onClick={archiveSelected}>
                 Conferma archiviazione
               </Button>
             </div>
