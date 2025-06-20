@@ -4,5 +4,5 @@
   "remoteUser": "coder",
   "forwardPorts": [3000],
   "runArgs": ["--network", "host"],
-  "postCreateCommand": "pnpm install"
+  "postCreateCommand": "nvm install 20 && nvm alias default 20 && pnpm install"
 }
