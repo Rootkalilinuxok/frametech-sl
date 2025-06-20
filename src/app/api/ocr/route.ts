@@ -14,13 +14,14 @@ async function bufferFromFile(filepath: string) {
 }
 
 export async function POST(req: NextRequest) {
-  // --- CORREZIONE CRITICA: prima ottieni il buffer, poi usalo nella promise ---
+  // CORREZIONE: ottieni il buffer PRIMA di chiamare la Promise
   const rawBody = await req.arrayBuffer();
   const stream = Readable.from(Buffer.from(rawBody));
   const form = formidable({ multiples: true, keepExtensions: true });
 
+  // AGGIUNTA TIPI per evitare TS error
   const files: any[] = await new Promise((resolve, reject) => {
-    form.parse(stream, (err, fields, files) => {
+    form.parse(stream, (err: any, fields: any, files: any) => {
       if (err) return reject(err);
       let f = files.files;
       if (!Array.isArray(f)) f = f ? [f] : [];
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
     });
   });
 
-  // --- Check env ---
+  // Check env
   const key = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
   const openaiKey = process.env.OPENAI_API_KEY;
   if (!key || !openaiKey) {
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
 
   for (const file of files) {
     try {
-      // --- SOLO IMMAGINI E PDF ---
+      // SOLO IMMAGINI E PDF
       if (!file.mimetype?.match(/(image\/|pdf)/)) {
         warnings.push({ filename: file.originalFilename, reason: "Formato non supportato" });
         continue;
@@ -50,7 +51,7 @@ export async function POST(req: NextRequest) {
 
       const buffer = await bufferFromFile(file.filepath);
 
-      // --- OCR GOOGLE VISION ---
+      // OCR GOOGLE VISION
       let ocrResult;
       if (file.mimetype === "application/pdf") {
         [ocrResult] = await ocrClient.documentTextDetection({ image: { content: buffer } });
@@ -65,7 +66,7 @@ export async function POST(req: NextRequest) {
         continue;
       }
 
-      // --- GPT-4o: estrai struttura dati ---
+      // GPT-4o: estrai struttura dati
       const prompt = [
         { role: "system", content: `
 Sei un sistema per l'estrazione di dati di ricevute, fatture o scontrini.  
@@ -115,7 +116,7 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
     }
   }
 
-  // --- Cleanup files temporanei ---
+  // Cleanup files temporanei
   for (const f of files) {
     try { await fs.unlink(f.filepath); } catch { /* ignore */ }
   }
