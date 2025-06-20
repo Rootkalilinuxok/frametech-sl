@@ -1,5 +1,4 @@
 import { ChartAreaInteractive } from "../andamento/_components/chart-area-interactive";
-import FileUploadTable from "./_components/FileUploadTable";
 
 import type { CostiRow } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
@@ -11,7 +10,6 @@ export default function Page() {
     <div className="@container/main flex flex-col gap-4 md:gap-6">
       <SectionCards />
       <ChartAreaInteractive />
-      <FileUploadTable />
       <DataTable data={data as unknown as CostiRow[]} />
     </div>
   );
