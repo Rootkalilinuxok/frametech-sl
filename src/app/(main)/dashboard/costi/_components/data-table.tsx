@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-
 import {
   KeyboardSensor,
   MouseSensor,
@@ -24,12 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useDataTableInstance } from "@/hooks/use-data-table-instance";
-
 import { costiColumns, type CostiRow } from "./columns";
-
-// [IMPORTA QUI IL COMPONENTE DEL CALENDARIO E HISTORYTABLE QUANDO PRONTI]
-// import { Calendar } from "@/components/ui/calendar";
-// import HistoryTable from "./HistoryTable";
 
 export function DataTable({ data: initialData }: { data: CostiRow[] }) {
   const dndEnabled = true;
@@ -90,8 +84,36 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [warnings, setWarnings] = React.useState<{ filename: string; reason: string }[]>([]);
+  const [uploadProgress, setUploadProgress] = React.useState<number>(0);
 
   const openUploadDialog = () => fileInputRef.current?.click();
+
+  // Barra avanzamento upload
+  const uploadWithProgress = (formData: FormData) => {
+    return new Promise<Response>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "/api/ocr", true);
+
+      xhr.upload.onprogress = function (event) {
+        if (event.lengthComputable) {
+          const percent = Math.round((event.loaded / event.total) * 100);
+          setUploadProgress(percent);
+        }
+      };
+
+      xhr.onload = function () {
+        setUploadProgress(100);
+        resolve(new Response(xhr.response, { status: xhr.status }));
+      };
+
+      xhr.onerror = function () {
+        reject(new Error("Errore di rete durante l'upload"));
+      };
+
+      xhr.responseType = "text";
+      xhr.send(formData);
+    });
+  };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -99,18 +121,20 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
     setLoading(true);
     setError(null);
     setWarnings([]);
+    setUploadProgress(0);
 
     try {
       const formData = new FormData();
       for (let i = 0; i < files.length; i++) {
         formData.append("files", files[i]);
       }
-      const res = await fetch("/api/ocr", {
-        method: "POST",
-        body: formData,
-      });
+
+      // Barra upload via xhr
+      const res = await uploadWithProgress(formData);
+
       if (!res.ok) throw new Error("Errore durante l'analisi OCR");
-      const json = await res.json();
+      const text = await res.text();
+      const json = JSON.parse(text);
       const { rows, warnings } = json;
       if (Array.isArray(rows)) setData((prev) => [...prev, ...rows]);
       if (Array.isArray(warnings) && warnings.length > 0) setWarnings(warnings);
@@ -118,6 +142,7 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
       setError(err.message || "Errore sconosciuto");
     } finally {
       setLoading(false);
+      setTimeout(() => setUploadProgress(0), 800);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
@@ -166,7 +191,20 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
             accept=".pdf,.jpg,.jpeg,.png"
             onChange={handleFileChange}
           />
-          {loading && <span className="ml-2 text-sm text-blue-500">Analisi in corso...</span>}
+          {uploadProgress > 0 && uploadProgress < 100 && (
+            <div className="ml-2 flex items-center gap-2 w-[140px]">
+              <div className="flex-1 h-2 bg-gray-200 rounded">
+                <div
+                  className="h-2 bg-blue-500 rounded"
+                  style={{ width: `${uploadProgress}%` }}
+                ></div>
+              </div>
+              <span className="text-xs text-blue-700 min-w-[30px]">{uploadProgress}%</span>
+            </div>
+          )}
+          {loading && uploadProgress === 100 && (
+            <span className="ml-2 text-sm text-blue-500">Analisi in corso...</span>
+          )}
           {error && <span className="ml-2 text-sm text-red-500">{error}</span>}
         </div>
         <div className="flex items-center gap-2">
