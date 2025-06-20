@@ -27,8 +27,6 @@ import { useDataTableInstance } from "@/hooks/use-data-table-instance";
 
 import { costiColumns, type CostiRow } from "./columns";
 
-// Import di getCoreRowModel da TanStack React-Table
-
 // [IMPORTA QUI IL COMPONENTE DEL CALENDARIO E HISTORYTABLE QUANDO PRONTI]
 // import { Calendar } from "@/components/ui/calendar";
 // import HistoryTable from "./HistoryTable";
@@ -43,14 +41,20 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
   const columns = dndEnabled ? withDndColumn(costiColumns) : costiColumns;
 
   // Sensori drag-and-drop
-  const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
+  const sensors = useSensors(
+    useSensor(MouseSensor, {}),
+    useSensor(TouchSensor, {}),
+    useSensor(KeyboardSensor, {})
+  );
 
   // Lista di UniqueIdentifier per l’ordinamento
   const dataIds = React.useMemo<UniqueIdentifier[]>(() => data.map((row) => row.id), [data]);
 
   // FUNZIONE DI UPDATE per rendere editabili le celle
   const updateData = (rowIndex: number, columnId: string, value: any) => {
-    setData((old) => old.map((row, index) => (index === rowIndex ? { ...row, [columnId]: value } : row)));
+    setData((old) =>
+      old.map((row, index) => (index === rowIndex ? { ...row, [columnId]: value } : row))
+    );
   };
 
   // Istanza della tabella: include getCoreRowModel e la funzione updateData nel meta
@@ -81,8 +85,41 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
   const [showReport, setShowReport] = React.useState(false);
   const [showCronologia, setShowCronologia] = React.useState(false);
 
-  const openUploadDialog = () => {
-    // TODO: implementa popup upload file
+  // ----------- UPLOAD LOGICA -----------
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [warnings, setWarnings] = React.useState<{ filename: string; reason: string }[]>([]);
+
+  const openUploadDialog = () => fileInputRef.current?.click();
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setLoading(true);
+    setError(null);
+    setWarnings([]);
+
+    try {
+      const formData = new FormData();
+      for (let i = 0; i < files.length; i++) {
+        formData.append("files", files[i]);
+      }
+      const res = await fetch("/api/ocr", {
+        method: "POST",
+        body: formData,
+      });
+      if (!res.ok) throw new Error("Errore durante l'analisi OCR");
+      const json = await res.json();
+      const { rows, warnings } = json;
+      if (Array.isArray(rows)) setData((prev) => [...prev, ...rows]);
+      if (Array.isArray(warnings) && warnings.length > 0) setWarnings(warnings);
+    } catch (err: any) {
+      setError(err.message || "Errore sconosciuto");
+    } finally {
+      setLoading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
   };
 
   const handleFiltroChange = (value: string) => {
@@ -111,7 +148,7 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
           </Select>
 
           {/* UPLOAD */}
-          <Button variant="outline" size="sm" onClick={openUploadDialog}>
+          <Button variant="outline" size="sm" onClick={openUploadDialog} disabled={loading}>
             <svg className="mr-1 h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -121,6 +158,16 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
             </svg>
             <span className="sr-only">Upload</span>
           </Button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            multiple
+            accept=".pdf,.jpg,.jpeg,.png"
+            onChange={handleFileChange}
+          />
+          {loading && <span className="ml-2 text-sm text-blue-500">Analisi in corso...</span>}
+          {error && <span className="ml-2 text-sm text-red-500">{error}</span>}
         </div>
         <div className="flex items-center gap-2">
           <DataTableViewOptions table={table} />
@@ -130,6 +177,20 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
           </Button>
         </div>
       </div>
+
+      {/* WARNING */}
+      {warnings.length > 0 && (
+        <div className="mb-2 p-2 rounded bg-yellow-100 text-yellow-700 border border-yellow-300">
+          <b>Attenzione:</b>
+          <ul className="ml-4 list-disc">
+            {warnings.map((w, i) => (
+              <li key={i}>
+                <b>{w.filename}</b>: {w.reason}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Popup/dialog per il filtro "Periodo" */}
       {showPeriodo && (
