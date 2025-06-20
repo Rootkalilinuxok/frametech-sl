@@ -1,11 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { v1 as vision } from "@google-cloud/vision";
 import { OpenAI } from "openai";
-import { v4 as uuidv4 } from "uuid";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
+import { v4 as uuidv4 } from "uuid";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
+
+function parseCredentials(key: string) {
+  try {
+    return JSON.parse(key);
+  } catch {
+    return null;
+  }
+}
+
+function safeJsonParse<T>(input: string): T | null {
+  try {
+    return JSON.parse(input) as T;
+  } catch {
+    return null;
+  }
+}
+
+function extractText(result: vision.protos.google.cloud.vision.v1.IAnnotateImageResponse) {
+  return result.textAnnotations?.[0]?.description ?? result.fullTextAnnotation?.text ?? "";
+}
 
 export async function POST(req: NextRequest) {
   const { base64, fileName, mimeType } = await req.json();
@@ -16,7 +37,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "API keys missing" }, { status: 500 });
   }
 
-  const ocrClient = new vision.ImageAnnotatorClient({ credentials: JSON.parse(key) });
+  const credentials = parseCredentials(key);
+  if (!credentials) {
+    return NextResponse.json({ error: "Invalid GOOGLE_APPLICATION_CREDENTIALS_JSON" }, { status: 500 });
+  }
+
+  const ocrClient = new vision.ImageAnnotatorClient({ credentials });
   const openai = new OpenAI({ apiKey: openaiKey });
 
   // decode base64
@@ -28,10 +54,7 @@ export async function POST(req: NextRequest) {
   } else {
     [ocrResult] = await ocrClient.textDetection({ image: { content: buffer } });
   }
-  const text =
-    ocrResult.textAnnotations?.[0]?.description ||
-    ocrResult.fullTextAnnotation?.text ||
-    "";
+  const text = extractText(ocrResult);
 
   const prompt: ChatCompletionMessageParam[] = [
     {
@@ -67,13 +90,9 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
     response_format: { type: "json_object" },
   });
 
-  let dati;
-  try {
-    dati = JSON.parse(gptRes.choices[0].message.content || "{}");
-  } catch (e) {
-    dati = {};
-  }
-  dati.id = dati.id || uuidv4();
+  let dati = safeJsonParse<Record<string, unknown>>(gptRes.choices[0].message.content ?? "{}");
+  dati ??= {};
+  dati.id ??= uuidv4();
   dati.filename = fileName;
 
   return NextResponse.json(dati);
