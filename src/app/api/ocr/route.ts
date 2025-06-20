@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { v1 as vision } from "@google-cloud/vision";
+import { protos } from "@google-cloud/vision/build/protos/protos";
 import { OpenAI } from "openai";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { v4 as uuidv4 } from "uuid";
@@ -24,7 +25,7 @@ function safeJsonParse<T>(input: string): T | null {
   }
 }
 
-function extractText(result: vision.protos.google.cloud.vision.v1.IAnnotateImageResponse) {
+function extractText(result: protos.google.cloud.vision.v1.IAnnotateImageResponse) {
   return result.textAnnotations?.[0]?.description ?? result.fullTextAnnotation?.text ?? "";
 }
 
