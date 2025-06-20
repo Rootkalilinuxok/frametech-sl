@@ -1,12 +1,9 @@
 "use client";
 
 import React, { useMemo } from "react";
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+
+import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -51,19 +48,15 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
       },
       {
         accessorKey: "name",
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Nome" />
-        ),
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Nome" />,
         enableResizing: true,
         enableHiding: false,
-        minSize: CHAR_WIDTH * 16,    // ADATTIVA E LARGA
+        minSize: CHAR_WIDTH * 16, // ADATTIVA E LARGA
         maxSize: CHAR_WIDTH * 40,
       },
       {
         accessorKey: "country",
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Nazione" />
-        ),
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Nazione" />,
         enableResizing: true,
         enableHiding: false,
         minSize: CHAR_WIDTH * 8,
@@ -71,9 +64,7 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
       },
       {
         accessorKey: "currency",
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Valuta" />
-        ),
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Valuta" />,
         enableResizing: true,
         enableHiding: false,
         minSize: CHAR_WIDTH * 8,
@@ -81,9 +72,7 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
       },
       {
         accessorKey: "tip",
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Tip/Mancia" />
-        ),
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Tip/Mancia" />,
         enableResizing: true,
         enableHiding: false,
         minSize: CHAR_WIDTH * 10,
@@ -91,19 +80,15 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
       },
       {
         accessorKey: "total",
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Totale" />
-        ),
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Totale" />,
         enableResizing: true,
         enableHiding: false,
-        minSize: CHAR_WIDTH * 12,   // PIU’ SPAZIO
+        minSize: CHAR_WIDTH * 12, // PIU’ SPAZIO
         maxSize: CHAR_WIDTH * 28,
       },
       {
         accessorKey: "exchangeRate",
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Cambio" />
-        ),
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Cambio" />,
         enableResizing: true,
         enableHiding: false,
         minSize: CHAR_WIDTH * 10,
@@ -111,19 +96,15 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
       },
       {
         accessorKey: "totalEur",
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Totale (€)" />
-        ),
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Totale (€)" />,
         enableResizing: true,
         enableHiding: false,
-        minSize: CHAR_WIDTH * 12,   // PIU’ SPAZIO
+        minSize: CHAR_WIDTH * 12, // PIU’ SPAZIO
         maxSize: CHAR_WIDTH * 28,
       },
       {
         accessorKey: "percent",
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="+ %" />
-        ),
+        header: ({ column }) => <DataTableColumnHeader column={column} title="+ %" />,
         enableResizing: true,
         enableHiding: false,
         minSize: CHAR_WIDTH * 8,
@@ -133,10 +114,7 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         id: "actions",
         header: () => <span className="sr-only">Azioni</span>,
         cell: ({ row }) => (
-          <button
-            onClick={() => console.log("Modifica riga", row.original.id)}
-            className="text-sm underline"
-          >
+          <button onClick={() => {}} className="text-sm underline">
             Modifica
           </button>
         ),
@@ -147,7 +125,7 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
         maxSize: CHAR_WIDTH * 18,
       },
     ],
-    []
+    [],
   );
 
   const table = useReactTable({
@@ -159,7 +137,7 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="table-auto w-full border-collapse">
+      <table className="w-full table-auto border-collapse">
         <thead>
           {table.getHeaderGroups().map((hg) => (
             <tr key={hg.id}>
@@ -172,11 +150,7 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
                   }}
                   className="px-4 py-2 text-left font-bold"
                 >
-                  {!header.isPlaceholder &&
-                    flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
+                  {!header.isPlaceholder && flexRender(header.column.columnDef.header, header.getContext())}
                 </th>
               ))}
             </tr>
@@ -192,7 +166,7 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
                     minWidth: cell.column.columnDef.minSize,
                     maxWidth: cell.column.columnDef.maxSize,
                   }}
-                  className="px-4 py-2 border-t"
+                  className="border-t px-4 py-2"
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
