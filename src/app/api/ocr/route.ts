@@ -2,33 +2,33 @@ import { NextRequest, NextResponse } from "next/server";
 import { v1 as vision } from "@google-cloud/vision";
 import { OpenAI } from "openai";
 import { v4 as uuidv4 } from "uuid";
-
-// For Node.js streaming FormData parsing
-import { Readable } from "stream";
 import formidable from "formidable";
 import fs from "fs/promises";
+import { Readable } from "stream";
 
 export const runtime = "nodejs";
 export const maxDuration = 300; // fino a 5 minuti per batch grandi
 
-// Utility per leggere un file in Buffer
 async function bufferFromFile(filepath: string) {
   return fs.readFile(filepath);
 }
 
-// --------- OCR + GPT Handler ---------
 export async function POST(req: NextRequest) {
-  // Parse FormData
+  // --- CORREZIONE CRITICA: prima ottieni il buffer, poi usalo nella promise ---
+  const rawBody = await req.arrayBuffer();
+  const stream = Readable.from(Buffer.from(rawBody));
   const form = formidable({ multiples: true, keepExtensions: true });
+
   const files: any[] = await new Promise((resolve, reject) => {
-    form.parse(Readable.from(Buffer.from(await req.arrayBuffer())), (err, fields, files) => {
-      if (err) reject(err);
-      const f = Array.isArray(files.files) ? files.files : [files.files];
+    form.parse(stream, (err, fields, files) => {
+      if (err) return reject(err);
+      let f = files.files;
+      if (!Array.isArray(f)) f = f ? [f] : [];
       resolve(f);
     });
   });
 
-  // Check env
+  // --- Check env ---
   const key = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
   const openaiKey = process.env.OPENAI_API_KEY;
   if (!key || !openaiKey) {
@@ -53,7 +53,6 @@ export async function POST(req: NextRequest) {
       // --- OCR GOOGLE VISION ---
       let ocrResult;
       if (file.mimetype === "application/pdf") {
-        // Per PDF: invio diretto
         [ocrResult] = await ocrClient.documentTextDetection({ image: { content: buffer } });
       } else {
         [ocrResult] = await ocrClient.textDetection({ image: { content: buffer } });
@@ -103,13 +102,10 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
         continue;
       }
 
-      // Genera id univoco se mancante
       dati.id = dati.id || uuidv4();
-      // Se date o total sono assenti, metti warning
       if (!dati.date || !dati.total) {
         warnings.push({ filename: file.originalFilename, reason: "Campi principali non trovati: date o total" });
       }
-      // Allego nome file
       dati.filename = file.originalFilename;
 
       processed.push(dati);
@@ -119,7 +115,7 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
     }
   }
 
-  // Cleanup files
+  // --- Cleanup files temporanei ---
   for (const f of files) {
     try { await fs.unlink(f.filepath); } catch { /* ignore */ }
   }
