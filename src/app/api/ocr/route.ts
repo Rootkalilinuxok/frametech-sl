@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from "uuid";
 import formidable from "formidable";
 import fs from "fs/promises";
 import { Readable } from "stream";
+// IMPORTA IL TIPO QUI:
+import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 
 export const runtime = "nodejs";
 export const maxDuration = 300; // fino a 5 minuti per batch grandi
@@ -14,12 +16,10 @@ async function bufferFromFile(filepath: string) {
 }
 
 export async function POST(req: NextRequest) {
-  // CORREZIONE: ottieni il buffer PRIMA di chiamare la Promise
   const rawBody = await req.arrayBuffer();
   const stream = Readable.from(Buffer.from(rawBody));
   const form = formidable({ multiples: true, keepExtensions: true });
 
-  // AGGIUNTA TIPI per evitare TS error
   const files: any[] = await new Promise((resolve, reject) => {
     form.parse(stream, (err: any, fields: any, files: any) => {
       if (err) return reject(err);
@@ -29,7 +29,6 @@ export async function POST(req: NextRequest) {
     });
   });
 
-  // Check env
   const key = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
   const openaiKey = process.env.OPENAI_API_KEY;
   if (!key || !openaiKey) {
@@ -43,7 +42,6 @@ export async function POST(req: NextRequest) {
 
   for (const file of files) {
     try {
-      // SOLO IMMAGINI E PDF
       if (!file.mimetype?.match(/(image\/|pdf)/)) {
         warnings.push({ filename: file.originalFilename, reason: "Formato non supportato" });
         continue;
@@ -51,7 +49,6 @@ export async function POST(req: NextRequest) {
 
       const buffer = await bufferFromFile(file.filepath);
 
-      // OCR GOOGLE VISION
       let ocrResult;
       if (file.mimetype === "application/pdf") {
         [ocrResult] = await ocrClient.documentTextDetection({ image: { content: buffer } });
@@ -60,14 +57,13 @@ export async function POST(req: NextRequest) {
       }
       const text = ocrResult.textAnnotations?.[0]?.description || ocrResult.fullTextAnnotation?.text || "";
 
-      // Valutazione leggibilità minima
       if (!text || text.length < 8) {
         warnings.push({ filename: file.originalFilename, reason: "File non leggibile (OCR vuoto o troppo breve)" });
         continue;
       }
 
-      // GPT-4o: estrai struttura dati
-      const prompt = [
+      // *** AGGIORNA QUESTA PARTE ***
+      const prompt: ChatCompletionMessageParam[] = [
         { role: "system", content: `
 Sei un sistema per l'estrazione di dati di ricevute, fatture o scontrini.  
 Dato un testo OCR (anche disordinato o rumoroso), restituisci **solo** e **sempre** un oggetto JSON, campi:
@@ -116,7 +112,6 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
     }
   }
 
-  // Cleanup files temporanei
   for (const f of files) {
     try { await fs.unlink(f.filepath); } catch { /* ignore */ }
   }
