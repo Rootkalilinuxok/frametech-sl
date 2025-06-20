@@ -134,6 +134,11 @@ To set up and run this admin dashboard locally, follow these steps:
    pnpm install
    ```
 
+   Ensure you're running **Node.js 20.x** before starting the server. If you use nvm:
+   ```bash
+   nvm use 20
+   ```
+
    > While installing, you may be prompted to use the `--force` or `--legacy-peer-deps` flag.
 
    > This is expected and safe — it’s due to a dependency from the Shadcn registry that references a breaking library version.
