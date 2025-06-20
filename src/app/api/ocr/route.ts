@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { v1 as vision } from "@google-cloud/vision";
 import { OpenAI } from "openai";
 import { v4 as uuidv4 } from "uuid";
+import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -10,22 +11,21 @@ export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const files = formData.getAll("files");
 
-  // CONTROLLA CHE SIANO PRESENTI FILES
   if (!files || files.length === 0) {
     return NextResponse.json({ error: "Nessun file inviato" }, { status: 400 });
   }
 
-  // --- CARICA CREDENZIALI
   const key = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
   const openaiKey = process.env.OPENAI_API_KEY;
   if (!key || !openaiKey) {
     return NextResponse.json({ error: "API keys missing" }, { status: 500 });
   }
+
   const ocrClient = new vision.ImageAnnotatorClient({ credentials: JSON.parse(key) });
   const openai = new OpenAI({ apiKey: openaiKey });
 
   const processed: any[] = [];
-  const warnings: { filename: string, reason: string }[] = [];
+  const warnings: { filename: string; reason: string }[] = [];
 
   for (const file of files) {
     try {
@@ -43,7 +43,6 @@ export async function POST(req: NextRequest) {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      // OCR GOOGLE VISION
       let ocrResult;
       if (file.type === "application/pdf") {
         [ocrResult] = await ocrClient.documentTextDetection({ image: { content: buffer } });
@@ -63,8 +62,7 @@ export async function POST(req: NextRequest) {
         continue;
       }
 
-      // GPT-4o: estrai struttura dati
-      const prompt = [
+      const prompt: ChatCompletionMessageParam[] = [
         {
           role: "system",
           content: `
