@@ -9,7 +9,7 @@ import { Readable } from "stream";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 
 export const runtime = "nodejs";
-export const maxDuration = 300; // fino a 5 minuti per batch grandi
+export const maxDuration = 60; // fino a 5 minuti per batch grandi
 
 async function bufferFromFile(filepath: string) {
   return fs.readFile(filepath);
