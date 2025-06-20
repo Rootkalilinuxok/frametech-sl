@@ -80,80 +80,79 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
   const [showCronologia, setShowCronologia] = React.useState(false);
 
   // ----------- UPLOAD LOGICA -----------
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
-  const [warnings, setWarnings] = React.useState<{ filename: string; reason: string }[]>([]);
-  const [uploadProgress, setUploadProgress] = React.useState<number>(0);
+const fileInputRef = React.useRef<HTMLInputElement>(null);
+const [loading, setLoading] = React.useState(false);
+const [error, setError] = React.useState<string | null>(null);
+const [warnings, setWarnings] = React.useState<{ filename: string; reason: string }[]>([]);
+const [uploadProgress, setUploadProgress] = React.useState<number>(0);
 
-  const openUploadDialog = () => fileInputRef.current?.click();
+const openUploadDialog = () => fileInputRef.current?.click();
 
-  // Barra avanzamento upload
-  const uploadWithProgress = (formData: FormData) => {
-    return new Promise<Response>((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open("POST", "/api/ocr", true);
+const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const files = e.target.files;
+  if (!files || files.length === 0) return;
 
-      xhr.upload.onprogress = function (event) {
-        if (event.lengthComputable) {
-          const percent = Math.round((event.loaded / event.total) * 100);
-          setUploadProgress(percent);
-        }
-      };
+  setLoading(true);
+  setError(null);
+  setWarnings([]);
+  setUploadProgress(0);
 
-      xhr.onload = function () {
-        setUploadProgress(100);
-        resolve(new Response(xhr.response, { status: xhr.status }));
-      };
+  const newRows: CostiRow[] = [];
+  const warningList: { filename: string; reason: string }[] = [];
+  let current = 0;
 
-      xhr.onerror = function () {
-        reject(new Error("Errore di rete durante l'upload"));
-      };
-
-      xhr.responseType = "text";
-      xhr.send(formData);
+  for (const file of Array.from(files)) {
+    // 1. Converti in base64
+    const base64 = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve((reader.result as string).split(",")[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
     });
-  };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-    setLoading(true);
-    setError(null);
-    setWarnings([]);
-    setUploadProgress(0);
-
+    // 2. Invia singola fetch per ogni file
     try {
-      const formData = new FormData();
-      for (let i = 0; i < files.length; i++) {
-        formData.append("files", files[i]);
+      const res = await fetch("/api/ocr", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          base64,
+          fileName: file.name,
+          mimeType: file.type,
+        }),
+      });
+
+      if (!res.ok) throw new Error(`Errore OCR (${file.name})`);
+      const dati = await res.json();
+
+      if (!dati || !dati.id) {
+        warningList.push({ filename: file.name, reason: "Dati non estratti o mancanti" });
+      } else {
+        newRows.push(dati);
       }
-
-      // Barra upload via xhr
-      const res = await uploadWithProgress(formData);
-
-      if (!res.ok) throw new Error("Errore durante l'analisi OCR");
-      const text = await res.text();
-      const json = JSON.parse(text);
-      const { rows, warnings } = json;
-      if (Array.isArray(rows)) setData((prev) => [...prev, ...rows]);
-      if (Array.isArray(warnings) && warnings.length > 0) setWarnings(warnings);
     } catch (err: any) {
-      setError(err.message || "Errore sconosciuto");
-    } finally {
-      setLoading(false);
-      setTimeout(() => setUploadProgress(0), 800);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+      warningList.push({ filename: file.name, reason: err.message || "Errore sconosciuto" });
     }
-  };
+    // Aggiorna barra avanzamento per ogni file
+    current++;
+    setUploadProgress(Math.round((current / files.length) * 100));
+  }
 
-  const handleFiltroChange = (value: string) => {
-    if (value === "periodo") setShowPeriodo(true);
-    else if (value === "archivia") setShowArchivia(true);
-    else if (value === "report") setShowReport(true);
-    else if (value === "cronologia") setShowCronologia(true);
-    setFiltro(""); // Reset per poter riselezionare un filtro
-  };
+  setData((prev) => [...prev, ...newRows]);
+  setWarnings(warningList);
+  setLoading(false);
+  setTimeout(() => setUploadProgress(0), 500);
+  if (fileInputRef.current) fileInputRef.current.value = "";
+};
+
+const handleFiltroChange = (value: string) => {
+  if (value === "periodo") setShowPeriodo(true);
+  else if (value === "archivia") setShowArchivia(true);
+  else if (value === "report") setShowReport(true);
+  else if (value === "cronologia") setShowCronologia(true);
+  setFiltro(""); // Reset per poter riselezionare un filtro
+};
+
 
   return (
     <Tabs defaultValue="filtri" className="w-full flex-col gap-6">
