@@ -4,9 +4,17 @@ import { v4 as uuidv4 } from "uuid";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { db } from "@/lib/db";
 import { receiptsLive } from "@/lib/schema";
+import { createHash } from "crypto";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
+
+// Funzione per generare un hash univoco della riga (obbligatorio nel DB)
+function generateSourceHash(dati: any) {
+  return createHash("sha256")
+    .update(JSON.stringify(dati) + (dati.filename ?? ""))
+    .digest("hex");
+}
 
 export async function POST(req: NextRequest) {
   const { base64, fileName, mimeType } = await req.json();
@@ -17,7 +25,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "API key(s) missing" }, { status: 500 });
   }
 
-  // Chiamata REST Google Vision OCR
+  // --- OCR Google Vision (REST) ---
   const visionEndpoint = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
   const body = {
     requests: [
@@ -51,7 +59,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "OCR vuoto o non leggibile", filename: fileName }, { status: 200 });
   }
 
-  // GPT extraction
+  // --- GPT extraction ---
   const openai = new OpenAI({ apiKey: openaiKey });
 
   const prompt: ChatCompletionMessageParam[] = [
@@ -97,26 +105,28 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
   dati.id = dati.id || uuidv4();
   dati.filename = fileName;
 
-  // Salva direttamente nel DB receiptsLive
+  // --- Salva direttamente la riga in receiptsLive ---
   try {
     await db.insert(receiptsLive).values({
       id: dati.id,
-      date: dati.date,
-      time: dati.time,
+      date: dati.date ? new Date(dati.date) : new Date(), // fallback a oggi se assente
+      time: dati.time ?? null,
       name: dati.name,
-      country: dati.country,
+      country: dati.country ?? null,
       currency: dati.currency,
-      tip: dati.tip,
-      total: dati.total,
-      exchange_rate: dati.exchange_rate,
-      total_eur: dati.total_eur,
-      percent: dati.percent,
-      filename: dati.filename,
-      // aggiungi altri campi richiesti dallo schema se servono!
+      total: Number(dati.total),
+      tip: dati.tip !== null && dati.tip !== undefined ? Number(dati.tip) : null,
+      exchangeRate: dati.exchange_rate !== null && dati.exchange_rate !== undefined ? Number(dati.exchange_rate) : null,
+      totalEur: dati.total_eur !== null && dati.total_eur !== undefined ? Number(dati.total_eur) : null,
+      percent: dati.percent !== null && dati.percent !== undefined ? Number(dati.percent) : null,
+      paymentMethod: "", // puoi mettere stringa vuota, oppure valorizzare se hai info
+      status: "new",
+      sourceHash: generateSourceHash(dati),
+      // createdAt: lasciato a defaultNow
     });
   } catch (err) {
     console.error("Failed to persist OCR result in DB", err);
-    // Non blocca il flusso, la risposta all'utente arriva comunque
+    // La risposta al client viene comunque restituita
   }
 
   return NextResponse.json(dati);
