@@ -1,7 +1,8 @@
+import path from "path";
+
 import { createPool } from "@vercel/postgres";
 import { drizzle } from "drizzle-orm/vercel-postgres";
 import { migrate } from "drizzle-orm/vercel-postgres/migrator";
-import path from "path";
 
 const databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) {
