@@ -108,20 +108,20 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
   // --- Salva direttamente la riga in receiptsLive ---
   try {
     await db.insert(receiptsLive).values({
-      // l'id lo genera drizzle a meno che tu non voglia inserirlo tu manualmente
-      date: dati.date ? new Date(dati.date) : new Date(), // fallback oggi
-      time: dati.time ?? null,
-      name: dati.name,
-      country: dati.country ?? null,
-      currency: dati.currency,
-      total: Number(dati.total),
-      tip: dati.tip !== null && dati.tip !== undefined ? Number(dati.tip) : null,
-      exchangeRate: dati.exchangeRate !== null && dati.exchangeRate !== undefined ? Number(dati.exchangeRate) : null,
-      totalEur: dati.totalEur !== null && dati.totalEur !== undefined ? Number(dati.totalEur) : null,
-      percent: dati.percent !== null && dati.percent !== undefined ? Number(dati.percent) : null,
-      paymentMethod: "",
-      status: "new",
-      sourceHash: generateSourceHash(dati),
+  // Usa la stringa ISO direttamente
+  date: dati.date ?? new Date().toISOString().slice(0, 10), // "YYYY-MM-DD"
+  time: dati.time ?? null,
+  name: dati.name,
+  country: dati.country ?? null,
+  currency: dati.currency,
+  total: Number(dati.total),
+  tip: dati.tip !== null && dati.tip !== undefined ? Number(dati.tip) : null,
+  exchangeRate: dati.exchangeRate !== null && dati.exchangeRate !== undefined ? Number(dati.exchangeRate) : null,
+  totalEur: dati.totalEur !== null && dati.totalEur !== undefined ? Number(dati.totalEur) : null,
+  percent: dati.percent !== null && dati.percent !== undefined ? Number(dati.percent) : null,
+  paymentMethod: "",
+  status: "new",
+  sourceHash: generateSourceHash(dati),
       // createdAt lasciato al defaultNow()
     });
   } catch (err) {
