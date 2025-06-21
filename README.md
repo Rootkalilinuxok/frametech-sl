@@ -60,11 +60,12 @@ The current version uses the [Tweakcn Tangerine](https://tweakcn.com/) theme for
 
 This project includes an **AI watcher script** (`ai-deploy-watcher.js`) that automatically monitors Vercel deploy errors, analyzes build logs, and provides OpenAI-powered suggestions for fixes.
 
-- All AI logs are saved in `ai-deploy-watcher.log`.  
+- All AI logs are saved in `ai-deploy-watcher.log`.
   **Check this log before opening a Pull Request** to quickly identify and resolve build errors.
 
 - The watcher runs automatically in cloud workspaces (Codex, CI) or can be launched locally with:
   ```sh
-  pnpm ai:watcher
-  # or
   node ai-deploy-watcher.js
+  ```
+
+  Ensure the environment variables `VERCEL_TOKEN`, `PROJECT_ID`, and `OPENAI_API_KEY` are set before running the script.
