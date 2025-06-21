@@ -108,7 +108,6 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
   // --- Salva direttamente la riga in receiptsLive ---
   try {
     await db.insert(receiptsLive).values({
-      id: dati.id,
       date: dati.date ? new Date(dati.date) : new Date(), // fallback a oggi se assente
       time: dati.time ?? null,
       name: dati.name,
