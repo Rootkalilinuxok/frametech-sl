@@ -29,14 +29,8 @@ const chartData = [
 ];
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "var(--primary)",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "var(--primary)",
-  },
+  desktop: { label: "Desktop", color: "var(--primary)" },
+  mobile: { label: "Mobile", color: "var(--primary)" },
 } satisfies ChartConfig;
 
 type TableCellViewerProps<
@@ -47,7 +41,7 @@ type TableCellViewerProps<
     target: string;
     limit: string;
     reviewer: string;
-  },
+  }
 > = {
   item: TItem;
 };
@@ -60,7 +54,7 @@ export function TableCellViewer<
     target: string;
     limit: string;
     reviewer: string;
-  },
+  }
 >({ item }: TableCellViewerProps<TItem>) {
   const isMobile = useIsMobile();
 
@@ -83,10 +77,7 @@ export function TableCellViewer<
                 <AreaChart
                   accessibilityLayer
                   data={chartData}
-                  margin={{
-                    left: 0,
-                    right: 10,
-                  }}
+                  margin={{ left: 0, right: 10 }}
                 >
                   <CartesianGrid vertical={false} />
                   <XAxis
@@ -94,26 +85,12 @@ export function TableCellViewer<
                     tickLine={false}
                     axisLine={false}
                     tickMargin={8}
-                    tickFormatter={(value) => value.slice(0, 3)}
+                    tickFormatter={value => value.slice(0, 3)}
                     hide
                   />
                   <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
-                  <Area
-                    dataKey="mobile"
-                    type="natural"
-                    fill="var(--color-mobile)"
-                    fillOpacity={0.6}
-                    stroke="var(--color-mobile)"
-                    stackId="a"
-                  />
-                  <Area
-                    dataKey="desktop"
-                    type="natural"
-                    fill="var(--color-desktop)"
-                    fillOpacity={0.4}
-                    stroke="var(--color-desktop)"
-                    stackId="a"
-                  />
+                  <Area dataKey="mobile" type="natural" fill="var(--color-mobile)" fillOpacity={0.6} stroke="var(--color-mobile)" stackId="a" />
+                  <Area dataKey="desktop" type="natural" fill="var(--color-desktop)" fillOpacity={0.4} stroke="var(--color-desktop)" stackId="a" />
                 </AreaChart>
               </ChartContainer>
               <Separator />
@@ -122,8 +99,7 @@ export function TableCellViewer<
                   Trending up by 5.2% this month <TrendingUp className="size-4" />
                 </div>
                 <div className="text-muted-foreground">
-                  Showing total visitors for the last 6 months. This is just some random text to test the layout. It
-                  spans multiple lines and should wrap around.
+                  Showing total visitors for the last 6 months. This is just some random text to test the layout. It spans multiple lines and should wrap around.
                 </div>
               </div>
               <Separator />
