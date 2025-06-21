@@ -95,5 +95,15 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
   dati.id = dati.id || uuidv4();
   dati.filename = fileName;
 
+  try {
+    await fetch(`${req.nextUrl.origin}/api/receipts`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dati),
+    });
+  } catch (err) {
+    console.error("Failed to persist OCR result", err);
+  }
+
   return NextResponse.json(dati);
 }
