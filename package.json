@@ -16,7 +16,8 @@
     "test:ui": "vitest --ui",
     "prepare": "husky",
     "generate:migrations": "drizzle-kit generate --schema=./lib/schema.ts --out=./drizzle",
-    "push:migrations": "drizzle-kit push --schema=./lib/schema.ts --out=./drizzle"
+    "push:migrations": "drizzle-kit push --schema=./lib/schema.ts --out=./drizzle",
+    "migrate": "pnpm run push:migrations"
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": [

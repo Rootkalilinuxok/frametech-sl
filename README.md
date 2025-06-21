@@ -172,8 +172,9 @@ You have two equivalent ways to provide the required environment variables – 
 
 4. **Apply database migrations**
    ```bash
-   pnpm run push:migrations
+   pnpm run migrate
    ```
+   Run this once before starting the server or as part of your deployment.
 
 5. **Start the development server**
    ```bash
