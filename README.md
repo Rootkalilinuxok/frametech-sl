@@ -170,7 +170,12 @@ You have two equivalent ways to provide the required environment variables – 
 
    > **Note** Some providers expose this value as `POSTGRES_URL`. If so, rename or duplicate it as `DATABASE_URL` so the application can find it.
 
-4. **Start the development server**
+4. **Apply database migrations**
+   ```bash
+   pnpm run push:migrations
+   ```
+
+5. **Start the development server**
    ```bash
    pnpm dev
    ```
