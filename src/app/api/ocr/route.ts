@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { OpenAI } from "openai";
 import { v4 as uuidv4 } from "uuid";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
+import { db } from "@/lib/db";
+import { receiptsLive } from "@/lib/schema";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -95,14 +97,26 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
   dati.id = dati.id || uuidv4();
   dati.filename = fileName;
 
+  // Salva direttamente nel DB receiptsLive
   try {
-    await fetch(`${req.nextUrl.origin}/api/receipts`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(dati),
+    await db.insert(receiptsLive).values({
+      id: dati.id,
+      date: dati.date,
+      time: dati.time,
+      name: dati.name,
+      country: dati.country,
+      currency: dati.currency,
+      tip: dati.tip,
+      total: dati.total,
+      exchange_rate: dati.exchange_rate,
+      total_eur: dati.total_eur,
+      percent: dati.percent,
+      filename: dati.filename,
+      // aggiungi altri campi richiesti dallo schema se servono!
     });
   } catch (err) {
-    console.error("Failed to persist OCR result", err);
+    console.error("Failed to persist OCR result in DB", err);
+    // Non blocca il flusso, la risposta all'utente arriva comunque
   }
 
   return NextResponse.json(dati);
