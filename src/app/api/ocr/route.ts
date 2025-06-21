@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { db } from "@/lib/db";
 import { receiptsLive } from "@/lib/schema";
+import type { InferInsertModel } from "drizzle-orm";
 import { createHash } from "crypto";
 
 export const runtime = "nodejs";
@@ -107,23 +108,35 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
 
   // --- Salva direttamente la riga in receiptsLive ---
   try {
-    await db.insert(receiptsLive).values({
-  // Usa la stringa ISO direttamente
-  date: dati.date ?? new Date().toISOString().slice(0, 10), // "YYYY-MM-DD"
-  time: dati.time ?? null,
-  name: dati.name,
-  country: dati.country ?? null,
-  currency: dati.currency,
-  total: Number(dati.total),
-  tip: dati.tip !== null && dati.tip !== undefined ? Number(dati.tip) : null,
-  exchangeRate: dati.exchangeRate !== null && dati.exchangeRate !== undefined ? Number(dati.exchangeRate) : null,
-  totalEur: dati.totalEur !== null && dati.totalEur !== undefined ? Number(dati.totalEur) : null,
-  percent: dati.percent !== null && dati.percent !== undefined ? Number(dati.percent) : null,
-  paymentMethod: "",
-  status: "new",
-  sourceHash: generateSourceHash(dati),
+    const row: InferInsertModel<typeof receiptsLive> = {
+      date: dati.date ? new Date(dati.date) : new Date(),
+      time: dati.time ?? null,
+      name: dati.name,
+      country: dati.country ?? null,
+      currency: dati.currency,
+      total: Number(dati.total) as unknown as string,
+      tip:
+        dati.tip !== null && dati.tip !== undefined
+          ? (Number(dati.tip) as unknown as string)
+          : null,
+      exchangeRate:
+          dati.exchangeRate !== null && dati.exchangeRate !== undefined
+            ? (Number(dati.exchangeRate) as unknown as string)
+            : null,
+      totalEur:
+          dati.totalEur !== null && dati.totalEur !== undefined
+            ? (Number(dati.totalEur) as unknown as string)
+            : null,
+      percent:
+          dati.percent !== null && dati.percent !== undefined
+            ? (Number(dati.percent) as unknown as string)
+            : null,
+      paymentMethod: "",
+      status: "new",
+      sourceHash: generateSourceHash(dati),
       // createdAt lasciato al defaultNow()
-    });
+    };
+    await db.insert(receiptsLive).values(row);
   } catch (err) {
     console.error("Failed to persist OCR result in DB", err);
     // La risposta al client viene comunque restituita
