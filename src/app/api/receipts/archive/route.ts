@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { inArray } from "drizzle-orm";
 
-import { db } from "@/lib/db";
-import { receiptsLive, receiptsArchive } from "@/lib/schema";
+import { db } from "@scr/lib/db";
+import { receiptsLive, receiptsArchive } from "@scr/lib/schema";
 
 export async function POST(req: NextRequest) {
   const { ids } = await req.json();
