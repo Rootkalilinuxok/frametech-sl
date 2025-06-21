@@ -23,7 +23,7 @@ function mapRow(row: ApiRow): CostiRow {
 
   return {
     id: row.id,
-    date: row.date instanceof Date ? row.date.toISOString().slice(0, 10) : row.date?.slice(0, 10),
+    date: row.date instanceof Date ? row.date.toISOString().slice(0, 10) : row.date.slice(0, 10),
     time: row.time ?? undefined,
     name: row.name,
     country: row.country ?? undefined,
@@ -43,14 +43,14 @@ async function getRows(): Promise<CostiRow[]> {
   });
 
   if (!res.ok) {
-    let message: string;
+    let body: string | undefined;
     try {
-      message = await res.text();
+      body = await res.text();
     } catch {
-      message = res.statusText;
+      // ignore
     }
-    console.error("Error fetching receipts history:", message);
-    throw new Error(message);
+    const message = body?.trim() ?? `Request failed with status ${res.status}`;
+    throw new Error(`Failed to fetch receipts history: ${message}`);
   }
 
   const rows = (await res.json()) as ApiRow[];
@@ -60,12 +60,17 @@ async function getRows(): Promise<CostiRow[]> {
 export { getRows };
 
 export default async function Page() {
-  const data = await getRows();
-  return (
-    <div className="@container/main flex flex-col gap-4 md:gap-6">
-      <SectionCards />
-      <ChartAreaInteractive />
-      <DataTable data={data} />
-    </div>
-  );
+  try {
+    const data = await getRows();
+    return (
+      <div className="@container/main flex flex-col gap-4 md:gap-6">
+        <SectionCards />
+        <ChartAreaInteractive />
+        <DataTable data={data} />
+      </div>
+    );
+  } catch (err) {
+    console.error("Failed to load receipts history:", err);
+    return <p>Errore nel caricamento dei dati</p>;
+  }
 }
