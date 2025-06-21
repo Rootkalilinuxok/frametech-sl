@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { eq, and, gte, lte } from "drizzle-orm";
+
 import { db } from "@/lib/db";
 import { receiptsLive } from "@/lib/schema";
 
@@ -13,20 +15,17 @@ export async function GET(req: NextRequest) {
   // Costruisci condizioni dinamiche
   let where = undefined;
   if (from && to) {
-  const fromDate = new Date(from + "T00:00:00.000Z");
-  const toDate = new Date(to + "T23:59:59.999Z");
-  where = and(
-    gte(receiptsLive.createdAt, fromDate),
-    lte(receiptsLive.createdAt, toDate)
-    );
+    const fromDate = new Date(from + "T00:00:00.000Z");
+    const toDate = new Date(to + "T23:59:59.999Z");
+    where = and(gte(receiptsLive.createdAt, fromDate), lte(receiptsLive.createdAt, toDate));
   }
 
   // Query Drizzle (prende tutto se where è undefined)
-  const rows = await db
-    .select()
-    .from(receiptsLive)
-    .where(where)
-    .orderBy(receiptsLive.createdAt);
-
-  return NextResponse.json(rows);
+  try {
+    const rows = await db.select().from(receiptsLive).where(where).orderBy(receiptsLive.createdAt);
+    return NextResponse.json(rows);
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Database error" }, { status: 500 });
+  }
 }
