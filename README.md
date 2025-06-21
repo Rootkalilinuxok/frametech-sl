@@ -23,18 +23,22 @@
   <img src="https://github.com/arhamkhnz/next-shadcn-admin-dashboard/blob/main/media/dashboard.png?version=5" alt="Dashboard Screenshot" width="75%">
 </div>
 
+---
+
 ## Project Vision
 
 The goal is to create an open-source admin template that includes multiple example screens, prebuilt sections, and thoughtfully designed UI patterns, all supported by a clean architecture and proper project setup.
 
 It aims to serve as a strong starting point for SaaS platforms, internal dashboards, and admin panels, with built-in support for multi-tenancy, RBAC, and feature-based scaling.
 
+---
+
 ## Overview
 
 This project uses `Next.js 15 (App Router)`, `TypeScript`, `Tailwind CSS v4`, and `Shadcn UI` as the main stack.  
 It also includes `Zod` for validation, `ESLint` and `Prettier` for linting and formatting, and `Husky` for pre-commit hooks.  
 
-This will support `React Hook Form`, `Zustand`, `TanStack Table`, and other related utilities, and will be added with upcoming screens. RBAC (Role-Based Access Control) with config-driven UI and multi-tenant UI support are also planned as part of the feature roadmap.
+It supports `React Hook Form`, `Zustand`, `TanStack Table`, and other related utilities, and will be added with upcoming screens. RBAC (Role-Based Access Control) with config-driven UI and multi-tenant UI support are also planned as part of the feature roadmap.
 
 The current version uses the [Tweakcn Tangerine](https://tweakcn.com/) theme for UI.
 
@@ -42,184 +46,25 @@ The current version uses the [Tweakcn Tangerine](https://tweakcn.com/) theme for
 > Check out the [`archive/next14-tailwindv3`](https://github.com/arhamkhnz/next-shadcn-admin-dashboard/tree/archive/next14-tailwindv3) branch.  
 > This branch uses a different color theme and is not actively maintained, though I'm trying to keep it updated with the latest changes and screens.
 
-## Screens
+---
 
-✅ Available  
-🚧 Coming Soon
+## AGENTS & Automations
 
-### Dashboards
-- ✅ Andamento
-- 🚧 CRM
-- 🚧 Analytics
-- 🚧 eCommerce
-- 🚧 Academy
-- 🚧 Logistics
-
-### Pages
-- 🚧 Email
-- 🚧 Chat
-- 🚧 Calendar
-- 🚧 Kanban
-- 🚧 Invoice
-- 🚧 Users
-- 🚧 Roles
-- ✅ Authentication
-
-## Colocation File System Architecture
-
-The project follows a colocation-first file structure using the App Router. Feature-specific pages live alongside their components to maintain separation of concerns and reduce cross-import complexity.
-
-```txt
-src/
-├── app/                      # Next.js App Router entry
-│   ├── (external)/           # Public pages (e.g., marketing, feedback)
-│
-│   ├── (main)/               # Main application layout
-│   │   ├── dashboard/
-│   │   │   ├── layout.tsx    # Shared layout for dashboard routes
-│   │   │   ├── andamento/    # Main overview dashboard
-│   │   │   │   ├── components/
-│   │   │   │   └── page.tsx
-│   │   │   ├── ecommerce/
-│   │   │   │   ├── components/
-│   │   │   │   └── page.tsx
-│   │   │   ├── email/
-│   │   │   │   ├── components/
-│   │   │   │   └── page.tsx
-│   │   │   ├── users/
-│   │   │   │   ├── components/
-│   │   │   │   └── page.tsx
-│   │   │   ├── profile/
-│   │   │   │   ├── components/
-│   │   │   │   └── page.tsx
-│   ├── auth/                  # Auth section
-│   │   ├── layout.tsx  
-│   │   ├── login/
-│   │   │   ├── components/
-│   │   │   └── page.tsx
-│   │   ├── register/
-│   │   │   ├── components/
-│   │   │   └── page.tsx
-│   │   ├── components/        # Shared auth components (e.g., buttons)
-│
-├── components/
-│   ├── ui/                    # Reusable UI primitives (button, input, etc.)
-│   ├── common/                # Shared layout/global components used across multiple areas
-│
-├── middleware.ts              # Middleware for handling auth/redirects
-├── navigation/                # Navigation config for sidebar
-├── hooks/                     # Custom React hooks
-├── utils/                     # Utility/helper functions
-├── server/                    # Server-only functions and server actions
-├── config/                    # Project-wide configuration (e.g. theme, layout)
-├── constants/                 # Static values like roles, app-level enums, routes, dummy data
-```
-
-If you want to dive deeper into this architecture pattern, check out [this repo](https://github.com/arhamkhnz/next-colocation-template).
-
-## Getting Started
-
-To set up and run this admin dashboard locally, follow these steps:
-
-> **Note**
-> This project uses **pnpm** as the preferred package manager. If you don't have it installed, run `npm install -g pnpm` first.
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/arhamkhnz/next-shadcn-admin-dashboard.git
-   ```
-   
-2. **Install dependencies**
-   ```bash
-   pnpm install
-   ```
-
-   Ensure you're running **Node.js 20.x** before starting the server. If you use nvm:
-   ```bash
-   nvm use 20
-   ```
-
-
-  > While installing, you may be prompted to use the `--force` or `--legacy-peer-deps` flag.
-
-  > This is expected and safe — it’s due to a dependency from the Shadcn registry that references a breaking library version.
-
-### Run database migrations
-
-After installing dependencies, generate the migration files and push them to your database:
-
-```bash
-pnpm generate:migrations
-pnpm push:migrations
-```
-
-Your `DATABASE_URL` must point to a user with permission to run migrations.
-To load optional sample data, run:
-
-```bash
-pnpm ts-node scripts/seed.ts
-```
-
-### 3. **Configure environment variables**
-
-You have two equivalent ways to provide the required environment variables – choose the one that best fits your workflow:
-
-1. **Copy the sample file and edit it**
-
-   ```bash
-   cp .env.example .env
-   # then open .env and set your real values for
-   # DATABASE_URL, GOOGLE_API_KEY and OPENAI_API_KEY
-   ```
-
-2. **Create (or append to) a local‑only environment file**
-
-   Set up a file such as `.env.local` (or export variables directly in your shell) with at least your database connection string, Google Vision API key, and OpenAI key:
-
-   ```bash
-   # example .env.local
-   DATABASE_URL=<your-postgres-connection>
-   GOOGLE_API_KEY=<your-google-api-key>
-   OPENAI_API_KEY=<your-openai-key>
-   ```
-
-   `GOOGLE_API_KEY` is the REST API key used by `/api/ocr` to call Google Cloud Vision.
-
-   > **Note** Some providers expose this value as `POSTGRES_URL`. If so, rename or duplicate it as `DATABASE_URL` so the application can find it.
-
-4. **Apply database migrations**
-   ```bash
-   pnpm run migrate
-   ```
-   Run this once before starting the server or as part of your deployment.
-
-5. **Start the development server**
-   ```bash
-   pnpm dev
-   ```
-
-Once running, the app will be available at [http://localhost:3000](http://localhost:3000)
-
-## Dashboard Metrics
-
-The dashboard exposes `/api/dashboard/costi-metrics`, which aggregates cost
-data from the `receipts_live` table.
-
-```ts
-const data = await fetch("/api/dashboard/costi-metrics").then((res) =>
-  res.json()
-);
-```
+> ℹ️ For build/test/AI/automation policies, see [AGENTS.md](./AGENTS.md).
+>
+> This project is AI/CI-ready and supports Codex, Copilot, and advanced workflows.
 
 ---
 
-> [!IMPORTANT]  
-> This project is frequently updated. If you’re working from a fork or previously cloned copy, check for the latest changes before syncing. Some updates may include breaking changes.
+## 🧠 AI-powered Vercel Deploy Debugger
 
----
+This project includes an **AI watcher script** (`ai-deploy-watcher.js`) that automatically monitors Vercel deploy errors, analyzes build logs, and provides OpenAI-powered suggestions for fixes.
 
-Feel free to open issues, feature requests, or start a discussion if you'd like to contribute or suggest improvements.
+- All AI logs are saved in `ai-deploy-watcher.log`.  
+  **Check this log before opening a Pull Request** to quickly identify and resolve build errors.
 
-**Happy building!**
-
-
+- The watcher runs automatically in cloud workspaces (Codex, CI) or can be launched locally with:
+  ```sh
+  pnpm ai:watcher
+  # or
+  node ai-deploy-watcher.js
