@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { receiptsLive } from "@/lib/schema";
+import { db } from "@scr/lib/db";
+import { receiptsLive } from "@scr/lib/schema";
 
 export async function POST(req: NextRequest) {
   const data = await req.json();
