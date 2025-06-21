@@ -1,66 +1,62 @@
 import { NextRequest, NextResponse } from "next/server";
-
-import { v1 as vision, protos } from "@google-cloud/vision";
 import { OpenAI } from "openai";
-import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { v4 as uuidv4 } from "uuid";
+import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-function parseCredentials(key: string) {
-  try {
-    return JSON.parse(key);
-  } catch {
-    return null;
-  }
-}
-
-function safeJsonParse<T>(input: string): T | null {
-  try {
-    return JSON.parse(input) as T;
-  } catch {
-    return null;
-  }
-}
-
-function extractText(result: protos.google.cloud.vision.v1.IAnnotateImageResponse) {
-  return result.textAnnotations?.[0]?.description ?? result.fullTextAnnotation?.text ?? "";
-}
-
 export async function POST(req: NextRequest) {
   const { base64, fileName, mimeType } = await req.json();
-
-  const key = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
+  const apiKey = process.env.GOOGLE_API_KEY;
   const openaiKey = process.env.OPENAI_API_KEY;
-  if (!key || !openaiKey) {
-    return NextResponse.json({ error: "API keys missing" }, { status: 500 });
+
+  if (!apiKey || !openaiKey) {
+    return NextResponse.json({ error: "API key(s) missing" }, { status: 500 });
   }
 
-  const credentials = parseCredentials(key);
-  if (!credentials) {
-    return NextResponse.json({ error: "Invalid GOOGLE_APPLICATION_CREDENTIALS_JSON" }, { status: 500 });
+  // Chiamata REST Google Vision OCR
+  const visionEndpoint = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
+  const body = {
+    requests: [
+      {
+        image: { content: base64 },
+        features: [
+          { type: mimeType === "application/pdf" ? "DOCUMENT_TEXT_DETECTION" : "TEXT_DETECTION", maxResults: 1 }
+        ]
+      }
+    ]
+  };
+
+  const visionRes = await fetch(visionEndpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+
+  if (!visionRes.ok) {
+    return NextResponse.json({ error: "Vision API Error" }, { status: 500 });
   }
 
-  const ocrClient = new vision.ImageAnnotatorClient({ credentials });
+  const visionData = await visionRes.json();
+  const response = visionData?.responses?.[0];
+  const text =
+    response?.fullTextAnnotation?.text ||
+    response?.textAnnotations?.[0]?.description ||
+    "";
+
+  if (!text || text.length < 8) {
+    return NextResponse.json({ error: "OCR vuoto o non leggibile", filename: fileName }, { status: 200 });
+  }
+
+  // GPT extraction
   const openai = new OpenAI({ apiKey: openaiKey });
-
-  // decode base64
-  const buffer = Buffer.from(base64, "base64");
-
-  let ocrResult;
-  if (mimeType === "application/pdf") {
-    [ocrResult] = await ocrClient.documentTextDetection({ image: { content: buffer } });
-  } else {
-    [ocrResult] = await ocrClient.textDetection({ image: { content: buffer } });
-  }
-  const text = extractText(ocrResult);
 
   const prompt: ChatCompletionMessageParam[] = [
     {
       role: "system",
       content: `
-Sei un sistema per l'estrazione di dati di ricevute, fatture o scontrini.  
+Sei un sistema per l'estrazione di dati di ricevute, fatture o scontrini.
 Dato un testo OCR (anche disordinato o rumoroso), restituisci **solo** e **sempre** un oggetto JSON, campi:
 {
   "id": "",
@@ -76,23 +72,27 @@ Dato un testo OCR (anche disordinato o rumoroso), restituisci **solo** e **sempr
   "percent": null        // opzionale, numero
 }
 Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve essere sempre valido e conforme!
-`,
+`
     },
     {
       role: "user",
-      content: `Testo OCR (estrai tutti i dati che trovi, massima accuratezza):\n\n${text}`,
-    },
+      content: `Testo OCR (estrai tutti i dati che trovi, massima accuratezza):\n\n${text}`
+    }
   ];
 
   const gptRes = await openai.chat.completions.create({
     model: "gpt-4o",
     messages: prompt,
-    response_format: { type: "json_object" },
+    response_format: { type: "json_object" }
   });
 
-  let dati = safeJsonParse<Record<string, unknown>>(gptRes.choices[0].message.content ?? "{}");
-  dati ??= {};
-  dati.id ??= uuidv4();
+  let dati;
+  try {
+    dati = JSON.parse(gptRes.choices[0].message.content || "{}");
+  } catch {
+    dati = {};
+  }
+  dati.id = dati.id || uuidv4();
   dati.filename = fileName;
 
   return NextResponse.json(dati);
