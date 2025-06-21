@@ -2,16 +2,11 @@
 // v2.1 – fixes import paths to existing shadcn/ui sub‑modules and keeps href & render features
 
 import Link from "next/link";
+
 import { TrendingDown, TrendingUp } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardAction,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 export interface KpiItem {
   title: string;
@@ -31,11 +26,7 @@ interface KpiCardGroupProps {
   className?: string;
 }
 
-export function KpiCardGroup({
-  items,
-  render,
-  className = "",
-}: KpiCardGroupProps) {
+export function KpiCardGroup({ items, render, className = "" }: KpiCardGroupProps) {
   return (
     <div
       className={`*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4 ${className}`}
@@ -45,9 +36,7 @@ export function KpiCardGroup({
           <Card key={item.title} className="@container/card" data-slot="card">
             <CardHeader>
               <CardDescription>{item.title}</CardDescription>
-              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                {item.value}
-              </CardTitle>
+              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">{item.value}</CardTitle>
               {item.delta && (
                 <CardAction>
                   <Badge variant="outline">
@@ -63,16 +52,10 @@ export function KpiCardGroup({
                 {item.message && (
                   <div className="line-clamp-1 flex gap-2 font-medium">
                     {item.message}
-                    {item.trend === "down" ? (
-                      <TrendingDown className="size-4" />
-                    ) : (
-                      <TrendingUp className="size-4" />
-                    )}
+                    {item.trend === "down" ? <TrendingDown className="size-4" /> : <TrendingUp className="size-4" />}
                   </div>
                 )}
-                {item.subtext && (
-                  <div className="text-muted-foreground">{item.subtext}</div>
-                )}
+                {item.subtext && <div className="text-muted-foreground">{item.subtext}</div>}
               </CardFooter>
             )}
           </Card>

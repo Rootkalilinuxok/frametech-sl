@@ -1,22 +1,26 @@
+import { createHash } from "crypto";
+
 import { NextRequest, NextResponse } from "next/server";
+
+import type { InferInsertModel } from "drizzle-orm";
 import { OpenAI } from "openai";
-import { v4 as uuidv4 } from "uuid";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
+import { v4 as uuidv4 } from "uuid";
+
 import { db } from "@/lib/db";
 import { receiptsLive } from "@/lib/schema";
-import type { InferInsertModel } from "drizzle-orm";
-import { createHash } from "crypto";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
 // Hash univoco riga
-function generateSourceHash(dati: any) {
+function generateSourceHash(dati: Record<string, unknown>) {
   return createHash("sha256")
     .update(JSON.stringify(dati) + (dati.filename ?? ""))
     .digest("hex");
 }
 
+// eslint-disable-next-line complexity
 export async function POST(req: NextRequest) {
   const { base64, fileName, mimeType } = await req.json();
   const apiKey = process.env.GOOGLE_API_KEY;
@@ -33,16 +37,16 @@ export async function POST(req: NextRequest) {
       {
         image: { content: base64 },
         features: [
-          { type: mimeType === "application/pdf" ? "DOCUMENT_TEXT_DETECTION" : "TEXT_DETECTION", maxResults: 1 }
-        ]
-      }
-    ]
+          { type: mimeType === "application/pdf" ? "DOCUMENT_TEXT_DETECTION" : "TEXT_DETECTION", maxResults: 1 },
+        ],
+      },
+    ],
   };
 
   const visionRes = await fetch(visionEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
   });
 
   if (!visionRes.ok) {
@@ -51,10 +55,7 @@ export async function POST(req: NextRequest) {
 
   const visionData = await visionRes.json();
   const response = visionData?.responses?.[0];
-  const text =
-    response?.fullTextAnnotation?.text ||
-    response?.textAnnotations?.[0]?.description ||
-    "";
+  const text = response?.fullTextAnnotation?.text ?? response?.textAnnotations?.[0]?.description ?? "";
 
   if (!text || text.length < 8) {
     return NextResponse.json({ error: "OCR vuoto o non leggibile", filename: fileName }, { status: 200 });
@@ -83,27 +84,27 @@ Dato un testo OCR (anche disordinato o rumoroso), restituisci **solo** e **sempr
   "percent": null       // opzionale, numero
 }
 Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve essere sempre valido e conforme!
-`
+`,
     },
     {
       role: "user",
-      content: `Testo OCR (estrai tutti i dati che trovi, massima accuratezza):\n\n${text}`
-    }
+      content: `Testo OCR (estrai tutti i dati che trovi, massima accuratezza):\n\n${text}`,
+    },
   ];
 
   const gptRes = await openai.chat.completions.create({
     model: "gpt-4o",
     messages: prompt,
-    response_format: { type: "json_object" }
+    response_format: { type: "json_object" },
   });
 
   let dati;
   try {
-    dati = JSON.parse(gptRes.choices[0].message.content || "{}");
+    dati = JSON.parse(gptRes.choices[0].message.content ?? "{}");
   } catch {
     dati = {};
   }
-  dati.id = dati.id || uuidv4();
+  dati.id = dati.id ?? uuidv4();
   dati.filename = fileName;
 
   // --- Salva direttamente la riga in receiptsLive ---
@@ -115,22 +116,14 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
       country: dati.country ?? null,
       currency: dati.currency,
       total: Number(dati.total) as unknown as string,
-      tip:
-        dati.tip !== null && dati.tip !== undefined
-          ? (Number(dati.tip) as unknown as string)
-          : null,
+      tip: dati.tip !== null && dati.tip !== undefined ? (Number(dati.tip) as unknown as string) : null,
       exchangeRate:
-          dati.exchangeRate !== null && dati.exchangeRate !== undefined
-            ? (Number(dati.exchangeRate) as unknown as string)
-            : null,
+        dati.exchangeRate !== null && dati.exchangeRate !== undefined
+          ? (Number(dati.exchangeRate) as unknown as string)
+          : null,
       totalEur:
-          dati.totalEur !== null && dati.totalEur !== undefined
-            ? (Number(dati.totalEur) as unknown as string)
-            : null,
-      percent:
-          dati.percent !== null && dati.percent !== undefined
-            ? (Number(dati.percent) as unknown as string)
-            : null,
+        dati.totalEur !== null && dati.totalEur !== undefined ? (Number(dati.totalEur) as unknown as string) : null,
+      percent: dati.percent !== null && dati.percent !== undefined ? (Number(dati.percent) as unknown as string) : null,
       paymentMethod: "",
       status: "new",
       sourceHash: generateSourceHash(dati),

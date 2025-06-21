@@ -1,5 +1,5 @@
 // src/middleware.ts
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 /**
  * Middleware neutro: lascia passare tutte le richieste

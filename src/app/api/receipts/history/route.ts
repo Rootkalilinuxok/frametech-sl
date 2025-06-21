@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { eq, and, gte, lte } from "drizzle-orm";
+import { and, gte, lte } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import { receiptsLive } from "@/lib/schema";

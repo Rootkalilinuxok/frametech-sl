@@ -22,6 +22,7 @@
  */
 
 import { ColumnDef } from "@tanstack/react-table";
+
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { SectionRowActions } from "@/components/table/row-actions";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -62,14 +63,14 @@ export const dashboardColumns: ColumnDef<ReceiptRow>[] = [
     header: ({ table }) => (
       <Checkbox
         checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Seleziona tutto"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
-        onCheckedChange={value => row.toggleSelected(!!value)}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Seleziona riga"
       />
     ),
@@ -128,8 +129,7 @@ export const dashboardColumns: ColumnDef<ReceiptRow>[] = [
   {
     accessorKey: "exchange_rate",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Cambio" />,
-    cell: ({ row }) =>
-      row.original.exchange_rate != null ? row.original.exchange_rate.toFixed(4) : "—",
+    cell: ({ row }) => (row.original.exchange_rate != null ? row.original.exchange_rate.toFixed(4) : "—"),
     size: 90,
   },
   {
@@ -141,8 +141,7 @@ export const dashboardColumns: ColumnDef<ReceiptRow>[] = [
   {
     accessorKey: "percent",
     header: ({ column }) => <DataTableColumnHeader column={column} title="+ %" />,
-    cell: ({ row }) =>
-      row.original.percent != null ? `${row.original.percent}%` : "—",
+    cell: ({ row }) => (row.original.percent != null ? `${row.original.percent}%` : "—"),
     size: 70,
   },
   // Azioni (fissa a destra)

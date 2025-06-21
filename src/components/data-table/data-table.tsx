@@ -19,7 +19,7 @@ interface DataTableProps<TData, TValue> {
   dataIds?: UniqueIdentifier[];
   dndEnabled?: boolean;
   handleDragEnd?: (event: DragEndEvent) => void;
-  sensors?: SensorDescriptor<any>[];
+  sensors?: SensorDescriptor[];
   sortableId?: string;
 }
 
