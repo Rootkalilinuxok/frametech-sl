@@ -113,8 +113,8 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "receipts_live_source_hash_unique": {
-          "name": "receipts_live_source_hash_unique",
+        "receipts_archive_source_hash_unique": {
+          "name": "receipts_archive_source_hash_unique",
           "nullsNotDistinct": false,
           "columns": [
             "source_hash"
