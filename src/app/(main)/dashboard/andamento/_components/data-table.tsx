@@ -12,70 +12,55 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { Plus } from "lucide-react";
+import { getCoreRowModel } from "@tanstack/react-table";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { useDataTableInstance } from "@/hooks/use-data-table-instance";
 import { DataTable as DataTableNew } from "@/components/data-table/data-table";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 import { DataTableViewOptions } from "@/components/data-table/data-table-view-options";
 import { withDndColumn } from "@/components/data-table/table-utils";
+import { useDataTableInstance } from "@/hooks/use-data-table-instance";
 
-import {
-  dashboardColumns,
-  type ReceiptRow,
-} from "./columns";
-
-// Import di getCoreRowModel da TanStack React-Table
-import { getCoreRowModel } from "@tanstack/react-table";
+import { dashboardColumns, type ReceiptRow } from "./columns";
 
 export function DataTable({ data: initialData }: { data: ReceiptRow[] }) {
   const dndEnabled = true;
-
-  // Stato locale dei dati, per il drag-and-drop
   const [data, setData] = React.useState<ReceiptRow[]>(() => initialData);
 
-  // Colonne con o senza colonna DnD
-  const columns = dndEnabled
-    ? withDndColumn(dashboardColumns)
-    : dashboardColumns;
+  // Colonne con o senza drag-n-drop
+  const columns = dndEnabled ? withDndColumn(dashboardColumns) : dashboardColumns;
 
-  // Sensori drag-and-drop
+  // Sensori dnd-kit
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
   );
 
-  // Lista di UniqueIdentifier per l’ordinamento
+  // Lista ID righe (unico)
   const dataIds = React.useMemo<UniqueIdentifier[]>(
-    () => data.map((row) => row.id),
+    () => data.map(row => row.id),
     [data]
   );
 
-  // Istanza della tabella: include obbligatoriamente getCoreRowModel
+  // Hook istanza react-table
   const table = useDataTableInstance({
     data,
     columns,
-    getRowId: (row) => row.id.toString(),
+    getRowId: row => row.id.toString(),
     getCoreRowModel: getCoreRowModel(),
   });
 
-  // Handler per terminare il drag
+  // Gestione riordinamento righe
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      setData((current) => {
+      setData(current => {
         const oldIndex = dataIds.indexOf(active.id);
         const newIndex = dataIds.indexOf(over!.id);
         return arrayMove(current, oldIndex, newIndex);
@@ -134,7 +119,7 @@ export function DataTable({ data: initialData }: { data: ReceiptRow[] }) {
         <DataTablePagination table={table} />
       </TabsContent>
 
-      {/* Le altre view rimangono inalterate */}
+      {/* Placeholder per altre viste */}
       <TabsContent value="past-performance" className="flex flex-col">
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed" />
       </TabsContent>
