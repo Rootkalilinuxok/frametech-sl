@@ -11,7 +11,8 @@
 
 # next.js
 /.next/
-/out/
+out/
+build/
 
 # production
 /build
@@ -25,10 +26,11 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
 # local env files
+.env*
 .env*.local
-.env
 
 # vercel
 .vercel
@@ -36,4 +38,23 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# lockfiles (opzionale: togli se vuoi versionare solo uno)
 package-lock.json
+yarn.lock
+
+
+# watcher AI log
+ai-deploy-watcher.log
+
+
+# Editor folders
+.idea/
+.vscode/
+*.swp
+
+# Backup files
+*.bak
+*~
+
+# Others (custom, aggiungi qui cartelle temporanee o di output extra)
