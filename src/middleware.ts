@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
  * Middleware neutro: lascia passare tutte le richieste
  * senza fare controlli di autenticazione.
  */
-export function middleware(_req: NextRequest) {
+export function middleware() {
   return NextResponse.next();
 }
 
