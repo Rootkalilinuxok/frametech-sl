@@ -41,9 +41,23 @@ async function getRows(): Promise<CostiRow[]> {
   const res = await fetch(`${baseUrl}/api/receipts/history`, {
     cache: "no-store",
   });
+
+  if (!res.ok) {
+    let message: string;
+    try {
+      message = await res.text();
+    } catch {
+      message = res.statusText;
+    }
+    console.error("Error fetching receipts history:", message);
+    throw new Error(message);
+  }
+
   const rows = (await res.json()) as ApiRow[];
   return rows.map(mapRow);
 }
+
+export { getRows };
 
 export default async function Page() {
   const data = await getRows();
