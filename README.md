@@ -139,9 +139,26 @@ To set up and run this admin dashboard locally, follow these steps:
    nvm use 20
    ```
 
-   > While installing, you may be prompted to use the `--force` or `--legacy-peer-deps` flag.
 
-   > This is expected and safe — it’s due to a dependency from the Shadcn registry that references a breaking library version.
+  > While installing, you may be prompted to use the `--force` or `--legacy-peer-deps` flag.
+
+  > This is expected and safe — it’s due to a dependency from the Shadcn registry that references a breaking library version.
+
+### Run database migrations
+
+After installing dependencies, generate the migration files and push them to your database:
+
+```bash
+pnpm generate:migrations
+pnpm push:migrations
+```
+
+Your `DATABASE_URL` must point to a user with permission to run migrations.
+To load optional sample data, run:
+
+```bash
+pnpm ts-node scripts/seed.ts
+```
 
 ### 3. **Configure environment variables**
 
