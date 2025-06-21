@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { eq, and, gte, lte } from "drizzle-orm";
 
-import { db } from "@/lib/db";
-import { receiptsLive } from "@/lib/schema";
+import { db } from "@scr/lib/db";
+import { receiptsLive } from "@scr/lib/schema";
 
 // Funzione per filtrare per periodo se richiesto
 export async function GET(req: NextRequest) {
