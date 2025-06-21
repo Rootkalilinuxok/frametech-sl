@@ -1,34 +1,33 @@
-/*More actions
-  Colonne per la tabella "Costi" (receipts_live) – **versione 2**
-  ───────────────────────────────────────────────────────────────
-  Ordine richiesto dall’utente:
-    1. ID
-    2. Data
-    3. Ora
-    4. Nome
-    5. Nazione
-    6. Valuta
-    7. Totale (importo originale)
-    8. Tip / Mancia
-    9. Cambio
-   10. Totale (€)
-   11. + % (eventuale maggiorazione / IVA / mark‑up)
-
-  Plus:   • colonna selezione (checkbox) all’inizio
-          • colonna Azioni alla fine
-  ───────────────────────────────────────────────────────────────
-
-  Dipendenze: TanStack React‑Table v8  ·  shadcn/ui (DataTableColumnHeader)
-*/
+/**
+ * Colonne per la tabella "Costi" (receipts_live) – versione 2
+ * ───────────────────────────────────────────────────────────────
+ * Ordine richiesto dall’utente:
+ *   1. ID
+ *   2. Data
+ *   3. Ora
+ *   4. Nome
+ *   5. Nazione
+ *   6. Valuta
+ *   7. Totale (importo originale)
+ *   8. Tip / Mancia
+ *   9. Cambio
+ *  10. Totale (€)
+ *  11. + % (eventuale maggiorazione / IVA / mark‑up)
+ *
+ * Plus:   • colonna selezione (checkbox) all’inizio
+ *         • colonna Azioni alla fine
+ * ───────────────────────────────────────────────────────────────
+ *
+ * Dipendenze: TanStack React-Table v8  ·  shadcn/ui (DataTableColumnHeader)
+ */
 
 import { ColumnDef } from "@tanstack/react-table";
-
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { SectionRowActions } from "@/components/table/row-actions";
 import { Checkbox } from "@/components/ui/checkbox";
 
 // ────────────────────────────────────────────────────────────
-//  Tipi
+// Tipi
 // ────────────────────────────────────────────────────────────
 export interface ReceiptRow {
   id: string;
@@ -45,7 +44,7 @@ export interface ReceiptRow {
 }
 
 // ────────────────────────────────────────────────────────────
-//  Helpers
+// Helpers
 // ────────────────────────────────────────────────────────────
 const fmtDate = (d: string) => new Date(d).toLocaleDateString("it-IT");
 const fmtTime = (t?: string) => t ?? "—";
@@ -54,7 +53,7 @@ const fmtCurr = (val: number, curr = "EUR") =>
 const fmtNum = (val?: number) => val ?? "—";
 
 // ────────────────────────────────────────────────────────────
-//  Definizione colonne
+// Definizione colonne
 // ────────────────────────────────────────────────────────────
 export const dashboardColumns: ColumnDef<ReceiptRow>[] = [
   // Checkbox di selezione (fissa)
@@ -63,14 +62,14 @@ export const dashboardColumns: ColumnDef<ReceiptRow>[] = [
     header: ({ table }) => (
       <Checkbox
         checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Seleziona tutto"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        onCheckedChange={value => row.toggleSelected(!!value)}
         aria-label="Seleziona riga"
       />
     ),
@@ -129,7 +128,8 @@ export const dashboardColumns: ColumnDef<ReceiptRow>[] = [
   {
     accessorKey: "exchange_rate",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Cambio" />,
-    cell: ({ row }) => (row.original.exchange_rate ? row.original.exchange_rate.toFixed(4) : "—"),
+    cell: ({ row }) =>
+      row.original.exchange_rate != null ? row.original.exchange_rate.toFixed(4) : "—",
     size: 90,
   },
   {
@@ -141,7 +141,8 @@ export const dashboardColumns: ColumnDef<ReceiptRow>[] = [
   {
     accessorKey: "percent",
     header: ({ column }) => <DataTableColumnHeader column={column} title="+ %" />,
-    cell: ({ row }) => (row.original.percent !== undefined ? row.original.percent + "%" : "—"),
+    cell: ({ row }) =>
+      row.original.percent != null ? `${row.original.percent}%` : "—",
     size: 70,
   },
   // Azioni (fissa a destra)
