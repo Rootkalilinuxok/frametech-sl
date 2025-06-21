@@ -108,7 +108,8 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
   // --- Salva direttamente la riga in receiptsLive ---
   try {
     await db.insert(receiptsLive).values({
-      date: dati.date ? new Date(dati.date) : new Date(), // fallback a oggi se assente
+      // Non serve id perché è autogenerato dallo schema
+      date: dati.date ? new Date(dati.date) : new Date(),
       time: dati.time ?? null,
       name: dati.name,
       country: dati.country ?? null,
@@ -118,10 +119,10 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
       exchangeRate: dati.exchange_rate !== null && dati.exchange_rate !== undefined ? Number(dati.exchange_rate) : null,
       totalEur: dati.total_eur !== null && dati.total_eur !== undefined ? Number(dati.total_eur) : null,
       percent: dati.percent !== null && dati.percent !== undefined ? Number(dati.percent) : null,
-      paymentMethod: "", // puoi mettere stringa vuota, oppure valorizzare se hai info
+      paymentMethod: "", // valorizza se hai info, altrimenti lascia vuoto
       status: "new",
       sourceHash: generateSourceHash(dati),
-      // createdAt: lasciato a defaultNow
+      // createdAt: lasciato a defaultNow dallo schema
     });
   } catch (err) {
     console.error("Failed to persist OCR result in DB", err);
