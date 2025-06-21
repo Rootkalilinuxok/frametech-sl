@@ -15,7 +15,7 @@ CREATE TABLE "receipts_archive" (
 	"source_hash" text NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"archived_at" timestamp DEFAULT now(),
-	CONSTRAINT "receipts_live_source_hash_unique" UNIQUE("source_hash")
+        CONSTRAINT "receipts_archive_source_hash_unique" UNIQUE("source_hash")
 );
 --> statement-breakpoint
 CREATE TABLE "receipts_live" (
