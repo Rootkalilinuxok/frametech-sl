@@ -9,7 +9,7 @@ import { createHash } from "crypto";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-// Funzione per generare un hash univoco della riga (obbligatorio nel DB)
+// Hash univoco riga
 function generateSourceHash(dati: any) {
   return createHash("sha256")
     .update(JSON.stringify(dati) + (dati.filename ?? ""))
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "API key(s) missing" }, { status: 500 });
   }
 
-  // --- OCR Google Vision (REST) ---
+  // OCR Google Vision (REST)
   const visionEndpoint = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
   const body = {
     requests: [
@@ -77,9 +77,9 @@ Dato un testo OCR (anche disordinato o rumoroso), restituisci **solo** e **sempr
   "currency": "",
   "tip": null,      // opzionale, numero
   "total": 0,       // numero
-  "exchange_rate": null, // opzionale, numero
-  "total_eur": 0,        // numero
-  "percent": null        // opzionale, numero
+  "exchangeRate": null, // opzionale, numero (ATTENZIONE: camelCase!)
+  "totalEur": 0,        // numero (camelCase!)
+  "percent": null       // opzionale, numero
 }
 Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve essere sempre valido e conforme!
 `
@@ -108,21 +108,21 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
   // --- Salva direttamente la riga in receiptsLive ---
   try {
     await db.insert(receiptsLive).values({
-      // Non serve id perché è autogenerato dallo schema
-      date: dati.date ? new Date(dati.date) : new Date(),
+      // l'id lo genera drizzle a meno che tu non voglia inserirlo tu manualmente
+      date: dati.date ? new Date(dati.date) : new Date(), // fallback oggi
       time: dati.time ?? null,
       name: dati.name,
       country: dati.country ?? null,
       currency: dati.currency,
       total: Number(dati.total),
       tip: dati.tip !== null && dati.tip !== undefined ? Number(dati.tip) : null,
-      exchangeRate: dati.exchange_rate !== null && dati.exchange_rate !== undefined ? Number(dati.exchange_rate) : null,
-      totalEur: dati.total_eur !== null && dati.total_eur !== undefined ? Number(dati.total_eur) : null,
+      exchangeRate: dati.exchangeRate !== null && dati.exchangeRate !== undefined ? Number(dati.exchangeRate) : null,
+      totalEur: dati.totalEur !== null && dati.totalEur !== undefined ? Number(dati.totalEur) : null,
       percent: dati.percent !== null && dati.percent !== undefined ? Number(dati.percent) : null,
-      paymentMethod: "", // valorizza se hai info, altrimenti lascia vuoto
+      paymentMethod: "",
       status: "new",
       sourceHash: generateSourceHash(dati),
-      // createdAt: lasciato a defaultNow dallo schema
+      // createdAt lasciato al defaultNow()
     });
   } catch (err) {
     console.error("Failed to persist OCR result in DB", err);
