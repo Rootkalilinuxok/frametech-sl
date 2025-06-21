@@ -1,21 +1,28 @@
-import { describe, it, expect, vi } from "vitest";
 import type { NextRequest } from "next/server";
 
-var mockInsert: any;
-var mockValues: any;
+import { describe, it, expect, vi, type Mock } from "vitest";
 
-vi.mock("@/lib/db", () => {
-  mockValues = vi.fn();
-  mockInsert = vi.fn(() => ({ values: mockValues }));
-  return { db: { insert: mockInsert } };
-});
+const mockValues: Mock<[], unknown> = vi.fn();
+const mockInsert: Mock<[], { values: Mock<[], unknown> }> = vi.fn(() => ({
+  values: mockValues,
+}));
+
+vi.doMock("@/lib/db", () => ({ db: { insert: mockInsert } }));
 vi.mock("@/lib/schema", () => ({ receiptsLive: {} }));
-
-import { POST } from "./route";
 
 describe("receipts POST API", () => {
   it("inserts data into receipts_live", async () => {
-    const req = { json: vi.fn().mockResolvedValue({ id: "1", date: "2024-01-01", currency: "EUR", total: 10, source_hash: "x" }) } as unknown as NextRequest;
+    const { POST } = await import("./route");
+    const req = {
+      json: vi.fn().mockResolvedValue({
+        id: "1",
+        date: "2024-01-01",
+        currency: "EUR",
+        total: 10,
+        source_hash: "x",
+      }),
+    } as unknown as NextRequest;
+
     const res = await POST(req);
     expect(mockInsert).toHaveBeenCalledWith(expect.anything());
     expect(mockValues).toHaveBeenCalled();
