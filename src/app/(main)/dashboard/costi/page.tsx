@@ -2,6 +2,7 @@ import { SectionCards } from "./_components/section-cards";
 import { DataTable } from "./_components/data-table";
 import type { CostiRow } from "./_components/columns";
 
+// Tipo che rappresenta la risposta della tua API (adattalo se cambiano i nomi/campi)
 type ApiRow = {
   id: string;
   date: string;
@@ -9,38 +10,40 @@ type ApiRow = {
   name: string;
   country?: string;
   currency: string;
-  tip?: number | null;
-  total: number | string;
-  exchangeRate?: number | null;
-  totalEur?: number | null;
-  percent?: number | null;
+  tip?: number | string | null;
+  total: number | string | null;
+  exchangeRate?: number | string | null;
+  totalEur?: number | string | null;
+  percent?: number | string | null;
 };
 
-// Mapping function: adatta l'oggetto dal backend a CostiRow
+// Funzione di mapping: converte una riga da API a CostiRow per la tabella
 function mapRow(row: ApiRow): CostiRow {
   return {
     id: row.id,
-    date: row.date,
-    time: row.time || "",
-    name: row.name,
-    country: row.country || "",
-    currency: row.currency,
-    tip: row.tip ?? 0,
-    total: Number(row.total ?? 0),
-    exchange_rate: row.exchangeRate ?? 0,
-    total_eur: row.totalEur ?? 0,
-    percent: row.percent ?? 0,
+    date: row.date ? row.date.slice(0, 10) : "",
+    time: row.time ?? "",
+    name: row.name ?? "",
+    country: row.country ?? "",
+    currency: row.currency ?? "",
+    tip: row.tip !== null && row.tip !== undefined ? Number(row.tip) : 0,
+    total: row.total !== null && row.total !== undefined ? Number(row.total) : 0,
+    exchange_rate:
+      row.exchangeRate !== null && row.exchangeRate !== undefined
+        ? Number(row.exchangeRate)
+        : 0,
+    total_eur:
+      row.totalEur !== null && row.totalEur !== undefined
+        ? Number(row.totalEur)
+        : 0,
+    percent: row.percent !== null && row.percent !== undefined ? Number(row.percent) : 0,
   };
 }
 
+// Funzione async che chiama la tua API (usa path corretto!)
+// ATTENZIONE: se la tua API risponde su /dashboard/costi/api/receipts/history va usato questo!
 async function getRows(): Promise<CostiRow[]> {
-  // Next.js App Router: process.env.VERCEL_URL solo su Vercel, fallback su localhost
-  const baseUrl =
-    process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : "http://localhost:3000";
-
-  const res = await fetch(`${baseUrl}/api/receipts/history`, { cache: "no-store" });
+  const res = await fetch("/dashboard/costi/api/receipts/history", { cache: "no-store" });
   if (!res.ok) {
     const text = await res.text();
     throw new Error("Errore fetch dati costi: " + res.status + " - " + text);
@@ -49,6 +52,7 @@ async function getRows(): Promise<CostiRow[]> {
   return apiRows.map(mapRow);
 }
 
+// Componente principale della pagina
 export default async function Page() {
   const data = await getRows();
   return (
