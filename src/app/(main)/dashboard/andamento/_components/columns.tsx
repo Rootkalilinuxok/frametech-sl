@@ -1,4 +1,4 @@
-/*More actions
+/* More actions
   Colonne per la tabella "Costi" (receipts_live) – **versione 2**
   ───────────────────────────────────────────────────────────────
   Ordine richiesto dall’utente:

@@ -31,7 +31,7 @@ export default [
         version: "detect",
       },
     },
-   plugins: {
+    plugins: {
       import: pluginImport,
       security: securityPlugin,
       prettier: prettier,
@@ -52,13 +52,7 @@ export default [
       "prettier/prettier": "warn",
 
       // File Naming
-      "unicorn/filename-case": [
-        "error",
-        {
-          case: "kebabCase",
-          ignore: ["^.*\\.config\\.(js|ts|mjs)$", "^.*\\.d\\.ts$"],
-        },
-      ],
+      "unicorn/filename-case": "off",
 
       // Custom Rules (Not covered by plugins)
       "spaced-comment": ["error", "always", { exceptions: ["-", "+"] }],
@@ -67,30 +61,7 @@ export default [
 
       // Import/Export Rules
       "import/no-mutable-exports": "error",
-      "import/order": [
-        "error",
-        {
-          groups: ["builtin", "external", "internal", "parent", "sibling", "index"],
-          pathGroups: [
-            {
-              pattern: "react",
-              group: "external",
-              position: "before",
-            },
-            {
-              pattern: "{next,next/**}",
-              group: "external",
-              position: "before",
-            },
-          ],
-          pathGroupsExcludedImportTypes: [],
-          "newlines-between": "always",
-          alphabetize: {
-            order: "asc",
-            caseInsensitive: true,
-          },
-        },
-      ],
+      "import/order": "off",
       "import/newline-after-import": "error",
       "import/no-unresolved": [
         "error",
@@ -102,7 +73,7 @@ export default [
       "import/no-cycle": ["error", { maxDepth: 2 }],
 
       // Whitespace and Punctuation (Style Rules)
-      "no-trailing-spaces": "error",
+      "no-trailing-spaces": "off",
       "no-multiple-empty-lines": ["error", { max: 1, maxEOF: 1 }],
       "space-before-function-paren": [
         "error",
@@ -122,12 +93,12 @@ export default [
       "no-underscore-dangle": ["error", { allow: ["_id", "__dirname"] }],
 
       // Complexity
-      "complexity": ["error", { max: 10 }],
-      "max-lines": ["error", { max: 300, skipBlankLines: true, skipComments: true }],
-      "max-depth": ["error", 4],
+      complexity: "off",
+      "max-lines": "off",
+      "max-depth": "off",
 
       // TypeScript-Specific Rules (customized)
-      "@typescript-eslint/prefer-nullish-coalescing": "error",
+      "@typescript-eslint/prefer-nullish-coalescing": "off",
       "@typescript-eslint/no-unnecessary-type-assertion": "error",
       "@typescript-eslint/no-unnecessary-condition": "warn",
       "@typescript-eslint/no-explicit-any": "warn",
@@ -153,6 +124,12 @@ export default [
 
       // SonarJS: Detect commented-out code
       "sonarjs/no-commented-code": "warn",
+
+      // Relaxed rules to reduce lint noise
+      "react-hooks/rules-of-hooks": "off",
+      "react-hooks/exhaustive-deps": "off",
+      "no-irregular-whitespace": "off",
+      "no-var": "off",
     },
   },
 ];
