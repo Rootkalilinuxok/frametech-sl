@@ -22,7 +22,7 @@ function numOrNull(value: unknown): string | null {
   return value !== null && value !== undefined ? (Number(value) as unknown as string) : null;
 }
 
-// eslint-disable-next-line complexity
+// OCR Google Vision API
 async function callVisionAPI(apiKey: string, base64: string, mimeType: string) {
   const endpoint = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
   const type = mimeType === "application/pdf" ? "DOCUMENT_TEXT_DETECTION" : "TEXT_DETECTION";
@@ -56,6 +56,7 @@ async function callVisionAPI(apiKey: string, base64: string, mimeType: string) {
   return "";
 }
 
+// GPT: estrai dati strutturati
 async function extractWithGPT(openaiKey: string, text: string, fileName: string) {
   const openai = new OpenAI({ apiKey: openaiKey });
   const prompt: ChatCompletionMessageParam[] = [
@@ -103,6 +104,7 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
   return dati;
 }
 
+// Salva su DB
 async function persistReceipt(dati: Record<string, unknown>) {
   try {
     const row: InferInsertModel<typeof receiptsLive> = {
@@ -128,29 +130,41 @@ async function persistReceipt(dati: Record<string, unknown>) {
 }
 
 export async function POST(req: NextRequest) {
+  // Step 1: parse input e env
   const { base64, fileName, mimeType } = await req.json();
   const apiKey = process.env.GOOGLE_API_KEY;
   const openaiKey = process.env.OPENAI_API_KEY;
 
+  // Step 2: check chiavi API
   if (!apiKey || !openaiKey) {
     return NextResponse.json({ error: "API key(s) missing" }, { status: 500 });
   }
 
   try {
+    // Step 3: OCR
     const text = await callVisionAPI(apiKey, base64, mimeType);
+    console.log("TESTO OCR:", text);   // <--- LOG
+
     if (!text || text.length < 8) {
+      console.warn("OCR vuoto o troppo corto", { text, fileName });
       return NextResponse.json({ error: "OCR vuoto o non leggibile", filename: fileName }, { status: 200 });
     }
 
+    // Step 4: GPT
     const dati = await extractWithGPT(openaiKey, text, fileName);
+    console.log("DATI GPT:", dati);    // <--- LOG
+
+    // Step 5: Persistenza su DB
     await persistReceipt(dati);
+
+    // Step 6: Risposta
     return NextResponse.json(dati);
   } catch (err) {
+    console.error("OCR route error", err);
     const message = (err as Error).message;
     if (message === "Vision API Error") {
       return NextResponse.json({ error: message }, { status: 500 });
     }
-    console.error(err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
