@@ -109,7 +109,7 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
 
       // 2. Invia singola fetch per ogni file
       try {
-        const res = await fetch("/(main)/dashboard/costi/api/ocr", {
+        const res = await fetch("/app/api/ocr/route.ts", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
