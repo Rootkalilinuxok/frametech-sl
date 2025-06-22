@@ -7,7 +7,7 @@ import { pgTable, uuid, varchar, numeric, timestamp, text } from "drizzle-orm/pg
  * object that can be spread into both table definitions.
  */
 const receiptColumns = {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id: serial("id").primaryKey(),
   date: timestamp("date", { mode: "date" }).notNull(),
   time: varchar("time", { length: 8 }),
   name: varchar("name", { length: 120 }).notNull(),
