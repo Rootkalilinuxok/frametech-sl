@@ -1,5 +1,4 @@
 import { ChartAreaInteractive } from "../andamento/_components/chart-area-interactive";
-
 import type { CostiRow } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
 import { SectionCards } from "./_components/section-cards";
@@ -38,6 +37,7 @@ function mapRow(row: ApiRow): CostiRow {
 
 async function getRows(): Promise<CostiRow[]> {
   const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
+  console.log("[COSTI] Chiamata API receipts/history →", `${baseUrl}/api/receipts/history`);
   const res = await fetch(`${baseUrl}/api/receipts/history`, {
     cache: "no-store",
   });
@@ -50,11 +50,27 @@ async function getRows(): Promise<CostiRow[]> {
       // ignore
     }
     const message = body?.trim() ?? `Request failed with status ${res.status}`;
+    console.error("[COSTI] Response NOT ok:", message);
     throw new Error(`Failed to fetch receipts history: ${message}`);
   }
 
-  const rows = (await res.json()) as ApiRow[];
-  return rows.map(mapRow);
+  let rows: ApiRow[];
+  try {
+    rows = (await res.json()) as ApiRow[];
+    console.log("[COSTI] API response (raw):", rows);
+  } catch (err) {
+    console.error("[COSTI] Errore parsing JSON dalla response:", err);
+    throw new Error("Errore parsing JSON dalla response API costi");
+  }
+
+  if (!rows || !Array.isArray(rows)) {
+    console.error("[COSTI] La risposta NON è un array valido!", rows);
+    throw new Error("La risposta NON è un array valido!");
+  }
+
+  const mapped = rows.map(mapRow);
+  console.log("[COSTI] Mappato in CostiRow[]:", mapped);
+  return mapped;
 }
 
 export { getRows };
@@ -62,6 +78,7 @@ export { getRows };
 export default async function Page() {
   try {
     const data = await getRows();
+    console.log("[COSTI] DataTable riceve dati:", data);
     return (
       <div className="@container/main flex flex-col gap-4 md:gap-6">
         <SectionCards />
