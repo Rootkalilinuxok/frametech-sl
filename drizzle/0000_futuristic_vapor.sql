@@ -1,5 +1,5 @@
 CREATE TABLE "receipts_archive" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id": serial("id").primaryKey(),
 	"date" timestamp NOT NULL,
 	"time" varchar,
 	"name" varchar NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE "receipts_archive" (
 );
 --> statement-breakpoint
 CREATE TABLE "receipts_live" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id": serial("id").primaryKey(),
 	"date" timestamp NOT NULL,
 	"time" varchar,
 	"name" varchar NOT NULL,
