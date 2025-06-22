@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import {
   KeyboardSensor,
   MouseSensor,
@@ -11,19 +12,18 @@ import {
   type UniqueIdentifier,
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import { Plus } from "lucide-react";
 import { getCoreRowModel } from "@tanstack/react-table";
-
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Plus } from "lucide-react";
 
 import { DataTable as DataTableNew } from "@/components/data-table/data-table";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 import { DataTableViewOptions } from "@/components/data-table/data-table-view-options";
 import { withDndColumn } from "@/components/data-table/table-utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDataTableInstance } from "@/hooks/use-data-table-instance";
 
 import { dashboardColumns, type ReceiptRow } from "./columns";
@@ -36,23 +36,16 @@ export function DataTable({ data: initialData }: { data: ReceiptRow[] }) {
   const columns = dndEnabled ? withDndColumn(dashboardColumns) : dashboardColumns;
 
   // Sensori dnd-kit
-  const sensors = useSensors(
-    useSensor(MouseSensor, {}),
-    useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {})
-  );
+  const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
 
   // Lista ID righe (unico)
-  const dataIds = React.useMemo<UniqueIdentifier[]>(
-    () => data.map(row => row.id),
-    [data]
-  );
+  const dataIds = React.useMemo<UniqueIdentifier[]>(() => data.map((row) => row.id), [data]);
 
   // Hook istanza react-table
   const table = useDataTableInstance({
     data,
     columns,
-    getRowId: row => row.id.toString(),
+    getRowId: (row) => row.id.toString(),
     getCoreRowModel: getCoreRowModel(),
   });
 
@@ -60,7 +53,7 @@ export function DataTable({ data: initialData }: { data: ReceiptRow[] }) {
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      setData(current => {
+      setData((current) => {
         const oldIndex = dataIds.indexOf(active.id);
         const newIndex = dataIds.indexOf(over!.id);
         return arrayMove(current, oldIndex, newIndex);

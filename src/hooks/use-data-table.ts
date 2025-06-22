@@ -1,12 +1,12 @@
 "use client";
 
-import { 
+import {
   useReactTable,
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   type ColumnDef,
-  type RowData
+  type RowData,
 } from "@tanstack/react-table";
 
 interface UseDataTableProps<TData extends RowData> {
@@ -15,11 +15,7 @@ interface UseDataTableProps<TData extends RowData> {
   getRowId?: (row: TData) => string;
 }
 
-export function useDataTable<TData extends RowData>({
-  data,
-  columns,
-  getRowId,
-}: UseDataTableProps<TData>) {
+export function useDataTable<TData extends RowData>({ data, columns, getRowId }: UseDataTableProps<TData>) {
   const table = useReactTable({
     data,
     columns,

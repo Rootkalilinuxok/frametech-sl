@@ -45,7 +45,7 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
   const dataIds = React.useMemo<UniqueIdentifier[]>(() => data.map((row) => row.id), [data]);
 
   // FUNZIONE DI UPDATE per rendere editabili le celle
-  const updateData = (rowIndex: number, columnId: string, value: any) => {
+  const updateData = (rowIndex: number, columnId: string, value: unknown) => {
     setData((old) => old.map((row, index) => (index === rowIndex ? { ...row, [columnId]: value } : row)));
   };
 
@@ -128,8 +128,9 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
         } else {
           newRows.push(dati);
         }
-      } catch (err: any) {
-        warningList.push({ filename: file.name, reason: err.message ?? "Errore sconosciuto" });
+      } catch (err: unknown) {
+        const error = err as Error;
+        warningList.push({ filename: file.name, reason: error.message ?? "Errore sconosciuto" });
       }
       // Aggiorna barra avanzamento per ogni file
       current++;

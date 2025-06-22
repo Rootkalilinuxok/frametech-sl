@@ -1,7 +1,5 @@
 import { createHash } from "crypto";
-
 import { NextRequest, NextResponse } from "next/server";
-
 import type { InferInsertModel } from "drizzle-orm";
 import { OpenAI } from "openai";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";

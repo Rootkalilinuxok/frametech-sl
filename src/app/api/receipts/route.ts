@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { db } from "@/lib/db";
 import { receiptsLive } from "@/lib/schema";
 
+// eslint-disable-next-line complexity
 export async function POST(req: NextRequest) {
   const data = await req.json();
 
@@ -20,7 +22,7 @@ export async function POST(req: NextRequest) {
     paymentMethod: data.payment_method ?? null,
     status: data.status ?? "new",
     sourceHash: data.source_hash ?? data.id,
-  } as any;
+  } as typeof receiptsLive.$inferInsert;
 
   await db.insert(receiptsLive).values(row);
   return NextResponse.json({ success: true });

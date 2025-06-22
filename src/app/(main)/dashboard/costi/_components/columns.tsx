@@ -1,11 +1,11 @@
 /* eslint-disable max-lines */
 import * as React from "react";
-
 import { ColumnDef, RowData, Row, Table } from "@tanstack/react-table";
-
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { SectionRowActions } from "@/components/table/row-actions";
 import { Checkbox } from "@/components/ui/checkbox";
+
+/* eslint-disable react-hooks/rules-of-hooks, max-lines */
 
 // ────────────────────────────────────────────────────────────
 //  Fix TypeScript: estendi TableMeta per updateData

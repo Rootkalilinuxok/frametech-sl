@@ -1,5 +1,4 @@
 import type { NextRequest } from "next/server";
-
 import { describe, it, expect, vi, type Mock } from "vitest";
 
 const mockValues: Mock<[], unknown> = vi.fn();

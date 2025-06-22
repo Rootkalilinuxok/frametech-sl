@@ -113,7 +113,7 @@ export default function DataTableResizable({ data }: { data: CostRow[] }) {
       {
         id: "actions",
         header: () => <span className="sr-only">Azioni</span>,
-        cell: ({ row }) => (
+        cell: () => (
           <button onClick={() => {}} className="text-sm underline">
             Modifica
           </button>
