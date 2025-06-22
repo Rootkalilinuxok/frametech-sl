@@ -41,6 +41,7 @@ async function callVisionAPI(apiKey: string, base64: string, mimeType: string) {
     body: JSON.stringify(body),
   });
 
+  
   if (!res.ok) {
     throw new Error("Vision API Error");
   }
