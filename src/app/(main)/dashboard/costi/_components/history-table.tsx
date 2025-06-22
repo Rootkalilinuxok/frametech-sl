@@ -1,18 +1,24 @@
 "use client";
-import React, { useEffect, useState } from "react";
 
+import React, { useEffect, useState } from "react";
 import { DownloadIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
-
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Table, TableHead, TableHeader, TableBody, TableRow, TableCell } from "@/components/ui/table";
+import {
+  Table,
+  TableHead,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@/components/ui/table";
 
-// Tipi dati: devono rispecchiare receiptsLive da schema.ts
+// Tipi: devono riflettere receiptsLive da schema
 type HistoryRow = {
-  id: string; // UUID reale
-  date: string | null; // Data documento (può essere null)
+  id: string; // UUID
+  date: string | null; // Data documento
   time?: string | null;
   name: string;
   country?: string | null;
@@ -25,7 +31,7 @@ type HistoryRow = {
   paymentMethod?: string | null;
   status?: string;
   sourceHash?: string;
-  createdAt: string; // Data caricamento (timestamp ISO)
+  createdAt: string; // Timestamp ISO
 };
 
 type Period = { from: Date | null; to: Date | null };
@@ -35,17 +41,22 @@ export default function HistoryTable() {
   const [period, setPeriod] = useState<Period>({ from: null, to: null });
   const [loading, setLoading] = useState(false);
 
-  // Carica dati all'avvio o al cambio periodo
+  // Caricamento dati dal backend (con filtro periodo)
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      let url = "/api/receipts/history";
+      let url = "/dashboard/costi/api/receipts/history";
       if (period.from && period.to) {
         const from = period.from.toISOString().slice(0, 10);
         const to = period.to.toISOString().slice(0, 10);
         url += `?from=${from}&to=${to}`;
       }
       const res = await fetch(url);
+      if (!res.ok) {
+        setData([]);
+        setLoading(false);
+        return;
+      }
       const rows: HistoryRow[] = await res.json();
       setData(rows);
       setLoading(false);
@@ -53,7 +64,7 @@ export default function HistoryTable() {
     fetchData();
   }, [period]);
 
-  // ID progressivo formattato a 4 cifre
+  // Righe visibili con ID progressivo
   const visibleRows = data
     .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
     .map((row, idx) => ({
@@ -62,7 +73,7 @@ export default function HistoryTable() {
       displayDate: row.createdAt ? format(new Date(row.createdAt), "dd/MM/yyyy HH:mm") : "",
     }));
 
-  // Export dati visibili (CSV)
+  // Esportazione CSV
   const exportCSV = () => {
     const header = [
       "ID cronologico",
@@ -86,7 +97,7 @@ export default function HistoryTable() {
         row.date ? format(new Date(row.date), "dd/MM/yyyy") : "",
         row.time ?? "",
         row.country ?? "",
-      ].join(";"),
+      ].join(";")
     );
     const csvContent = [header.join(";"), ...rows].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
