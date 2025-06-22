@@ -177,6 +177,16 @@ You have two equivalent ways to provide the required environment variables – 
 
 Once running, the app will be available at [http://localhost:3000](http://localhost:3000)
 
+5. **Run ESLint**
+   ```bash
+   pnpm run lint
+   ```
+
+6. **Run unit tests**
+   ```bash
+   pnpm test
+   ```
+
 ## Dashboard Metrics
 
 The dashboard exposes `/api/dashboard/costi-metrics`, which aggregates cost
