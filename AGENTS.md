@@ -1,5 +1,8 @@
 # AGENTS.md
 
+> ℹ️ **ATTENZIONE: Tutte le procedure tecniche dettagliate, policy CI/CD, workflow Vercel/Next.js/OpenAI, fix errori, troubleshooting e script sono documentati nella guida [guida-vercel.md](./guida-vercel.md) nella root. Consultare SEMPRE quella guida prima di modificare script, policy o proporre fix automatici.**
+
+
 ## 🚀 Build, Test, Lint, Deploy
 
 - **Install dependencies:**  
