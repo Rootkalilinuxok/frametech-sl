@@ -175,7 +175,7 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
     setData((prev) =>
       prev.map((row) =>
         selectedRowIds.includes(row.id)
-          ? { ...row, date: "", time: "", name: "", country: "", currency: "", tip: "", total: "", exchangeRate: "", totalEur: "", percent: "" }
+          ? { ...row, date: "", time: "", name: "", country: "", currency: "", tip: 0, total: 0, exchangeRate: 0, totalEur: 0, percent: 0 }
           : row
       )
     );
