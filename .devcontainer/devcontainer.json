@@ -1,8 +1,8 @@
 {
   "name": "FrameTech SL Dev",
-  "image": "openai/codex-universal:latest",
-  "remoteUser": "coder",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "remoteUser": "node",
   "forwardPorts": [3000],
   "runArgs": ["--network", "host"],
-  "postCreateCommand": "nvm install 20 && nvm alias default 20 && pnpm install"
+  "postCreateCommand": "pnpm install"
 }
