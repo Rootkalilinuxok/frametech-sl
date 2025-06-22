@@ -128,7 +128,10 @@ To set up and run this admin dashboard locally, follow these steps:
    ```bash
    git clone https://github.com/arhamkhnz/next-shadcn-admin-dashboard.git
    ```
-   
+
+> **Important**
+> After cloning, run `pnpm install` to install dependencies before running any project scripts.
+
 2. **Install dependencies**
    ```bash
    pnpm install
