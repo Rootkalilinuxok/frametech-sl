@@ -38,6 +38,10 @@ interface CellProps {
   table: Table<CostiRow>;
 }
 
+// ────────────────────────────────────────────────────────────
+//  Celle editabili
+// ────────────────────────────────────────────────────────────
+
 export function DateCell({ row, table }: CellProps) {
   const [value, setValue] = React.useState(row.original.date);
   React.useEffect(() => {
