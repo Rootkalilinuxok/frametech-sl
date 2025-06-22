@@ -175,13 +175,13 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
     setData((prev) =>
       prev.map((row) =>
         selectedRowIds.includes(row.id)
-          ? { ...row, name: "", country: "", currency: "", tip: 0, total: 0, exchangeRate: 0, totalEur: 0, percent: 0 }
+          ? { ...row, date: "", time: "", name: "", country: "", currency: "", tip: "", total: "", exchangeRate: "", totalEur: "", percent: "" }
           : row
       )
     );
   }
 
-  return (
+  return ( 
     <Tabs defaultValue="filtri" className="w-full flex-col gap-6">
       <div className="flex items-center justify-between">
         <div className="mb-4 flex items-center gap-2">
