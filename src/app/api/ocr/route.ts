@@ -22,16 +22,16 @@ export async function POST(req: NextRequest) {
       {
         image: { content: base64 },
         features: [
-          { type: mimeType === "application/pdf" ? "DOCUMENT_TEXT_DETECTION" : "TEXT_DETECTION", maxResults: 1 }
-        ]
-      }
-    ]
+          { type: mimeType === "application/pdf" ? "DOCUMENT_TEXT_DETECTION" : "TEXT_DETECTION", maxResults: 1 },
+        ],
+      },
+    ],
   };
 
   const visionRes = await fetch(visionEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
   });
 
   if (!visionRes.ok) {
@@ -40,10 +40,7 @@ export async function POST(req: NextRequest) {
 
   const visionData = await visionRes.json();
   const response = visionData?.responses?.[0];
-  const text =
-    response?.fullTextAnnotation?.text ||
-    response?.textAnnotations?.[0]?.description ||
-    "";
+  const text = response?.fullTextAnnotation?.text || response?.textAnnotations?.[0]?.description || "";
 
   if (!text || text.length < 8) {
     return NextResponse.json({ error: "OCR vuoto o non leggibile", filename: fileName }, { status: 200 });
@@ -72,18 +69,18 @@ Dato un testo OCR (anche disordinato o rumoroso), restituisci **solo** e **sempr
   "percent": null        // opzionale, numero
 }
 Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve essere sempre valido e conforme!
-`
+`,
     },
     {
       role: "user",
-      content: `Testo OCR (estrai tutti i dati che trovi, massima accuratezza):\n\n${text}`
-    }
+      content: `Testo OCR (estrai tutti i dati che trovi, massima accuratezza):\n\n${text}`,
+    },
   ];
 
   const gptRes = await openai.chat.completions.create({
     model: "gpt-4o",
     messages: prompt,
-    response_format: { type: "json_object" }
+    response_format: { type: "json_object" },
   });
 
   let dati;

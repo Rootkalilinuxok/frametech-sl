@@ -20,20 +20,16 @@ export function KpiCardGroup({ items }: KpiCardGroupProps) {
       {items.map((item, index) => (
         <Card key={index}>
           <CardHeader>
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {item.title}
-            </CardTitle>
+            <CardTitle className="text-muted-foreground text-sm font-medium">{item.title}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{item.value}</div>
             {item.delta && item.trend && (
-              <div className={`flex items-center mt-2 ${
-                item.trend === "up" ? "text-green-500" : "text-red-500"
-              }`}>
+              <div className={`mt-2 flex items-center ${item.trend === "up" ? "text-green-500" : "text-red-500"}`}>
                 {item.trend === "up" ? (
-                  <TrendingUp className="h-4 w-4 mr-1" />
+                  <TrendingUp className="mr-1 h-4 w-4" />
                 ) : (
-                  <TrendingDown className="h-4 w-4 mr-1" />
+                  <TrendingDown className="mr-1 h-4 w-4" />
                 )}
                 {item.delta}
               </div>
