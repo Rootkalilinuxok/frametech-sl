@@ -2,7 +2,7 @@ import { SectionCards } from "./_components/section-cards";
 import { DataTable } from "./_components/data-table";
 import type { CostiRow } from "./_components/columns";
 
-// Tipo che rappresenta la risposta della tua API (adattalo se cambiano i nomi/campi)
+// Tipo che rappresenta la risposta della tua API (modifica se cambiano i campi)
 type ApiRow = {
   id: string;
   date: string;
@@ -17,7 +17,7 @@ type ApiRow = {
   percent?: number | string | null;
 };
 
-// Funzione di mapping: converte una riga da API a CostiRow per la tabella
+// Mapping da risposta API a CostiRow (modifica se serve)
 function mapRow(row: ApiRow): CostiRow {
   return {
     id: row.id,
@@ -40,21 +40,29 @@ function mapRow(row: ApiRow): CostiRow {
   };
 }
 
-// Funzione async che chiama la tua API (usa path corretto!)
-// ATTENZIONE: se la tua API risponde su /dashboard/costi/api/receipts/history va usato questo!
+// Funzione async per recuperare i dati costi dalla API
 async function getRows(): Promise<CostiRow[]> {
-  const res = await fetch("/dashboard/costi/api/receipts/history", { cache: "no-store" });
+  // Prendi la base URL dal .env oppure fallback a localhost (dev)
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  // Usare sempre l'URL ASSOLUTO nei Server Component/SSR!
+  const url = `${baseUrl}/api/receipts/history`;
+
+  const res = await fetch(url, { cache: "no-store" });
+
   if (!res.ok) {
     const text = await res.text();
+    // Errore gestito: sarà visibile come stacktrace dettagliata solo in dev!
     throw new Error("Errore fetch dati costi: " + res.status + " - " + text);
   }
+
   const apiRows: ApiRow[] = await res.json();
   return apiRows.map(mapRow);
 }
 
-// Componente principale della pagina
+// Componente server principale della pagina
 export default async function Page() {
   const data = await getRows();
+
   return (
     <div className="@container/main flex flex-col gap-4 md:gap-6">
       <SectionCards />
