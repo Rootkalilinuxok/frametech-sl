@@ -31,7 +31,6 @@ import { costiColumns, type CostiRow } from "./columns";
 // eslint-disable-next-line complexity
 export function DataTable({ data: initialData }: { data: CostiRow[] }) {
   const dndEnabled = true;
-
   // Stato locale dei dati, per drag-and-drop e per editabilità
   const [data, setData] = React.useState<CostiRow[]>(() => initialData);
 
@@ -170,6 +169,18 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
     }
   };
 
+  // ----------- CLEAR RIGHE SELEZIONATE -----------
+  const selectedRowIds = table.getFilteredSelectedRowModel().rows.map((r) => r.original.id);
+  function clearSelectedRows() {
+    setData((prev) =>
+      prev.map((row) =>
+        selectedRowIds.includes(row.id)
+          ? { ...row, name: "", country: "", currency: "", tip: 0, total: 0, exchangeRate: 0, totalEur: 0, percent: 0 }
+          : row
+      )
+    );
+  }
+
   return (
     <Tabs defaultValue="filtri" className="w-full flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -206,6 +217,17 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
             accept=".pdf,.jpg,.jpeg,.png"
             onChange={handleFileChange}
           />
+
+          {/* ELIMINA RIGHE SELEZIONATE */}
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={clearSelectedRows}
+            disabled={selectedRowIds.length === 0}
+          >
+            Elimina
+          </Button>
+
           {uploadProgress > 0 && uploadProgress < 100 && (
             <div className="ml-2 flex w-[140px] items-center gap-2">
               <div className="h-2 flex-1 rounded bg-gray-200">
