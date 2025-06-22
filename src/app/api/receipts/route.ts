@@ -5,13 +5,12 @@ import { InferInsertModel } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { receiptsLive } from "@/lib/schema";
 
-// eslint-disable-next-line complexity
 export async function POST(req: NextRequest) {
   const data = await req.json();
 
   const row: InferInsertModel<typeof receiptsLive> = {
     id: data.id,
-    date: data.date ? new Date(data.date) : undefined,
+    date: data.date ? new Date(data.date) : new Date(),
     time: data.time ?? null,
     name: data.name,
     country: data.country ?? null,
