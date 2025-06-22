@@ -34,9 +34,17 @@ function mapRow(row: ApiRow): CostiRow {
 }
 
 async function getRows(): Promise<CostiRow[]> {
-  // Adatta qui il path se la tua API è diversa
-  const res = await fetch("/api/receipts/history", { cache: "no-store" });
-  if (!res.ok) throw new Error("Errore fetch dati costi");
+  // Next.js App Router: process.env.VERCEL_URL solo su Vercel, fallback su localhost
+  const baseUrl =
+    process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000";
+
+  const res = await fetch(`${baseUrl}/api/receipts/history`, { cache: "no-store" });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error("Errore fetch dati costi: " + res.status + " - " + text);
+  }
   const apiRows: ApiRow[] = await res.json();
   return apiRows.map(mapRow);
 }
