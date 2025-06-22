@@ -56,6 +56,10 @@ The current version uses the [Tweakcn Tangerine](https://tweakcn.com/) theme for
 
 ---
 
+> ℹ️ **ATTENZIONE: Tutte le procedure tecniche dettagliate, policy CI/CD, workflow Vercel/Next.js/OpenAI, fix errori, troubleshooting e script sono documentati nella guida [guida-vercel.md](./guida-vercel.md) nella root. Consultare SEMPRE quella guida prima di modificare script, policy o proporre fix automatici.**
+
+---
+
 ## 🧠 AI-powered Vercel Deploy Debugger
 
 This project includes an **AI watcher script** (`ai-deploy-watcher.js`) that automatically monitors Vercel deploy errors, analyzes build logs, and provides OpenAI-powered suggestions for fixes.
