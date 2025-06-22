@@ -1,5 +1,5 @@
 CREATE TABLE "receipts_archive" (
-	"id": serial("id").primaryKey(),
+	"id" SERIAL PRIMARY KEY,
 	"date" timestamp NOT NULL,
 	"time" varchar,
 	"name" varchar NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE "receipts_archive" (
 );
 --> statement-breakpoint
 CREATE TABLE "receipts_live" (
-	"id": serial("id").primaryKey(),
+	"id" SERIAL PRIMARY KEY,
 	"date" timestamp NOT NULL,
 	"time" varchar,
 	"name" varchar NOT NULL,
