@@ -9,8 +9,8 @@ import { DownloadIcon } from "@radix-ui/react-icons";
 
 // Tipi dati: devono rispecchiare receiptsLive da schema.ts
 type HistoryRow = {
-  id: string;           // UUID reale
-  date: string | null;  // Data documento (può essere null)
+  id: string; // UUID reale
+  date: string | null; // Data documento (può essere null)
   time?: string | null;
   name: string;
   country?: string | null;
@@ -23,7 +23,7 @@ type HistoryRow = {
   paymentMethod?: string | null;
   status?: string;
   sourceHash?: string;
-  createdAt: string;     // Data caricamento (timestamp ISO)
+  createdAt: string; // Data caricamento (timestamp ISO)
 };
 
 type Period = { from: Date | null; to: Date | null };
@@ -71,9 +71,9 @@ export default function HistoryTable() {
       "Intestazione",
       "Data documento",
       "Ora",
-      "Nazione"
+      "Nazione",
     ];
-    const rows = visibleRows.map(row =>
+    const rows = visibleRows.map((row) =>
       [
         row.displayId,
         row.displayDate,
@@ -83,25 +83,23 @@ export default function HistoryTable() {
         row.name,
         row.date ? format(new Date(row.date), "dd/MM/yyyy") : "",
         row.time || "",
-        row.country || ""
-      ].join(";")
+        row.country || "",
+      ].join(";"),
     );
     const csvContent = [header.join(";"), ...rows].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `Cronologia_caricamenti_${new Date().toISOString().slice(0,10)}.csv`;
+    link.download = `Cronologia_caricamenti_${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
   };
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-4 mb-2">
+      <div className="mb-2 flex items-center gap-4">
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline">
-              Seleziona periodo
-            </Button>
+            <Button variant="outline">Seleziona periodo</Button>
           </PopoverTrigger>
           <PopoverContent>
             <div className="flex flex-col gap-2">
@@ -109,18 +107,17 @@ export default function HistoryTable() {
                 mode="range"
                 selected={{
                   from: period.from || undefined,
-                  to: period.to || undefined
+                  to: period.to || undefined,
                 }}
-                onSelect={(range) => setPeriod({
-                 from: range?.from ?? null,
-                 to: range?.to ?? null })}
+                onSelect={(range) =>
+                  setPeriod({
+                    from: range?.from ?? null,
+                    to: range?.to ?? null,
+                  })
+                }
                 numberOfMonths={2}
               />
-              <Button
-                onClick={() => setPeriod({ from: null, to: null })}
-                variant="ghost"
-                size="sm"
-              >
+              <Button onClick={() => setPeriod({ from: null, to: null })} variant="ghost" size="sm">
                 Cancella filtro
               </Button>
             </div>
@@ -150,7 +147,7 @@ export default function HistoryTable() {
           <TableBody>
             {visibleRows.length === 0 && !loading && (
               <TableRow>
-                <TableCell colSpan={9} className="text-center text-muted-foreground">
+                <TableCell colSpan={9} className="text-muted-foreground text-center">
                   Nessun caricamento trovato.
                 </TableCell>
               </TableRow>

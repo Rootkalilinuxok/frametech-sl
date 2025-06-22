@@ -16,13 +16,7 @@ import { Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { useDataTableInstance } from "@/hooks/use-data-table-instance";
@@ -31,10 +25,7 @@ import { DataTablePagination } from "@/components/data-table/data-table-paginati
 import { DataTableViewOptions } from "@/components/data-table/data-table-view-options";
 import { withDndColumn } from "@/components/data-table/table-utils";
 
-import {
-  dashboardColumns,
-  type ReceiptRow,
-} from "./columns";
+import { dashboardColumns, type ReceiptRow } from "./columns";
 
 // Import di getCoreRowModel da TanStack React-Table
 import { getCoreRowModel } from "@tanstack/react-table";
@@ -46,22 +37,13 @@ export function DataTable({ data: initialData }: { data: ReceiptRow[] }) {
   const [data, setData] = React.useState<ReceiptRow[]>(() => initialData);
 
   // Colonne con o senza colonna DnD
-  const columns = dndEnabled
-    ? withDndColumn(dashboardColumns)
-    : dashboardColumns;
+  const columns = dndEnabled ? withDndColumn(dashboardColumns) : dashboardColumns;
 
   // Sensori drag-and-drop
-  const sensors = useSensors(
-    useSensor(MouseSensor, {}),
-    useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {})
-  );
+  const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
 
   // Lista di UniqueIdentifier per l’ordinamento
-  const dataIds = React.useMemo<UniqueIdentifier[]>(
-    () => data.map((row) => row.id),
-    [data]
-  );
+  const dataIds = React.useMemo<UniqueIdentifier[]>(() => data.map((row) => row.id), [data]);
 
   // Istanza della tabella: include obbligatoriamente getCoreRowModel
   const table = useDataTableInstance({

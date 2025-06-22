@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 // ────────────────────────────────────────────────────────────
 //  Fix TypeScript: estendi TableMeta per updateData
 // ────────────────────────────────────────────────────────────
-declare module '@tanstack/react-table' {
+declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
     updateData: (rowIndex: number, columnId: string, value: any) => void;
   }
@@ -67,14 +67,16 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Data" />,
     cell: ({ row, table }) => {
       const [value, setValue] = React.useState(row.original.date);
-      React.useEffect(() => { setValue(row.original.date); }, [row.original.date]);
+      React.useEffect(() => {
+        setValue(row.original.date);
+      }, [row.original.date]);
       return (
         <input
           type="date"
-          className="input input-sm border rounded px-2 py-1"
+          className="input input-sm rounded border px-2 py-1"
           style={{ width: "120px", minWidth: "110px", maxWidth: "130px" }}
           value={value}
-          onChange={e => setValue(e.target.value)}
+          onChange={(e) => setValue(e.target.value)}
           onBlur={() => {
             if (value !== row.original.date) {
               table.options.meta?.updateData(row.index, "date", value);
@@ -91,14 +93,16 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Ora" />,
     cell: ({ row, table }) => {
       const [value, setValue] = React.useState(row.original.time ?? "");
-      React.useEffect(() => { setValue(row.original.time ?? ""); }, [row.original.time]);
+      React.useEffect(() => {
+        setValue(row.original.time ?? "");
+      }, [row.original.time]);
       return (
         <input
           type="time"
-          className="input input-sm border rounded px-2 py-1"
+          className="input input-sm rounded border px-2 py-1"
           style={{ width: "90px", minWidth: "80px", maxWidth: "100px" }}
           value={value}
-          onChange={e => setValue(e.target.value)}
+          onChange={(e) => setValue(e.target.value)}
           onBlur={() => {
             if (value !== (row.original.time ?? "")) {
               table.options.meta?.updateData(row.index, "time", value);
@@ -115,12 +119,14 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Nome" />,
     cell: ({ row, table }) => {
       const [value, setValue] = React.useState(row.original.name);
-      React.useEffect(() => { setValue(row.original.name); }, [row.original.name]);
+      React.useEffect(() => {
+        setValue(row.original.name);
+      }, [row.original.name]);
       return (
         <input
-          className="input input-sm border rounded px-2 py-1 w-full"
+          className="input input-sm w-full rounded border px-2 py-1"
           value={value}
-          onChange={e => setValue(e.target.value)}
+          onChange={(e) => setValue(e.target.value)}
           onBlur={() => {
             if (value !== row.original.name) {
               table.options.meta?.updateData(row.index, "name", value);
@@ -129,7 +135,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    minSize: 60,   // "Nome"
+    minSize: 60, // "Nome"
     maxSize: 260,
   },
   {
@@ -137,12 +143,14 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Nazione" />,
     cell: ({ row, table }) => {
       const [value, setValue] = React.useState(row.original.country ?? "");
-      React.useEffect(() => { setValue(row.original.country ?? ""); }, [row.original.country]);
+      React.useEffect(() => {
+        setValue(row.original.country ?? "");
+      }, [row.original.country]);
       return (
         <input
-          className="input input-sm border rounded px-2 py-1 w-full"
+          className="input input-sm w-full rounded border px-2 py-1"
           value={value}
-          onChange={e => setValue(e.target.value)}
+          onChange={(e) => setValue(e.target.value)}
           onBlur={() => {
             if (value !== (row.original.country ?? "")) {
               table.options.meta?.updateData(row.index, "country", value || undefined);
@@ -151,7 +159,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    minSize: 80,   // "Nazione"
+    minSize: 80, // "Nazione"
     maxSize: 180,
   },
   {
@@ -159,12 +167,14 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Valuta" />,
     cell: ({ row, table }) => {
       const [value, setValue] = React.useState(row.original.currency);
-      React.useEffect(() => { setValue(row.original.currency); }, [row.original.currency]);
+      React.useEffect(() => {
+        setValue(row.original.currency);
+      }, [row.original.currency]);
       return (
         <input
-          className="input input-sm border rounded px-2 py-1 w-full"
+          className="input input-sm w-full rounded border px-2 py-1"
           value={value}
-          onChange={e => setValue(e.target.value)}
+          onChange={(e) => setValue(e.target.value)}
           onBlur={() => {
             if (value !== row.original.currency) {
               table.options.meta?.updateData(row.index, "currency", value);
@@ -173,7 +183,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    minSize: 80,   // "Valuta"
+    minSize: 80, // "Valuta"
     maxSize: 180,
   },
   {
@@ -181,13 +191,15 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Tip/Mancia" />,
     cell: ({ row, table }) => {
       const [value, setValue] = React.useState(row.original.tip ?? "");
-      React.useEffect(() => { setValue(row.original.tip ?? ""); }, [row.original.tip]);
+      React.useEffect(() => {
+        setValue(row.original.tip ?? "");
+      }, [row.original.tip]);
       return (
         <input
           type="number"
-          className="input input-sm border rounded px-2 py-1 w-full"
+          className="input input-sm w-full rounded border px-2 py-1"
           value={value}
-          onChange={e => setValue(e.target.value)}
+          onChange={(e) => setValue(e.target.value)}
           onBlur={() => {
             const num = value === "" ? undefined : Number(value);
             if (num !== row.original.tip) {
@@ -197,7 +209,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    minSize: 100,  // "Tip/Mancia"
+    minSize: 100, // "Tip/Mancia"
     maxSize: 180,
   },
   {
@@ -205,13 +217,15 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Totale" />,
     cell: ({ row, table }) => {
       const [value, setValue] = React.useState(row.original.total);
-      React.useEffect(() => { setValue(row.original.total); }, [row.original.total]);
+      React.useEffect(() => {
+        setValue(row.original.total);
+      }, [row.original.total]);
       return (
         <input
           type="number"
-          className="input input-sm border rounded px-2 py-1 w-full"
+          className="input input-sm w-full rounded border px-2 py-1"
           value={value}
-          onChange={e => setValue(Number(e.target.value))}
+          onChange={(e) => setValue(Number(e.target.value))}
           onBlur={() => {
             if (value !== row.original.total) {
               table.options.meta?.updateData(row.index, "total", value);
@@ -220,7 +234,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    minSize: 80,   // "Totale"
+    minSize: 80, // "Totale"
     maxSize: 180,
   },
   {
@@ -228,14 +242,16 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Cambio" />,
     cell: ({ row, table }) => {
       const [value, setValue] = React.useState(row.original.exchange_rate ?? "");
-      React.useEffect(() => { setValue(row.original.exchange_rate ?? ""); }, [row.original.exchange_rate]);
+      React.useEffect(() => {
+        setValue(row.original.exchange_rate ?? "");
+      }, [row.original.exchange_rate]);
       return (
         <input
           type="number"
           step="0.0001"
-          className="input input-sm border rounded px-2 py-1 w-full"
+          className="input input-sm w-full rounded border px-2 py-1"
           value={value}
-          onChange={e => setValue(e.target.value)}
+          onChange={(e) => setValue(e.target.value)}
           onBlur={() => {
             const num = value === "" ? undefined : Number(value);
             if (num !== row.original.exchange_rate) {
@@ -245,7 +261,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    minSize: 80,   // "Cambio"
+    minSize: 80, // "Cambio"
     maxSize: 180,
   },
   {
@@ -253,13 +269,15 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Totale (€)" />,
     cell: ({ row, table }) => {
       const [value, setValue] = React.useState(row.original.total_eur);
-      React.useEffect(() => { setValue(row.original.total_eur); }, [row.original.total_eur]);
+      React.useEffect(() => {
+        setValue(row.original.total_eur);
+      }, [row.original.total_eur]);
       return (
         <input
           type="number"
-          className="input input-sm border rounded px-2 py-1 w-full"
+          className="input input-sm w-full rounded border px-2 py-1"
           value={value}
-          onChange={e => setValue(Number(e.target.value))}
+          onChange={(e) => setValue(Number(e.target.value))}
           onBlur={() => {
             if (value !== row.original.total_eur) {
               table.options.meta?.updateData(row.index, "total_eur", value);
@@ -268,7 +286,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    minSize: 90,   // "Totale (€)"
+    minSize: 90, // "Totale (€)"
     maxSize: 180,
   },
   {
@@ -276,14 +294,16 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="+ %" />,
     cell: ({ row, table }) => {
       const [value, setValue] = React.useState(row.original.percent ?? "");
-      React.useEffect(() => { setValue(row.original.percent ?? ""); }, [row.original.percent]);
+      React.useEffect(() => {
+        setValue(row.original.percent ?? "");
+      }, [row.original.percent]);
       return (
         <input
           type="number"
           step="0.01"
-          className="input input-sm border rounded px-2 py-1 w-full"
+          className="input input-sm w-full rounded border px-2 py-1"
           value={value}
-          onChange={e => setValue(e.target.value)}
+          onChange={(e) => setValue(e.target.value)}
           onBlur={() => {
             const num = value === "" ? undefined : Number(value);
             if (num !== row.original.percent) {
@@ -293,7 +313,7 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
         />
       );
     },
-    minSize: 60,   // "+ %"
+    minSize: 60, // "+ %"
     maxSize: 110,
   },
   {
