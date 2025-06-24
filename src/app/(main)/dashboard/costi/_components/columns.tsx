@@ -34,6 +34,7 @@ export interface CostiRow {
   exchange_rate?: number;
   total_eur: number;
   percent?: number;
+  image_url?: string;
 }
 
 interface CellProps {
