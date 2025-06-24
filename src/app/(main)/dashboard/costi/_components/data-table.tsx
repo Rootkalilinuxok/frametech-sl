@@ -37,6 +37,8 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
   const dndEnabled = true;
   // Stato locale dei dati, per drag-and-drop e per editabilità
   const [data, setData] = React.useState<CostiRow[]>(() => initialData);
+  console.log("DATA INIZIALE", initialData);
+
 
   // Colonne con o senza colonna DnD
   const columns = dndEnabled ? withDndColumn(costiColumns) : costiColumns;
