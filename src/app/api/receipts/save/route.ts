@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { receiptsLive } from "@/lib/schema"; // <-- Assicurati che questa sia la tua tabella Drizzle
+import { receiptsLive } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
 export async function POST(req: Request) {
@@ -11,7 +11,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "ID mancante" }, { status: 400 });
     }
 
-    // Esegui update, non insert, perché l’ID è già stato generato
     await db
       .update(receiptsLive)
       .set({
@@ -22,11 +21,10 @@ export async function POST(req: Request) {
         currency: body.currency,
         tip: body.tip,
         total: body.total,
-        exchangeRate: body.exchange_rate,
-        totalEur: body.total_eur,
-
+        exchangeRate: body.exchangeRate, 
+        totalEur: body.totalEur,         
         percent: body.percent,
-        image_url: body.image_url, // 👈 salva qui il link pubblico
+        imageUrl: body.imageUrl,       
       })
       .where(eq(receiptsLive.id, body.id));
 
