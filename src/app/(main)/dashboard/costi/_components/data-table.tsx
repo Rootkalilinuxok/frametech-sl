@@ -253,14 +253,14 @@ function closeImage() {
   }
 
   return (
-    <>
+  <>
     {viewer && (
-  <ReceiptImageModal
-    imageUrl={viewer.url}
-    fileName={viewer.name}
-    onClose={closeImage}
-  />
-)}
+      <ReceiptImageModal
+        imageUrl={viewer.url}
+        fileName={viewer.name}
+        onClose={closeImage}
+      />
+    )}
 
     <Tabs defaultValue="filtri" className="w-full flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -454,5 +454,6 @@ function closeImage() {
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed" />
       </TabsContent>
     </Tabs>
+    </>
   );
 }
