@@ -115,13 +115,13 @@ async function persistReceipt(dati: Record<string, unknown>) {
   currency: dati.currency as string,
   total: Number(dati.total as string) as unknown as string,
   tip: numOrNull(dati.tip),
-  exchange_rate: numOrNull(dati.exchangeRate),  
-  total_eur: numOrNull(dati.totalEur),          
+  exchangeRate: numOrNull(dati.exchangeRate),     
+  totalEur: numOrNull(dati.totalEur),            
   percent: numOrNull(dati.percent),
   paymentMethod: "",
   status: "new",
   sourceHash: generateSourceHash(dati),
-  image_url: dati.image_url as string ?? null, // <--- aggiunto qui!
+  imageUrl: dati.image_url as string ?? null  
       // createdAt lasciato al defaultNow()
     };
     await db.insert(receiptsLive).values(row);
