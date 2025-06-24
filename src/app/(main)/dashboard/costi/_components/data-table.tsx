@@ -141,6 +141,15 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
   const [error, setError] = React.useState<string | null>(null);
   const [warnings, setWarnings] = React.useState<{ filename: string; reason: string }[]>([]);
   const [uploadProgress, setUploadProgress] = React.useState<number>(0);
+  // Stato per visualizzazione pop-up immagine scontrino
+  const [viewer, setViewer] = React.useState<{ url: string; name: string } | null>(null);
+function openImage(obj: { url: string; name: string }) {
+  setViewer(obj);
+}
+function closeImage() {
+  setViewer(null);
+}
+
 
   const openUploadDialog = () => fileInputRef.current?.click();
 
