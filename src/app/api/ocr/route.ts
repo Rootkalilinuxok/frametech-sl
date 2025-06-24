@@ -41,18 +41,12 @@ async function callVisionAPI(apiKey: string, base64: string, mimeType: string) {
     body: JSON.stringify(body),
   });
 
-  if (!res.ok) {
-    throw new Error("Vision API Error");
-  }
+  if (!res.ok) throw new Error("Vision API Error");
 
   const data = await res.json();
   const response = data.responses?.[0];
-  if (response?.fullTextAnnotation?.text) {
-    return response.fullTextAnnotation.text;
-  }
-  if (response?.textAnnotations?.[0]?.description) {
-    return response.textAnnotations[0].description;
-  }
+  if (response?.fullTextAnnotation?.text) return response.fullTextAnnotation.text;
+  if (response?.textAnnotations?.[0]?.description) return response.textAnnotations[0].description;
   return "";
 }
 
@@ -74,7 +68,7 @@ Dato un testo OCR (anche disordinato o rumoroso), restituisci **solo** e **sempr
   "currency": "",
   "tip": null,      // opzionale, numero
   "total": 0,       // numero
-  "exchangeRate": null, // opzionale, numero (ATTENZIONE: camelCase!)
+  "exchangeRate": null, // opzionale, numero (camelCase!)
   "totalEur": 0,        // numero (camelCase!)
   "percent": null       // opzionale, numero
 }
@@ -108,21 +102,21 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
 async function persistReceipt(dati: Record<string, unknown>) {
   try {
     const row: InferInsertModel<typeof receiptsLive> = {
-  date: dati.date ? new Date(dati.date as string) : new Date(),
-  time: (dati.time as string | null) ?? null,
-  name: dati.name as string,
-  country: (dati.country as string | undefined) ?? null,
-  currency: dati.currency as string,
-  total: Number(dati.total as string) as unknown as string,
-  tip: numOrNull(dati.tip),
-  exchangeRate: numOrNull(dati.exchangeRate),     
-  totalEur: numOrNull(dati.totalEur),            
-  percent: numOrNull(dati.percent),
-  paymentMethod: "",
-  status: "new",
-  sourceHash: generateSourceHash(dati),
-  imageUrl: dati.image_url as string ?? null  
-      // createdAt lasciato al defaultNow()
+      date: dati.date ? new Date(dati.date as string) : new Date(),
+      time: (dati.time as string | null) ?? null,
+      name: dati.name as string,
+      country: (dati.country as string | undefined) ?? null,
+      currency: dati.currency as string,
+      total: Number(dati.total as string) as unknown as string,
+      tip: numOrNull(dati.tip),
+      exchangeRate: numOrNull(dati.exchangeRate),
+      totalEur: numOrNull(dati.totalEur),
+      percent: numOrNull(dati.percent),
+      paymentMethod: "",
+      status: "new",
+      sourceHash: generateSourceHash(dati),
+      imageUrl: (dati.imageUrl as string) ?? null,
+      // createdAt gestito da defaultNow()
     };
     await db.insert(receiptsLive).values(row);
   } catch (err) {
@@ -131,18 +125,15 @@ async function persistReceipt(dati: Record<string, unknown>) {
 }
 
 export async function POST(req: NextRequest) {
-  // Step 1: parse input e env
-  const { base64, fileName, mimeType, image_url } = await req.json(); // <--- aggiungi image_url qui
+  const { base64, fileName, mimeType, imageUrl } = await req.json();
+
   const apiKey = process.env.GOOGLE_API_KEY;
   const openaiKey = process.env.OPENAI_API_KEY;
-
-  // Step 2: check chiavi API
   if (!apiKey || !openaiKey) {
     return NextResponse.json({ error: "API key(s) missing" }, { status: 500 });
   }
 
   try {
-    // Step 3: OCR
     const text = await callVisionAPI(apiKey, base64, mimeType);
     console.log("TESTO OCR:", text);
 
@@ -151,21 +142,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "OCR vuoto o non leggibile", filename: fileName }, { status: 200 });
     }
 
-    // Step 4: GPT
     const dati = await extractWithGPT(openaiKey, text, fileName);
     console.log("DATI GPT:", dati);
 
-    // Passa image_url a dati (così persistReceipt lo riceve)
-    dati.image_url = image_url;
+    dati.imageUrl = imageUrl;
 
-    // Step 5: Persistenza su DB
     await persistReceipt(dati);
 
-    // Step 6: Risposta - FORZA il campo image_url in uscita!
-return NextResponse.json({
-  ...dati,
-  image_url: dati.image_url || dati.imageUrl || "" // fallback se serve
-});
+    return NextResponse.json({
+      ...dati,
+      imageUrl: dati.imageUrl || "",
+    });
 
   } catch (err) {
     console.error("OCR route error", err);
