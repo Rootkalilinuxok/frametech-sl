@@ -121,6 +121,7 @@ async function persistReceipt(dati: Record<string, unknown>) {
       paymentMethod: "",
       status: "new",
       sourceHash: generateSourceHash(dati),
+      image_url: dati.image_url as string ?? null, // <--- aggiunto qui!
       // createdAt lasciato al defaultNow()
     };
     await db.insert(receiptsLive).values(row);
@@ -131,7 +132,7 @@ async function persistReceipt(dati: Record<string, unknown>) {
 
 export async function POST(req: NextRequest) {
   // Step 1: parse input e env
-  const { base64, fileName, mimeType } = await req.json();
+  const { base64, fileName, mimeType, image_url } = await req.json(); // <--- aggiungi image_url qui
   const apiKey = process.env.GOOGLE_API_KEY;
   const openaiKey = process.env.OPENAI_API_KEY;
 
@@ -143,7 +144,7 @@ export async function POST(req: NextRequest) {
   try {
     // Step 3: OCR
     const text = await callVisionAPI(apiKey, base64, mimeType);
-    console.log("TESTO OCR:", text);   // <--- LOG
+    console.log("TESTO OCR:", text);
 
     if (!text || text.length < 8) {
       console.warn("OCR vuoto o troppo corto", { text, fileName });
@@ -152,7 +153,10 @@ export async function POST(req: NextRequest) {
 
     // Step 4: GPT
     const dati = await extractWithGPT(openaiKey, text, fileName);
-    console.log("DATI GPT:", dati);    // <--- LOG
+    console.log("DATI GPT:", dati);
+
+    // Passa image_url a dati (così persistReceipt lo riceve)
+    dati.image_url = image_url;
 
     // Step 5: Persistenza su DB
     await persistReceipt(dati);
