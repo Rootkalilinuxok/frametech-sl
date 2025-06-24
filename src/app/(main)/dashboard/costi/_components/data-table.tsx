@@ -210,7 +210,7 @@ function closeImage() {
       if (!res.ok) throw new Error(`Errore OCR (${file.name})`);
       const dati = await res.json();
       // Mostra solo l’URL pubblico (NON usare più createObjectURL)
-      dati.image_url = publicUrl;
+      
 
       if (!dati || !dati.id) {
         warningList.push({ filename: file.name, reason: "Dati non estratti o mancanti" });
