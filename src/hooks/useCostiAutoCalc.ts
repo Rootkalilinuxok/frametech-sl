@@ -10,9 +10,9 @@ export interface CostiRow {
   currency: string;
   total: number;
   tip?: number;
-  exchange_rate: number;
+  exchangeRate: number;
   percent?: number;
-  total_eur: number;
+  totalEur: number;
   // ...altri campi se servono
 }
 
@@ -41,14 +41,14 @@ export function useCostiAutoCalc(setData: (cb: (old: CostiRow[]) => CostiRow[]) 
 
     // 3. Recupera cambio automatico se cambia la valuta
     if (["currency", "country"].includes(columnId)) {
-      row.exchange_rate = await fetchExchangeRate(row.currency);
+      row.exchangeRate = await fetchExchangeRate(row.currency);
     }
 
     // 4. Ricalcola Totale€
-    row.total_eur = calcEuro(
+    row.totalEur = calcEuro(
       row.total ?? 0,
       row.tip ?? 0,
-      row.exchange_rate ?? 1,
+      row.exchangeRate ?? 1,
       row.percent ?? 0
     );
 
