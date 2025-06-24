@@ -84,6 +84,27 @@ export function NameCell({ row, table }: CellProps) {
   );
 }
 
+export function DateCell({ row, table }: CellProps) {
+  const [value, setValue] = React.useState(row.original.date ?? "");
+  React.useEffect(() => {
+    setValue(row.original.date ?? "");
+  }, [row.original.date]);
+  return (
+    <input
+      type="date"
+      className="input input-sm rounded border px-2 py-1"
+      style={{ width: "120px", minWidth: "110px", maxWidth: "130px" }}
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      onBlur={() => {
+        if (value !== (row.original.date ?? "")) {
+          table.options.meta?.updateData(row.index, "date", value);
+        }
+      }}
+    />
+  );
+}
+
 export function TimeCell({ row, table }: CellProps) {
   const [value, setValue] = React.useState(row.original.time ?? "");
   React.useEffect(() => {
