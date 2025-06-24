@@ -14,13 +14,13 @@ export async function POST(req: NextRequest) {
     currency: data.currency,
     total: data.total,
     tip: data.tip ?? null,
-    exchange_rate: data.exchangeRate ?? null, // usa snake_case coerente col DB
-    total_eur: data.totalEur ?? null,
+    exchangeRate: data.exchangeRate ?? null,
+    totalEur: data.totalEur ?? null,
     percent: data.percent ?? null,
-    paymentMethod: data.payment_method ?? null,
+    paymentMethod: data.paymentMethod ?? null,
     status: data.status ?? "new",
-    sourceHash: data.source_hash ?? data.id,
-    image_url: data.image_url ?? null
+    sourceHash: data.sourceHash ?? data.id,
+    imageUrl: data.imageUrl ?? null
   } as typeof receiptsLive.$inferInsert;
 
   await db.insert(receiptsLive).values(row);
