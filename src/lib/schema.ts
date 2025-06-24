@@ -22,6 +22,7 @@ const receiptColumns = {
   status: varchar("status", { length: 20 }).default("new"),
   sourceHash: text("source_hash").notNull().unique(),
   createdAt: timestamp("created_at").defaultNow(),
+  image_url: varchar("image_url", { length: 255 }),
 };
 
 /* --- live ------------------------------------------------ */
