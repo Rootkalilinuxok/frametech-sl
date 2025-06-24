@@ -25,7 +25,8 @@ export async function POST(req: Request) {
 
     const form = new IncomingForm({ multiples: false });
     const { fields, files } = await new Promise<any>((resolve, reject) => {
-      form.parse(stream as any, (err, fields, files) => {
+      form.parse(stream as any, (err: any, fields: any, files: any) => {
+
         if (err) reject(err);
         else resolve({ fields, files });
       });
