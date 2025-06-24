@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { IncomingForm } from "formidable"; // <-- aggiornato
-import fs from "fs";
-import { promisify } from "util";
-import path from "path";
+import { IncomingForm } from "formidable";
+import { Readable } from "stream"; // ✅ per conversione stream
+import fs from "fs/promises"; // ✅ usa fs/promises diretto
 
 export const config = {
   api: {
@@ -22,19 +21,21 @@ export async function POST(req: NextRequest) {
     uploadDir: "/tmp",
   });
 
-  const parseForm = () =>
-    new Promise<{ fields: any; files: any }>((resolve, reject) => {
-      form.parse(req as any, (err: any, fields: any, files: any) => {
-        if (err) reject(err);
-        else resolve({ fields, files });
-      });
+  // ✅ Converti NextRequest in uno stream compatibile
+  const stream = Readable.fromWeb(req.body as any) as any;
+
+  // ✅ Esegui parsing
+  const { files } = await new Promise<{ fields: any; files: any }>((resolve, reject) => {
+    form.parse(stream, (err, fields, files) => {
+      if (err) reject(err);
+      else resolve({ fields, files });
     });
+  });
 
   try {
-    const { files } = await parseForm();
-    const file = files.file[0] ?? files.file;
+    const file = Array.isArray(files.file) ? files.file[0] : files.file;
+    const fileBuffer = await fs.readFile(file.filepath);
 
-    const fileBuffer = await promisify(fs.readFile)(file.filepath);
     const { data, error } = await supabase.storage
       .from("receipts")
       .upload(`uploads/${file.originalFilename}`, fileBuffer, {
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
       });
 
     if (error) {
-      console.error(error);
+      console.error("Upload failed:", error);
       return NextResponse.json({ error: "Upload to Supabase failed" }, { status: 500 });
     }
 
