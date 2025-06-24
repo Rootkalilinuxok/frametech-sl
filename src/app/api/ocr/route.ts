@@ -108,20 +108,20 @@ Se non riesci a trovare un campo, lascia stringa vuota o null, MA il JSON deve e
 async function persistReceipt(dati: Record<string, unknown>) {
   try {
     const row: InferInsertModel<typeof receiptsLive> = {
-      date: dati.date ? new Date(dati.date as string) : new Date(),
-      time: (dati.time as string | null) ?? null,
-      name: dati.name as string,
-      country: (dati.country as string | undefined) ?? null,
-      currency: dati.currency as string,
-      total: Number(dati.total as string) as unknown as string,
-      tip: numOrNull(dati.tip),
-      exchangeRate: numOrNull(dati.exchangeRate),
-      totalEur: numOrNull(dati.totalEur),
-      percent: numOrNull(dati.percent),
-      paymentMethod: "",
-      status: "new",
-      sourceHash: generateSourceHash(dati),
-      image_url: dati.image_url as string ?? null, // <--- aggiunto qui!
+  date: dati.date ? new Date(dati.date as string) : new Date(),
+  time: (dati.time as string | null) ?? null,
+  name: dati.name as string,
+  country: (dati.country as string | undefined) ?? null,
+  currency: dati.currency as string,
+  total: Number(dati.total as string) as unknown as string,
+  tip: numOrNull(dati.tip),
+  exchange_rate: numOrNull(dati.exchangeRate),  
+  total_eur: numOrNull(dati.totalEur),          
+  percent: numOrNull(dati.percent),
+  paymentMethod: "",
+  status: "new",
+  sourceHash: generateSourceHash(dati),
+  image_url: dati.image_url as string ?? null, // <--- aggiunto qui!
       // createdAt lasciato al defaultNow()
     };
     await db.insert(receiptsLive).values(row);
