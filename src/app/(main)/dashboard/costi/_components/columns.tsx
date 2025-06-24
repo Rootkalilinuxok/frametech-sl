@@ -95,22 +95,22 @@ export function NameCell({ row, table }: CellProps) {
     setValue(row.original.name);
   }, [row.original.name]);
 
-  // Se c'è un'immagine, mostra il nome come link che apre il pop-up
   if (imageUrl) {
     return (
       <Button
         variant="link"
         className="p-0 text-blue-700 underline"
-        onClick={() =>
-          table.options.meta?.openImage({ url: imageUrl, name: row.original.name })
-        }
+        onClick={() => {
+          if (table.options.meta && table.options.meta.openImage) {
+            table.options.meta.openImage({ url: imageUrl, name: row.original.name });
+          }
+        }}
       >
         {row.original.name}
       </Button>
     );
   }
 
-  // Altrimenti input editabile come prima
   return (
     <input
       className="input input-sm w-full rounded border px-2 py-1"
@@ -124,6 +124,7 @@ export function NameCell({ row, table }: CellProps) {
     />
   );
 }
+
 
 
 export function CountryCell({ row, table }: CellProps) {
