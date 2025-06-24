@@ -1,14 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { IncomingForm } from "formidable";
-import { Readable } from "stream";
-import fs from "fs/promises";
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -16,38 +7,34 @@ const supabase = createClient(
 );
 
 export async function POST(req: NextRequest) {
-  const form = new IncomingForm({
-    keepExtensions: true,
-    uploadDir: "/tmp",
-  });
-
-  const stream = Readable.fromWeb(req.body as any) as any;
-
-  const { files } = await new Promise<{ fields: any; files: any }>((resolve, reject) => {
-    form.parse(stream, (err, fields, files) => {
-      if (err) reject(err);
-      else resolve({ fields, files });
-    });
-  });
-
   try {
-    const file = Array.isArray(files.file) ? files.file[0] : files.file;
-    const fileBuffer = await fs.readFile(file.filepath);
+    const formData = await req.formData();
+    const file = formData.get("file") as File | null;
+
+    if (!file) {
+      return NextResponse.json({ error: "Nessun file caricato" }, { status: 400 });
+    }
+
+    const buffer = Buffer.from(await file.arrayBuffer());
 
     const { data, error } = await supabase.storage
       .from("receipts")
-      .upload(`uploads/${file.originalFilename}`, fileBuffer, {
-        contentType: file.mimetype,
+      .upload(`uploads/${file.name}`, buffer, {
+        contentType: file.type,
       });
 
     if (error) {
-      console.error("Upload failed:", error);
+      console.error("Errore durante l'upload:", error.message);
       return NextResponse.json({ error: "Upload to Supabase failed" }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, path: data.path });
+    const { data: urlInfo } = supabase.storage
+      .from("receipts")
+      .getPublicUrl(data.path);
+
+    return NextResponse.json({ success: true, url: urlInfo.publicUrl });
   } catch (err: any) {
-    console.error("Errore in upload API:", err.message);
+    console.error("Errore API:", err.message);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
