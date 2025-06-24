@@ -18,7 +18,7 @@ describe("receipts POST API", () => {
         date: "2024-01-01",
         currency: "EUR",
         total: 10,
-        source_hash: "x",
+        sourceHash: "x",
       }),
     } as unknown as NextRequest;
 

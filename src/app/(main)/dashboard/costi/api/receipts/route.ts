@@ -19,9 +19,9 @@ export async function POST(req: NextRequest) {
     exchangeRate: data.exchangeRate ?? null,
     totalEur: data.totalEur ?? null,
     percent: data.percent ?? null,
-    paymentMethod: data.payment_method ?? null,
+    paymentMethod: data.paymentMethod ?? null,
     status: data.status ?? "new",
-    sourceHash: data.source_hash ?? data.id,
+    sourceHash: data.sourceHash ?? data.id,
   } as typeof receiptsLive.$inferInsert;
 
   await db.insert(receiptsLive).values(row);
