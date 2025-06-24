@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     const ext = file.name.split('.').pop() || "jpg";
     const fileName = `${uuidv4()}.${ext}`;
 
-    // ECCO LA DIFFERENZA: leggi il buffer
+    // LEGGE IL BUFFER (funziona sempre anche su Vercel/Next)
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
