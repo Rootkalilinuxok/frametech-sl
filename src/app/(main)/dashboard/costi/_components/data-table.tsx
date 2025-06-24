@@ -52,7 +52,7 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
       let row = { ...newData[rowIndex] };
 
       // Aggiorna il valore della cella
-      row[columnId] = value;
+      (row as any)[columnId] = value;
 
       // Mapping automatico country/currency
       if (columnId === "country") {
