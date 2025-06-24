@@ -16,6 +16,8 @@ import {
 import { arrayMove } from "@dnd-kit/sortable";
 import { getCoreRowModel } from "@tanstack/react-table";
 import { Plus } from "lucide-react";
+import { ReceiptImageModal } from "./ReceiptImageModal";
+
 
 import { DataTable as DataTableNew } from "@/components/data-table/data-table";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
@@ -113,7 +115,7 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
     columns,
     getRowId: (row) => row.id.toString(),
     getCoreRowModel: getCoreRowModel(),
-    meta: { updateData }, // fondamentale per l'editabilità!
+    meta: { updateData, openImage }, // fondamentale per l'editabilità!
   });
 
   // Handler per terminare il drag
@@ -251,6 +253,15 @@ function closeImage() {
   }
 
   return (
+    <>
+    {viewer && (
+  <ReceiptImageModal
+    imageUrl={viewer.url}
+    fileName={viewer.name}
+    onClose={closeImage}
+  />
+)}
+
     <Tabs defaultValue="filtri" className="w-full flex-col gap-6">
       <div className="flex items-center justify-between">
         <div className="mb-4 flex items-center gap-2">
