@@ -22,7 +22,25 @@ export async function GET(req: NextRequest) {
 
   // Query Drizzle (prende tutto se where è undefined)
   try {
-    const rows = await db.select().from(receiptsLive).where(where).orderBy(receiptsLive.createdAt);
+    const rows = await db
+  .select({
+    id: receiptsLive.id,
+    date: receiptsLive.date,
+    time: receiptsLive.time,
+    name: receiptsLive.name,
+    country: receiptsLive.country,
+    currency: receiptsLive.currency,
+    tip: receiptsLive.tip,
+    total: receiptsLive.total,
+    exchangeRate: receiptsLive.exchange_rate, //  alias con camelCase
+    totalEur: receiptsLive.total_eur,
+    percent: receiptsLive.percent,
+    image_url: receiptsLive.image_url,        //  aggiunto per link immagine
+  })
+  .from(receiptsLive)
+  .where(where)
+  .orderBy(receiptsLive.createdAt);
+
     return NextResponse.json(rows);
   } catch (err) {
     console.error(err);
