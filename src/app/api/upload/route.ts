@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { IncomingForm } from "formidable-serverless";
+import { IncomingForm } from "formidable";
 import fs from "fs";
 import { promisify } from "util";
 import path from "path";
