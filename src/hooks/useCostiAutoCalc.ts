@@ -28,7 +28,7 @@ export function useCostiAutoCalc(setData: (cb: (old: CostiRow[]) => CostiRow[]) 
     // 1. Crea nuova copia dati
     let newRows = [...data];
     let row = { ...newRows[rowIdx] };
-    row[columnId] = value;
+    (row as any)[columnId] = value;
 
     // 2. Auto-mapping country/currency
     if (columnId === "country") {
