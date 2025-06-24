@@ -155,64 +155,85 @@ function closeImage() {
 
   const openUploadDialog = () => fileInputRef.current?.click();
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
+ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const files = e.target.files;
+  if (!files || files.length === 0) return;
 
-    setLoading(true);
-    setError(null);
-    setWarnings([]);
-    setUploadProgress(0);
+  setLoading(true);
+  setError(null);
+  setWarnings([]);
+  setUploadProgress(0);
 
-    const newRows: CostiRow[] = [];
-    const warningList: { filename: string; reason: string }[] = [];
-    let current = 0;
+  const newRows: CostiRow[] = [];
+  const warningList: { filename: string; reason: string }[] = [];
+  let current = 0;
 
-    for (const file of Array.from(files)) {
-      // 1. Converti in base64
-      const base64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve((reader.result as string).split(",")[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
+  for (const file of Array.from(files)) {
+    // 1. UPLOAD file a /api/upload
+    let publicUrl = "";
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const uploadRes = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
       });
-
-      // 2. Invia singola fetch per ogni file
-      try {
-        const res = await fetch("/api/ocr", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            base64,
-            fileName: file.name,
-            mimeType: file.type,
-          }),
-        });
-
-        if (!res.ok) throw new Error(`Errore OCR (${file.name})`);
-        const dati = await res.json();
-        dati.imageUrl = URL.createObjectURL(file);
-
-        if (!dati || !dati.id) {
-          warningList.push({ filename: file.name, reason: "Dati non estratti o mancanti" });
-        } else {
-          newRows.push(dati);
-        }
-      } catch (err: unknown) {
-        const error = err as Error;
-        warningList.push({ filename: file.name, reason: error.message ?? "Errore sconosciuto" });
-      }
-      // Aggiorna barra avanzamento per ogni file
-      current++;
-      setUploadProgress(Math.round((current / files.length) * 100));
+      const uploadJson = await uploadRes.json();
+      if (!uploadJson.url) throw new Error("Upload fallito");
+      publicUrl = uploadJson.url;
+    } catch {
+      warningList.push({ filename: file.name, reason: "Upload fallito" });
+      continue;
     }
 
-    setData((prev) => [...prev, ...newRows]);
-    setWarnings(warningList);
-    setLoading(false);
-    setTimeout(() => setUploadProgress(0), 500);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
+    // 2. Converti in base64 per OCR
+    const base64 = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve((reader.result as string).split(",")[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+    // 3. Invia a /api/ocr, passando anche image_url!
+    try {
+      const res = await fetch("/api/ocr", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          base64,
+          fileName: file.name,
+          mimeType: file.type,
+          image_url: publicUrl,  // ← QUESTA È LA CHIAVE!
+        }),
+      });
+
+      if (!res.ok) throw new Error(`Errore OCR (${file.name})`);
+      const dati = await res.json();
+      // Mostra solo l’URL pubblico (NON usare più createObjectURL)
+      dati.image_url = publicUrl;
+
+      if (!dati || !dati.id) {
+        warningList.push({ filename: file.name, reason: "Dati non estratti o mancanti" });
+      } else {
+        newRows.push(dati);
+      }
+    } catch (err: unknown) {
+      const error = err as Error;
+      warningList.push({ filename: file.name, reason: error.message ?? "Errore sconosciuto" });
+    }
+
+    // Aggiorna barra avanzamento per ogni file
+    current++;
+    setUploadProgress(Math.round((current / files.length) * 100));
+  }
+
+  setData((prev) => [...prev, ...newRows]);
+  setWarnings(warningList);
+  setLoading(false);
+  setTimeout(() => setUploadProgress(0), 500);
+  if (fileInputRef.current) fileInputRef.current.value = "";
+};
+
 
   const handleFiltroChange = (value: string) => {
     if (value === "periodo") setShowPeriodo(true);
