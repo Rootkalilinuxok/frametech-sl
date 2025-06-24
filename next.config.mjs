@@ -6,9 +6,6 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
-  serverActions: {
-    bodySizeLimit: '10mb', // Aumenta il limite del body per file upload
-  },
   async redirects() {
     return [
       {
@@ -18,6 +15,6 @@ const nextConfig = {
       },
     ];
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;
