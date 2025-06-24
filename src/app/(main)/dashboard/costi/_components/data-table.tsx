@@ -70,9 +70,9 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
 
       // Aggiorna cambio valuta se cambia country/currency (asincrono!)
       if (["currency", "country"].includes(columnId)) {
-        row.exchange_rate = row.currency === "EUR" ? 1 : 0;
+        row.exchangeRate = row.currency === "EUR" ? 1 : 0;
         // Ricalcolo temporaneo Totale €
-        row.total_eur = calcEuro(
+        row.totalEur = calcEuro(
           Number(row.total ?? 0),
           Number(row.tip ?? 0),
           Number(row.currency === "EUR" ? 1 : 0),
@@ -86,8 +86,8 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
             setData((currData) => {
               const updatedData = [...currData];
               let updatedRow = { ...updatedData[rowIndex] };
-              updatedRow.exchange_rate = rate;
-              updatedRow.total_eur = calcEuro(
+              updatedRow.exchangeRate = rate;
+              updatedRow.totalEur = calcEuro(
                 Number(updatedRow.total ?? 0),
                 Number(updatedRow.tip ?? 0),
                 Number(rate ?? 1),
@@ -100,10 +100,10 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
         }
       } else {
         // Ricalcolo Totale € per qualsiasi altro campo editato
-        row.total_eur = calcEuro(
+        row.totalEur = calcEuro(
           Number(row.total ?? 0),
           Number(row.tip ?? 0),
-          Number(row.exchange_rate ?? 1),
+          Number(row.exchangeRate ?? 1),
           Number(row.percent ?? 0)
         );
         newData[rowIndex] = row;
@@ -197,7 +197,7 @@ function closeImage() {
       reader.readAsDataURL(file);
     });
 
-    // 3. Invia a /api/ocr, passando anche image_url!
+    // 3. Invia a /api/ocr, passando anche imageUrl!
     try {
       const res = await fetch("/api/ocr", {
         method: "POST",
@@ -206,7 +206,7 @@ function closeImage() {
           base64,
           fileName: file.name,
           mimeType: file.type,
-          image_url: publicUrl,  // ← QUESTA È LA CHIAVE!
+          imageUrl: publicUrl,  // ← QUESTA È LA CHIAVE!
         }),
       });
 
@@ -218,15 +218,15 @@ function closeImage() {
       if (!dati || !dati.id) {
   warningList.push({ filename: file.name, reason: "Dati non estratti o mancanti" });
 } else {
-  // Salva in database anche l'image_url appena ottenuta da Supabase
+  // Salva in database anche l'imageUrl appena ottenuta da Supabase
   await fetch("/api/receipts/save", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ...dati, image_url: publicUrl }),
+    body: JSON.stringify({ ...dati, imageUrl: publicUrl }),
   });
 
   // Aggiorna lo stato locale per mostrare correttamente il link cliccabile
-  newRows.push({ ...dati, image_url: publicUrl });
+  newRows.push({ ...dati, imageUrl: publicUrl });
 
       }
     } catch (err: unknown) {
@@ -279,7 +279,7 @@ function closeImage() {
     setData((prev) =>
       prev.map((row) =>
         selectedRowIds.includes(row.id)
-          ? { ...row, date: "", time: "", name: "", country: "", currency: "", tip: 0, total: 0, exchange_rate: 0, total_eur: 0, percent: 0 }
+          ? { ...row, date: "", time: "", name: "", country: "", currency: "", tip: 0, total: 0, exchangeRate: 0, totalEur: 0, percent: 0 }
           : row
       )
     );

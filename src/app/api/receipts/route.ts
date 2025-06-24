@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     percent: data.percent ?? null,
     paymentMethod: data.paymentMethod ?? null,
     status: data.status ?? "new",
-    sourceHash: data.sourceHash ?? data.id,
+    sourceHash: data.sourceHash ?? data.id, 
     imageUrl: data.imageUrl ?? null
   } as typeof receiptsLive.$inferInsert;
 

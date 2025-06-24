@@ -15,7 +15,7 @@ type ApiRow = {
   exchangeRate?: number | string | null;
   totalEur?: number | string | null;
   percent?: number | string | null;
-  image_url?: string | null; //  aggiungi questo
+  imageUrl?: string | null; //  aggiungi questo
 };
 
 
@@ -30,16 +30,16 @@ function mapRow(row: ApiRow): CostiRow {
     currency: row.currency ?? "",
     tip: row.tip !== null && row.tip !== undefined ? Number(row.tip) : 0,
     total: row.total !== null && row.total !== undefined ? Number(row.total) : 0,
-    exchange_rate:
+    exchangeRate:
       row.exchangeRate !== null && row.exchangeRate !== undefined
         ? Number(row.exchangeRate)
         : 0,
-    total_eur:
+    totalEur:
       row.totalEur !== null && row.totalEur !== undefined
         ? Number(row.totalEur)
         : 0,
     percent: row.percent !== null && row.percent !== undefined ? Number(row.percent) : 0,
-    image_url: row.image_url ?? "", // mappa correttamente
+    imageUrl: row.imageUrl ?? "", // mappa correttamente
   };
 }
 
