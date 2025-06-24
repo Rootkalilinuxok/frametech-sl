@@ -121,7 +121,7 @@ async function persistReceipt(dati: Record<string, unknown>) {
   paymentMethod: "",
   status: "new",
   sourceHash: generateSourceHash(dati),
-  imageUrl: dati.image_url as string ?? null  
+  imageUrl: dati.imageUrl as string ?? null
       // createdAt lasciato al defaultNow()
     };
     await db.insert(receiptsLive).values(row);
@@ -132,7 +132,7 @@ async function persistReceipt(dati: Record<string, unknown>) {
 
 export async function POST(req: NextRequest) {
   // Step 1: parse input e env
-  const { base64, fileName, mimeType, image_url } = await req.json(); // <--- aggiungi image_url qui
+  const { base64, fileName, mimeType, imageUrl } = await req.json(); // <--- aggiungi imageUrl qui
   const apiKey = process.env.GOOGLE_API_KEY;
   const openaiKey = process.env.OPENAI_API_KEY;
 
@@ -155,17 +155,17 @@ export async function POST(req: NextRequest) {
     const dati = await extractWithGPT(openaiKey, text, fileName);
     console.log("DATI GPT:", dati);
 
-    // Passa image_url a dati (così persistReceipt lo riceve)
-    dati.image_url = image_url;
+    // Passa imageUrl a dati (così persistReceipt lo riceve)
+    dati.imageUrl = imageUrl;
 
     // Step 5: Persistenza su DB
     await persistReceipt(dati);
 
-    // Step 6: Risposta - FORZA il campo image_url in uscita!
-return NextResponse.json({
-  ...dati,
-  image_url: dati.image_url || dati.imageUrl || "" // fallback se serve
-});
+    // Step 6: Risposta - FORZA il campo imageUrl in uscita!
+    return NextResponse.json({
+      ...dati,
+      imageUrl: dati.imageUrl || "",
+    });
 
   } catch (err) {
     console.error("OCR route error", err);

@@ -8,8 +8,8 @@
     "currency": "EUR",
     "tip": 5,
     "total": 50,
-    "exchange_rate": 1,
-    "total_eur": 50,
+    "exchangeRate": 1,
+    "totalEur": 50,
     "percent": 10
   },
   {
@@ -21,8 +21,8 @@
     "currency": "EUR",
     "tip": null,
     "total": 120,
-    "exchange_rate": 1,
-    "total_eur": 120,
+    "exchangeRate": 1,
+    "totalEur": 120,
     "percent": 22
   },
   {
@@ -34,8 +34,8 @@
     "currency": "EUR",
     "tip": 2,
     "total": 35,
-    "exchange_rate": 1,
-    "total_eur": 35,
+    "exchangeRate": 1,
+    "totalEur": 35,
     "percent": null
   },
   {
@@ -47,8 +47,8 @@
     "currency": "EUR",
     "tip": 4,
     "total": 60,
-    "exchange_rate": 1,
-    "total_eur": 60,
+    "exchangeRate": 1,
+    "totalEur": 60,
     "percent": 5
   },
   {
@@ -60,8 +60,8 @@
     "currency": "GBP",
     "tip": 1,
     "total": 12,
-    "exchange_rate": 1.17,
-    "total_eur": 14.04,
+    "exchangeRate": 1.17,
+    "totalEur": 14.04,
     "percent": 20
   },
   {
@@ -73,8 +73,8 @@
     "currency": "USD",
     "tip": 3,
     "total": 28,
-    "exchange_rate": 0.92,
-    "total_eur": 25.76,
+    "exchangeRate": 0.92,
+    "totalEur": 25.76,
     "percent": null
   },
   {
@@ -86,8 +86,8 @@
     "currency": "EUR",
     "tip": 2,
     "total": 18,
-    "exchange_rate": 1,
-    "total_eur": 18,
+    "exchangeRate": 1,
+    "totalEur": 18,
     "percent": 5
   },
   {
@@ -99,8 +99,8 @@
     "currency": "EUR",
     "tip": 20,
     "total": 220,
-    "exchange_rate": 1,
-    "total_eur": 220,
+    "exchangeRate": 1,
+    "totalEur": 220,
     "percent": 0
   },
   {
@@ -112,8 +112,8 @@
     "currency": "JPY",
     "tip": 0,
     "total": 6000,
-    "exchange_rate": 0.006,
-    "total_eur": 36,
+    "exchangeRate": 0.006,
+    "totalEur": 36,
     "percent": 15
   },
   {
@@ -125,8 +125,8 @@
     "currency": "AUD",
     "tip": 5,
     "total": 80,
-    "exchange_rate": 0.62,
-    "total_eur": 49.6,
+    "exchangeRate": 0.62,
+    "totalEur": 49.6,
     "percent": 10
   }
 ]
