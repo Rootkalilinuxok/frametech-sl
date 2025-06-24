@@ -1,52 +1,55 @@
-import { NextResponse } from "next/server";
-import { IncomingForm } from "formidable";
-import { Readable } from "stream";
-import { supabase } from "@/lib/supabase";
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import { IncomingForm } from "formidable-serverless";
+import fs from "fs";
+import { promisify } from "util";
+import path from "path";
 
+// Config globale (no edge runtime!)
 export const config = {
   api: {
     bodyParser: false,
   },
 };
 
-export async function POST(req: Request) {
-  try {
-    const contentType = req.headers.get("content-type") || "";
-    if (!contentType.includes("multipart/form-data")) {
-      return NextResponse.json({ error: "Tipo contenuto non valido" }, { status: 400 });
-    }
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_KEY!
+);
 
-    const buffer = Buffer.from(await req.arrayBuffer());
-    const stream = Readable.from(buffer) as any;
+export async function POST(req: NextRequest) {
+  const form = new IncomingForm({
+    keepExtensions: true,
+    uploadDir: "/tmp", // necessario su Vercel
+  });
 
-    const form = new IncomingForm({ multiples: false, keepExtensions: true });
-
-    const { fields, files } = await new Promise<any>((resolve, reject) => {
-      form.parse(stream, (err: any, fields: any, files: any) => {
+  const parseForm = () =>
+    new Promise<{ fields: any; files: any }>((resolve, reject) => {
+      form.parse(req as any, (err: any, fields: any, files: any) => {
         if (err) reject(err);
         else resolve({ fields, files });
       });
     });
 
-    const file = Array.isArray(files.file) ? files.file[0] : files.file;
-    const fileBuffer = await file.toBuffer?.();
-    const fileName = `${crypto.randomUUID()}_${file.originalFilename}`;
+  try {
+    const { files } = await parseForm();
+    const file = files.file[0] ?? files.file;
 
-    const { error } = await supabase.storage
+    const fileBuffer = await promisify(fs.readFile)(file.filepath);
+    const { data, error } = await supabase.storage
       .from("receipts")
-      .upload(fileName, fileBuffer, {
+      .upload(`uploads/${file.originalFilename}`, fileBuffer, {
         contentType: file.mimetype,
       });
 
     if (error) {
-      console.error("Supabase upload error:", error);
-      return NextResponse.json({ error: "Upload su Supabase fallito" }, { status: 500 });
+      console.error(error);
+      return NextResponse.json({ error: "Upload to Supabase failed" }, { status: 500 });
     }
 
-    const { data } = supabase.storage.from("receipts").getPublicUrl(fileName);
-    return NextResponse.json({ success: true, url: data.publicUrl, fileName });
-  } catch (err) {
-    console.error("Errore upload:", err);
-    return NextResponse.json({ error: "Errore interno" }, { status: 500 });
+    return NextResponse.json({ success: true, path: data.path });
+  } catch (err: any) {
+    console.error("Errore in upload API:", err.message);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
