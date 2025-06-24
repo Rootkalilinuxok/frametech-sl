@@ -17,7 +17,7 @@ export async function POST(req: Request) {
 
     let chunk = await reader.read();
     while (!chunk.done) {
-      buffers.push(chunk.value);
+      buffers.push(Buffer.from(chunk.value));
       chunk = await reader.read();
     }
 
