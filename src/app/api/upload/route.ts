@@ -1,6 +1,6 @@
-import { Readable } from "stream";
 import { NextResponse } from "next/server";
 import { IncomingForm } from "formidable";
+import { Readable } from "stream";
 import { supabase } from "@/lib/supabase";
 
 export const config = {
@@ -16,10 +16,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Tipo contenuto non valido" }, { status: 400 });
     }
 
-    const form = new IncomingForm({ multiples: false });
+    const buffer = Buffer.from(await req.arrayBuffer());
+    const stream = Readable.from(buffer) as any;
 
-    // Converti lo stream nativo in uno leggibile per Node.js
-    const stream = Readable.fromWeb(req.body as any) as any;
+    const form = new IncomingForm({ multiples: false, keepExtensions: true });
 
     const { fields, files } = await new Promise<any>((resolve, reject) => {
       form.parse(stream, (err: any, fields: any, files: any) => {
@@ -29,12 +29,12 @@ export async function POST(req: Request) {
     });
 
     const file = Array.isArray(files.file) ? files.file[0] : files.file;
-    const buffer = await file.toBuffer?.();
+    const fileBuffer = await file.toBuffer?.();
     const fileName = `${crypto.randomUUID()}_${file.originalFilename}`;
 
     const { error } = await supabase.storage
       .from("receipts")
-      .upload(fileName, buffer, {
+      .upload(fileName, fileBuffer, {
         contentType: file.mimetype,
       });
 
