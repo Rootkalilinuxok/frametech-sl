@@ -19,13 +19,19 @@ function generateSourceHash(dati: Record<string, unknown>) {
 }
 
 function numOrNull(value: unknown): string | null {
-  return value !== null && value !== undefined ? (Number(value) as unknown as string) : null;
+  return value !== null && value !== undefined
+    ? (Number(value) as unknown as string)
+    : null;
 }
 
 // OCR Google Vision API
+// eslint-disable-next-line complexity
 async function callVisionAPI(apiKey: string, base64: string, mimeType: string) {
   const endpoint = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
-  const type = mimeType === "application/pdf" ? "DOCUMENT_TEXT_DETECTION" : "TEXT_DETECTION";
+  const type =
+    mimeType === "application/pdf"
+      ? "DOCUMENT_TEXT_DETECTION"
+      : "TEXT_DETECTION";
   const body = {
     requests: [
       {
@@ -45,13 +51,21 @@ async function callVisionAPI(apiKey: string, base64: string, mimeType: string) {
 
   const data = await res.json();
   const response = data.responses?.[0];
-  if (response?.fullTextAnnotation?.text) return response.fullTextAnnotation.text;
-  if (response?.textAnnotations?.[0]?.description) return response.textAnnotations[0].description;
-  return "";
+
+  // restituisco prima fullTextAnnotation, poi textAnnotations
+  return (
+    response?.fullTextAnnotation?.text ??
+    response?.textAnnotations?.[0]?.description ??
+    ""
+  );
 }
 
 // GPT: estrai dati strutturati
-async function extractWithGPT(openaiKey: string, text: string, fileName: string) {
+async function extractWithGPT(
+  openaiKey: string,
+  text: string,
+  fileName: string
+) {
   const openai = new OpenAI({ apiKey: openaiKey });
   const prompt: ChatCompletionMessageParam[] = [
     {
@@ -115,8 +129,8 @@ async function persistReceipt(dati: Record<string, unknown>) {
       paymentMethod: "",
       status: "new",
       sourceHash: generateSourceHash(dati),
-      imageUrl: (dati.imageUrl as string) ?? null,
-      // createdAt gestito da defaultNow()
+      imageUrl: (dati.imageUrl as string | null) ?? null,
+      // createdAt gestito da defaultNow() nello schema
     };
     await db.insert(receiptsLive).values(row);
   } catch (err) {
@@ -125,12 +139,15 @@ async function persistReceipt(dati: Record<string, unknown>) {
 }
 
 export async function POST(req: NextRequest) {
+  // Step 1: parse input e env
   const { base64, fileName, mimeType, imageUrl } = await req.json();
-
   const apiKey = process.env.GOOGLE_API_KEY;
   const openaiKey = process.env.OPENAI_API_KEY;
   if (!apiKey || !openaiKey) {
-    return NextResponse.json({ error: "API key(s) missing" }, { status: 500 });
+    return NextResponse.json(
+      { error: "API key(s) missing" },
+      { status: 500 }
+    );
   }
 
   try {
@@ -139,21 +156,25 @@ export async function POST(req: NextRequest) {
 
     if (!text || text.length < 8) {
       console.warn("OCR vuoto o troppo corto", { text, fileName });
-      return NextResponse.json({ error: "OCR vuoto o non leggibile", filename: fileName }, { status: 200 });
+      return NextResponse.json(
+        { error: "OCR vuoto o non leggibile", filename: fileName },
+        { status: 200 }
+      );
     }
 
     const dati = await extractWithGPT(openaiKey, text, fileName);
     console.log("DATI GPT:", dati);
 
+    // Passa imageUrl a dati (così persistReceipt lo riceve)
     dati.imageUrl = imageUrl;
 
     await persistReceipt(dati);
 
+    // Step 6: Risposta - FORZA il campo imageUrl in uscita!
     return NextResponse.json({
       ...dati,
-      imageUrl: dati.imageUrl || "",
+      imageUrl: dati.imageUrl ?? "",
     });
-
   } catch (err) {
     console.error("OCR route error", err);
     const message = (err as Error).message;
