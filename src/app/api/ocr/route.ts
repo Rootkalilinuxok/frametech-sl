@@ -161,8 +161,12 @@ export async function POST(req: NextRequest) {
     // Step 5: Persistenza su DB
     await persistReceipt(dati);
 
-    // Step 6: Risposta
-    return NextResponse.json(dati);
+    // Step 6: Risposta - FORZA il campo image_url in uscita!
+return NextResponse.json({
+  ...dati,
+  image_url: dati.image_url || dati.imageUrl || "" // fallback se serve
+});
+
   } catch (err) {
     console.error("OCR route error", err);
     const message = (err as Error).message;
