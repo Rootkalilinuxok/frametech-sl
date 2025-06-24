@@ -21,10 +21,10 @@ export async function POST(req: Request) {
         currency: body.currency,
         tip: body.tip,
         total: body.total,
-        exchangeRate: body.exchangeRate, 
-        totalEur: body.totalEur,         
+        exchange_rate: body.exchangeRate,   
+        total_eur: body.totalEur,           
         percent: body.percent,
-        imageUrl: body.imageUrl,       
+        image_url: body.imageUrl,           
       })
       .where(eq(receiptsLive.id, body.id));
 
