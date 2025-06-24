@@ -25,8 +25,10 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useDataTableInstance } from "@/hooks/use-data-table-instance";
-
 import { costiColumns, type CostiRow } from "./columns";
+
+// IMPORT UTILITY AUTOMAZIONI
+import { fetchExchangeRate, calcEuro, countryToCurrency, normalizeCountry, normalizeCurrency } from "@/utils/currency";
 
 // eslint-disable-next-line complexity
 export function DataTable({ data: initialData }: { data: CostiRow[] }) {
@@ -43,9 +45,66 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
   // Lista di UniqueIdentifier per l’ordinamento
   const dataIds = React.useMemo<UniqueIdentifier[]>(() => data.map((row) => row.id), [data]);
 
-  // FUNZIONE DI UPDATE per rendere editabili le celle
+  // FUNZIONE DI UPDATE per automazioni NAZIONE/VALUTA/CAMBIO/TOTALE €
   const updateData = (rowIndex: number, columnId: string, value: unknown) => {
-    setData((old) => old.map((row, index) => (index === rowIndex ? { ...row, [columnId]: value } : row)));
+    setData((old) => {
+      const newData = [...old];
+      let row = { ...newData[rowIndex] };
+
+      // Aggiorna il valore della cella
+      row[columnId] = value;
+
+      // Mapping automatico country/currency
+      if (columnId === "country") {
+        row.country = normalizeCountry(String(value));
+        row.currency = countryToCurrency[row.country] || row.currency;
+      }
+      if (columnId === "currency") {
+        row.currency = normalizeCurrency(String(value));
+      }
+
+      // Aggiorna cambio valuta se cambia country/currency (asincrono!)
+      if (["currency", "country"].includes(columnId)) {
+        row.exchange_rate = row.currency === "EUR" ? 1 : 0;
+        // Ricalcolo temporaneo Totale €
+        row.total_eur = calcEuro(
+          Number(row.total ?? 0),
+          Number(row.tip ?? 0),
+          Number(row.currency === "EUR" ? 1 : 0),
+          Number(row.percent ?? 0)
+        );
+        newData[rowIndex] = row;
+
+        // Fetch del cambio solo se diverso da EUR
+        if (row.currency && row.currency !== "EUR") {
+          fetchExchangeRate(row.currency).then((rate) => {
+            setData((currData) => {
+              const updatedData = [...currData];
+              let updatedRow = { ...updatedData[rowIndex] };
+              updatedRow.exchange_rate = rate;
+              updatedRow.total_eur = calcEuro(
+                Number(updatedRow.total ?? 0),
+                Number(updatedRow.tip ?? 0),
+                Number(rate ?? 1),
+                Number(updatedRow.percent ?? 0)
+              );
+              updatedData[rowIndex] = updatedRow;
+              return updatedData;
+            });
+          });
+        }
+      } else {
+        // Ricalcolo Totale € per qualsiasi altro campo editato
+        row.total_eur = calcEuro(
+          Number(row.total ?? 0),
+          Number(row.tip ?? 0),
+          Number(row.exchange_rate ?? 1),
+          Number(row.percent ?? 0)
+        );
+        newData[rowIndex] = row;
+      }
+      return newData;
+    });
   };
 
   // Istanza della tabella: include getCoreRowModel e la funzione updateData nel meta
@@ -181,7 +240,7 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
     );
   }
 
-  return ( 
+  return (
     <Tabs defaultValue="filtri" className="w-full flex-col gap-6">
       <div className="flex items-center justify-between">
         <div className="mb-4 flex items-center gap-2">
