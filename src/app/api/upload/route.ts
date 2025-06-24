@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-// Connessione a Supabase
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_KEY!
@@ -9,7 +8,6 @@ const supabase = createClient(
 
 export async function POST(req: NextRequest) {
   try {
-    // Estrai form-data dalla richiesta
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
 
@@ -17,14 +15,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Nessun file caricato" }, { status: 400 });
     }
 
-    // Converti il file in buffer
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    // Esegui upload nel bucket Supabase "receipts"
+    // Genera nome file univoco
+    const uniqueName = `${Date.now()}-${file.name}`;
+
     const { data, error } = await supabase.storage
       .from("receipts")
-      .upload(`uploads/${file.name}`, buffer, {
+      .upload(`uploads/${uniqueName}`, buffer, {
         contentType: file.type,
+        upsert: false, // evitiamo sovrascritture
       });
 
     if (error) {
@@ -32,12 +32,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Upload to Supabase failed" }, { status: 500 });
     }
 
-    // Ottieni URL pubblico del file caricato
     const { data: urlInfo } = supabase.storage
       .from("receipts")
       .getPublicUrl(data.path);
 
-    // Ritorna URL al client per salvarlo nel DB
     return NextResponse.json({
       success: true,
       url: urlInfo.publicUrl,
