@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { IncomingForm } from "formidable";
+import { IncomingForm } from "formidable"; // <-- aggiornato
 import fs from "fs";
 import { promisify } from "util";
 import path from "path";
 
-// Config globale (no edge runtime!)
 export const config = {
   api: {
     bodyParser: false,
@@ -20,7 +19,7 @@ const supabase = createClient(
 export async function POST(req: NextRequest) {
   const form = new IncomingForm({
     keepExtensions: true,
-    uploadDir: "/tmp", // necessario su Vercel
+    uploadDir: "/tmp",
   });
 
   const parseForm = () =>
