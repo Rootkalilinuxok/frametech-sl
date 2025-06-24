@@ -45,52 +45,11 @@ interface CellProps {
 //  Celle editabili
 // ────────────────────────────────────────────────────────────
 
-export function DateCell({ row, table }: CellProps) {
-  const [value, setValue] = React.useState(row.original.date);
-  React.useEffect(() => {
-    setValue(row.original.date);
-  }, [row.original.date]);
-  return (
-    <input
-      type="date"
-      className="input input-sm rounded border px-2 py-1"
-      style={{ width: "120px", minWidth: "110px", maxWidth: "130px" }}
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      onBlur={() => {
-        if (value !== row.original.date) {
-          table.options.meta?.updateData(row.index, "date", value);
-        }
-      }}
-    />
-  );
-}
-
-export function TimeCell({ row, table }: CellProps) {
-  const [value, setValue] = React.useState(row.original.time ?? "");
-  React.useEffect(() => {
-    setValue(row.original.time ?? "");
-  }, [row.original.time]);
-  return (
-    <input
-      type="time"
-      className="input input-sm rounded border px-2 py-1"
-      style={{ width: "90px", minWidth: "80px", maxWidth: "100px" }}
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      onBlur={() => {
-        if (value !== (row.original.time ?? "")) {
-          table.options.meta?.updateData(row.index, "time", value);
-        }
-      }}
-    />
-  );
-}
-
 export function NameCell({ row, table }: CellProps) {
-  const imageUrl = (row.original as any).imageUrl;
-  const [value, setValue] = React.useState(row.original.name);
+  // Campo serializzato dal DB: deve essere image_url (snake_case)
+  const imageUrl = (row.original as any).image_url;
 
+  const [value, setValue] = React.useState(row.original.name);
   React.useEffect(() => {
     setValue(row.original.name);
   }, [row.original.name]);
@@ -119,6 +78,27 @@ export function NameCell({ row, table }: CellProps) {
       onBlur={() => {
         if (value !== row.original.name) {
           table.options.meta?.updateData(row.index, "name", value);
+        }
+      }}
+    />
+  );
+}
+
+export function TimeCell({ row, table }: CellProps) {
+  const [value, setValue] = React.useState(row.original.time ?? "");
+  React.useEffect(() => {
+    setValue(row.original.time ?? "");
+  }, [row.original.time]);
+  return (
+    <input
+      type="time"
+      className="input input-sm rounded border px-2 py-1"
+      style={{ width: "90px", minWidth: "80px", maxWidth: "100px" }}
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      onBlur={() => {
+        if (value !== (row.original.time ?? "")) {
+          table.options.meta?.updateData(row.index, "time", value);
         }
       }}
     />
