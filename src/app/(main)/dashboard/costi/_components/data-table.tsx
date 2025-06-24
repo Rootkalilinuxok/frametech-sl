@@ -213,9 +213,18 @@ function closeImage() {
       
 
       if (!dati || !dati.id) {
-        warningList.push({ filename: file.name, reason: "Dati non estratti o mancanti" });
-      } else {
-        newRows.push(dati);
+  warningList.push({ filename: file.name, reason: "Dati non estratti o mancanti" });
+} else {
+  // Salva in database anche l'image_url appena ottenuta da Supabase
+  await fetch("/api/receipts/save", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...dati, image_url: publicUrl }),
+  });
+
+  // Aggiorna lo stato locale per mostrare correttamente il link cliccabile
+  newRows.push({ ...dati, image_url: publicUrl });
+
       }
     } catch (err: unknown) {
       const error = err as Error;
