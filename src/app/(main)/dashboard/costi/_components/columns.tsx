@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
     updateData: (rowIndex: number, columnId: string, value: any) => void;
+    openImage?: (props: { url: string; name: string }) => void;
   }
 }
 
