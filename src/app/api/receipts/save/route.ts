@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { receipts } from "@/lib/schema"; // <-- Assicurati che questa sia la tua tabella Drizzle
+import { receiptsLive } from "@/lib/schema"; // <-- Assicurati che questa sia la tua tabella Drizzle
 import { eq } from "drizzle-orm";
 
 export async function POST(req: Request) {
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
 
     // Esegui update, non insert, perché l’ID è già stato generato
     await db
-      .update(receipts)
+      .update(receiptsLive)
       .set({
         date: body.date,
         time: body.time,
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
         percent: body.percent,
         image_url: body.image_url, // 👈 salva qui il link pubblico
       })
-      .where(eq(receipts.id, body.id));
+      .where(eq(receiptsLive.id, body.id));
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
