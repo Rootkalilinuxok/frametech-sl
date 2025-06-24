@@ -20,7 +20,8 @@ export function ReceiptImageModal({ imageUrl, fileName, onClose }: ReceiptImageM
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="relative max-w-4xl max-h-[90vh] w-full bg-background rounded-lg p-4 overflow-auto">
+      <div className="relative max-w-4xl max-h-[90vh] w-full bg-background rounded-lg p-4 overflow-hidden flex flex-col items-center">
+        {/* Bottone Chiudi in alto a destra */}
         <Button
           variant="outline"
           className="absolute top-3 right-3 p-1 rounded-full"
@@ -28,13 +29,17 @@ export function ReceiptImageModal({ imageUrl, fileName, onClose }: ReceiptImageM
         >
           <X className="w-4 h-4" />
         </Button>
-        <img
-          src={imageUrl}
-          alt={fileName}
-          style={{ maxWidth: "100%", maxHeight: "80vh", transform: `scale(${zoom})` }}
-          className="mx-auto my-2 block"
-        />
-        <div className="mt-2 flex justify-center gap-4">
+        {/* Container scrollabile immagine */}
+        <div className="flex-1 flex items-center justify-center overflow-auto w-full mb-20">
+          <img
+            src={imageUrl}
+            alt={fileName}
+            style={{ maxWidth: "100%", maxHeight: "80vh", transform: `scale(${zoom})`, transition: "transform 0.2s" }}
+            className="block"
+          />
+        </div>
+        {/* Overlay pulsanti, sempre in basso */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4 bg-black/70 px-4 py-2 rounded-lg shadow-lg">
           <Button variant="secondary" onClick={handleDownload}>
             <Download className="w-4 h-4 mr-1" /> Download
           </Button>
@@ -49,3 +54,4 @@ export function ReceiptImageModal({ imageUrl, fileName, onClose }: ReceiptImageM
     </div>
   );
 }
+
