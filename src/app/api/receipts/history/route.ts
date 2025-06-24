@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-
 import { and, gte, lte } from "drizzle-orm";
 
 import { db } from "@/lib/db";
@@ -12,7 +11,6 @@ export async function GET(req: NextRequest) {
   const from = searchParams.get("from");
   const to = searchParams.get("to");
 
-  // Costruisci condizioni dinamiche
   let where = undefined;
   if (from && to) {
     const fromDate = new Date(from + "T00:00:00.000Z");
@@ -20,26 +18,25 @@ export async function GET(req: NextRequest) {
     where = and(gte(receiptsLive.createdAt, fromDate), lte(receiptsLive.createdAt, toDate));
   }
 
-  // Query Drizzle (prende tutto se where è undefined)
   try {
     const rows = await db
-  .select({
-    id: receiptsLive.id,
-    date: receiptsLive.date,
-    time: receiptsLive.time,
-    name: receiptsLive.name,
-    country: receiptsLive.country,
-    currency: receiptsLive.currency,
-    tip: receiptsLive.tip,
-    total: receiptsLive.total,
-    exchangeRate: receiptsLive.exchange_rate, //  alias con camelCase
-    totalEur: receiptsLive.total_eur,
-    percent: receiptsLive.percent,
-    image_url: receiptsLive.image_url,        //  aggiunto per link immagine
-  })
-  .from(receiptsLive)
-  .where(where)
-  .orderBy(receiptsLive.createdAt);
+      .select({
+        id: receiptsLive.id,
+        date: receiptsLive.date,
+        time: receiptsLive.time,
+        name: receiptsLive.name,
+        country: receiptsLive.country,
+        currency: receiptsLive.currency,
+        tip: receiptsLive.tip,
+        total: receiptsLive.total,
+        exchangeRate: receiptsLive.exchange_rate, 
+        totalEur: receiptsLive.total_eur,
+        percent: receiptsLive.percent,
+        imageUrl: receiptsLive.image_url,         
+      })
+      .from(receiptsLive)
+      .where(where)
+      .orderBy(receiptsLive.createdAt);
 
     return NextResponse.json(rows);
   } catch (err) {
