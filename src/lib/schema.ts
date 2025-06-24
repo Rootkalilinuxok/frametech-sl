@@ -7,7 +7,7 @@ import { pgTable, serial, varchar, numeric, timestamp, text } from "drizzle-orm/
  * object that can be spread into both table definitions.
  */
 const receiptColumns = {
-  id: serial("id").primaryKey(), // <-- ID incrementale numerico
+  id: serial("id").primaryKey(),
   date: timestamp("date", { mode: "date" }).notNull(),
   time: varchar("time", { length: 8 }),
   name: varchar("name", { length: 120 }).notNull(),
@@ -22,7 +22,7 @@ const receiptColumns = {
   status: varchar("status", { length: 20 }).default("new"),
   sourceHash: text("source_hash").notNull().unique(),
   createdAt: timestamp("created_at").defaultNow(),
-  image_url: varchar("image_url", { length: 255 }),
+  imageUrl: varchar("image_url", { length: 255 }),
 };
 
 /* --- live ------------------------------------------------ */
