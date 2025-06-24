@@ -1,59 +1,58 @@
-import { NextRequest, NextResponse } from "next/server";
-import { v4 as uuidv4 } from "uuid";
-import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
+import { Readable } from "stream";
+import { IncomingForm } from "formidable";
+import { supabase } from "@/lib/supabase"; // Cambia percorso se necessario
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_KEY!
-);
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
-export const runtime = "nodejs";
-export const maxDuration = 60;
-
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    if (!req.headers.get("content-type")?.includes("multipart/form-data")) {
-      return NextResponse.json({ error: "Content-Type must be multipart/form-data" }, { status: 400 });
+    const buffers: Buffer[] = [];
+    const reader = req.body?.getReader();
+    if (!reader) return NextResponse.json({ error: "Body not readable" }, { status: 400 });
+
+    let chunk = await reader.read();
+    while (!chunk.done) {
+      buffers.push(chunk.value);
+      chunk = await reader.read();
     }
 
-    const formData = await req.formData();
-    const file = formData.get("file") as File;
-    if (!file) {
-      return NextResponse.json({ error: "Missing file" }, { status: 400 });
-    }
+    const stream = Readable.from(Buffer.concat(buffers));
 
-    const ext = file.name.split('.').pop() || "jpg";
-    const fileName = `${uuidv4()}.${ext}`;
+    const form = new IncomingForm({ multiples: false });
+    const { fields, files } = await new Promise<any>((resolve, reject) => {
+      form.parse(stream as any, (err, fields, files) => {
+        if (err) reject(err);
+        else resolve({ fields, files });
+      });
+    });
 
-    // LEGGE IL BUFFER (funziona sempre anche su Vercel/Next)
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    const file = files.file;
+    if (!file) return NextResponse.json({ error: "File mancante" }, { status: 400 });
 
-    const { data, error } = await supabase.storage
+    const uploadedFile = Array.isArray(file) ? file[0] : file;
+    const buffer = await uploadedFile.toBuffer?.();
+    const fileName = `${crypto.randomUUID()}_${uploadedFile.originalFilename}`;
+
+    const { error } = await supabase.storage
       .from("receipts")
       .upload(fileName, buffer, {
-        contentType: file.type,
-        cacheControl: "3600",
-        upsert: false,
+        contentType: uploadedFile.mimetype,
       });
 
     if (error) {
-      console.error("Supabase upload error:", error);
+      console.error("Errore Supabase:", error);
       return NextResponse.json({ error: "Supabase upload error" }, { status: 500 });
     }
 
-    // Ottieni la URL pubblica dell’immagine
-    const { data: publicUrlData } = supabase.storage
-      .from("receipts")
-      .getPublicUrl(fileName);
-
-    return NextResponse.json({
-      success: true,
-      url: publicUrlData.publicUrl,
-      fileName,
-    });
+    const { data } = supabase.storage.from("receipts").getPublicUrl(fileName);
+    return NextResponse.json({ success: true, url: data.publicUrl, fileName });
   } catch (err) {
-    console.error("Errore upload file:", err);
+    console.error("Errore upload:", err);
     return NextResponse.json({ error: "Upload error" }, { status: 500 });
   }
 }
