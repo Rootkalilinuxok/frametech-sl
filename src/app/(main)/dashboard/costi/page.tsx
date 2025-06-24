@@ -15,7 +15,9 @@ type ApiRow = {
   exchangeRate?: number | string | null;
   totalEur?: number | string | null;
   percent?: number | string | null;
+  image_url?: string | null; //  aggiungi questo
 };
+
 
 // Mapping da risposta API a CostiRow (modifica se serve)
 function mapRow(row: ApiRow): CostiRow {
@@ -37,6 +39,7 @@ function mapRow(row: ApiRow): CostiRow {
         ? Number(row.totalEur)
         : 0,
     percent: row.percent !== null && row.percent !== undefined ? Number(row.percent) : 0,
+    image_url: row.image_url ?? "", // mappa correttamente
   };
 }
 
