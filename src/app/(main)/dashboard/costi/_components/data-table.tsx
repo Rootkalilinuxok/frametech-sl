@@ -180,6 +180,7 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
 
         if (!res.ok) throw new Error(`Errore OCR (${file.name})`);
         const dati = await res.json();
+        dati.imageUrl = URL.createObjectURL(file);
 
         if (!dati || !dati.id) {
           warningList.push({ filename: file.name, reason: "Dati non estratti o mancanti" });
