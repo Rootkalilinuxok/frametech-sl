@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Readable } from "stream";
 import { IncomingForm } from "formidable";
-import { supabase } from "@/lib/supabase"; // Cambia percorso se necessario
+import { supabase } from "@/lib/supabase"; // cambia se il tuo file è altrove
 
 export const config = {
   api: {
@@ -35,24 +35,24 @@ export async function POST(req: Request) {
     if (!file) return NextResponse.json({ error: "File mancante" }, { status: 400 });
 
     const uploadedFile = Array.isArray(file) ? file[0] : file;
-    const buffer = await uploadedFile.toBuffer?.();
+    const fileBuffer = await uploadedFile.toBuffer?.();
     const fileName = `${crypto.randomUUID()}_${uploadedFile.originalFilename}`;
 
     const { error } = await supabase.storage
       .from("receipts")
-      .upload(fileName, buffer, {
+      .upload(fileName, fileBuffer, {
         contentType: uploadedFile.mimetype,
       });
 
     if (error) {
-      console.error("Errore Supabase:", error);
+      console.error("Supabase upload error:", error);
       return NextResponse.json({ error: "Supabase upload error" }, { status: 500 });
     }
 
     const { data } = supabase.storage.from("receipts").getPublicUrl(fileName);
     return NextResponse.json({ success: true, url: data.publicUrl, fileName });
   } catch (err) {
-    console.error("Errore upload:", err);
+    console.error("Upload failed:", err);
     return NextResponse.json({ error: "Upload error" }, { status: 500 });
   }
 }
