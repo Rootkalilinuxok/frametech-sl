@@ -1,4 +1,4 @@
 declare module 'formidable-serverless' {
-  import type { IncomingForm } from 'formidable';
+  import { IncomingForm } from 'formidable';
   export { IncomingForm };
 }
