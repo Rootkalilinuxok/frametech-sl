@@ -22,8 +22,9 @@ export async function POST(req: Request) {
         currency: body.currency,
         tip: body.tip,
         total: body.total,
-        exchange_rate: body.exchange_rate,
-        total_eur: body.total_eur,
+        exchangeRate: body.exchange_rate,
+        totalEur: body.total_eur,
+
         percent: body.percent,
         image_url: body.image_url, // 👈 salva qui il link pubblico
       })
