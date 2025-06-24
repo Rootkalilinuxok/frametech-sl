@@ -46,10 +46,10 @@ interface CellProps {
 // ────────────────────────────────────────────────────────────
 
 export function NameCell({ row, table }: CellProps) {
-  // Campo serializzato dal DB: deve essere image_url (snake_case)
+  // Usa il campo image_url restituito dal backend (DB)
   const imageUrl = (row.original as any).image_url;
-
   const [value, setValue] = React.useState(row.original.name);
+
   React.useEffect(() => {
     setValue(row.original.name);
   }, [row.original.name]);
@@ -60,7 +60,7 @@ export function NameCell({ row, table }: CellProps) {
         variant="link"
         className="p-0 text-blue-700 underline"
         onClick={() => {
-          if (table.options.meta && table.options.meta.openImage) {
+          if (table.options.meta?.openImage) {
             table.options.meta.openImage({ url: imageUrl, name: row.original.name });
           }
         }}
@@ -104,7 +104,6 @@ export function TimeCell({ row, table }: CellProps) {
     />
   );
 }
-
 
 
 export function CountryCell({ row, table }: CellProps) {
