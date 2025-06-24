@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { IncomingForm } from "formidable";
-import { Readable } from "stream"; // ✅ per conversione stream
-import fs from "fs/promises"; // ✅ usa fs/promises diretto
+import { Readable } from "stream";
+import fs from "fs/promises";
 
 export const config = {
   api: {
@@ -21,10 +21,8 @@ export async function POST(req: NextRequest) {
     uploadDir: "/tmp",
   });
 
-  // ✅ Converti NextRequest in uno stream compatibile
   const stream = Readable.fromWeb(req.body as any) as any;
 
-  // ✅ Esegui parsing
   const { files } = await new Promise<{ fields: any; files: any }>((resolve, reject) => {
     form.parse(stream, (err, fields, files) => {
       if (err) reject(err);
