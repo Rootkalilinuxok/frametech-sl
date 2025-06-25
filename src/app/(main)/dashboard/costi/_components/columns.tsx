@@ -157,8 +157,12 @@ export function CurrencyCell({ row, table }: CellProps) {
     <input
       className="input input-sm w-full rounded border px-2 py-1"
       value={value}
-      onChange={(e) => setValue(e.target.value)}
+      onChange={(e) => {
+        console.log("[DEBUG] CurrencyCell onChange", e.target.value);
+        setValue(e.target.value);
+      }}
       onBlur={() => {
+        console.log("[DEBUG] CurrencyCell onBlur", value);
         if (value !== row.original.currency) {
           table.options.meta?.updateData(row.index, "currency", value);
         }
