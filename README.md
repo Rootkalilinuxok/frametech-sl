@@ -72,4 +72,20 @@ This project includes an **AI watcher script** (`ai-deploy-watcher.js`) that aut
   node ai-deploy-watcher.js
   ```
 
-  Ensure the environment variables `VERCEL_TOKEN`, `PROJECT_ID`, and `OPENAI_API_KEY` are set before running the script.
+Ensure the environment variables `VERCEL_TOKEN`, `PROJECT_ID`, and `OPENAI_API_KEY` are set before running the script.
+
+---
+
+## Network Access for Currency Rates
+
+Currency conversion is handled via [api.exchangerate.host](https://api.exchangerate.host). When using the provided devcontainer the container runs with `--network host`, so external API requests work out of the box.
+
+If you run the project in your own Docker setup make sure the container can reach this API (for example by adding `--network host`).
+
+For local development you can override or proxy the service by setting `NEXT_PUBLIC_EXCHANGE_RATE_URL` in your `.env` file:
+
+```sh
+NEXT_PUBLIC_EXCHANGE_RATE_URL=https://api.exchangerate.host
+```
+
+If not set, it defaults to `https://api.exchangerate.host`.

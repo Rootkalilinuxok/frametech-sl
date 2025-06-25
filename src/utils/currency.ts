@@ -78,14 +78,23 @@ export function normalizeCurrency(input: string): string {
 }
 
 // Fetch current exchange rate: how many units of `currency` equal 1 EUR
+const EXCHANGE_BASE =
+  process.env.NEXT_PUBLIC_EXCHANGE_RATE_URL ??
+  "https://api.exchangerate.host";
+
 export async function fetchExchangeRate(currency: string): Promise<number> {
-  if (!currency || normalizeCurrency(currency) === "EUR") return 1;
+  if (!currency || normalizeCurrency(currency) === "EUR") {
+    return 1;
+  }
+
   try {
     const to = normalizeCurrency(currency);
     const res = await fetch(
-      `https://api.exchangerate.host/convert?from=EUR&to=${to}&amount=1`
+      `${EXCHANGE_BASE.replace(/\/$/, "")}/convert?from=EUR&to=${to}&amount=1`
     );
-    if (!res.ok) return 0;
+    if (!res.ok) {
+      return 0;
+    }
     const data = await res.json();
     return data?.info?.rate ?? data?.result ?? 0;
   } catch (err) {
