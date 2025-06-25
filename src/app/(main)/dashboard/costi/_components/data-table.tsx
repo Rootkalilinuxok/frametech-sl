@@ -101,6 +101,7 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
         newData[rowIndex] = row;
 
         if (row.currency && row.currency !== "EUR") {
+         console.log("[DEBUG] Richiesta cambio per valuta:", row.currency);
           fetchExchangeRate(row.currency).then((rate) => {
             setData((currData) => {
               const updated = [...currData];
