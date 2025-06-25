@@ -150,6 +150,10 @@ export function CountryCell({ row, table }: CellProps) {
 
 export function CurrencyCell({ row, table }: CellProps) {
   const [value, setValue] = React.useState(row.original.currency);
+  // Alcuni log hanno mostrato che l'evento onBlur non sempre
+  // viene eseguito: usiamo quindi un debounce sull'onChange
+  // per garantire che updateData sia chiamato comunque.
+  const timer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   React.useEffect(() => {
     setValue(row.original.currency);
   }, [row.original.currency]);
@@ -157,7 +161,14 @@ export function CurrencyCell({ row, table }: CellProps) {
     <input
       className="input input-sm w-full rounded border px-2 py-1"
       value={value}
-      onChange={(e) => setValue(e.target.value)}
+      onChange={(e) => {
+        const v = e.target.value;
+        setValue(v);
+        if (timer.current) clearTimeout(timer.current);
+        timer.current = setTimeout(() => {
+          table.options.meta?.updateData(row.index, "currency", v);
+        }, 300);
+      }}
       onBlur={() => {
         if (value !== row.original.currency) {
           table.options.meta?.updateData(row.index, "currency", value);
