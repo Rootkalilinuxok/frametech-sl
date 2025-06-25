@@ -168,7 +168,7 @@ export function CurrencyCell({ row, table }: CellProps) {
 }
 
 export function TipCell({ row, table }: CellProps) {
-  const [value, setValue] = React.useState(row.original.tip ?? "");
+  const [value, setValue] = React.useState<number | "">(row.original.tip ?? "");
   React.useEffect(() => {
     setValue(row.original.tip ?? "");
   }, [row.original.tip]);
@@ -191,7 +191,7 @@ export function TipCell({ row, table }: CellProps) {
 }
 
 export function TotalCell({ row, table }: CellProps) {
-  const [value, setValue] = React.useState(row.original.total ?? "");
+  const [value, setValue] = React.useState<number | "">(row.original.total ?? "");
   React.useEffect(() => {
     setValue(row.original.total ?? "");
   }, [row.original.total]);
@@ -214,7 +214,7 @@ export function TotalCell({ row, table }: CellProps) {
 }
 
 export function ExchangeRateCell({ row, table }: CellProps) {
-  const [value, setValue] = React.useState(row.original.exchangeRate ?? "");
+  const [value, setValue] = React.useState<number | "">(row.original.exchangeRate ?? "");
   React.useEffect(() => {
     setValue(row.original.exchangeRate ?? "");
   }, [row.original.exchangeRate]);
@@ -239,7 +239,7 @@ export function ExchangeRateCell({ row, table }: CellProps) {
 
 
 export function TotalEurCell({ row, table }: CellProps) {
-  const [value, setValue] = React.useState(row.original.totalEur ?? "");
+  const [value, setValue] = React.useState<number | "">(row.original.totalEur ?? "");
   React.useEffect(() => {
     setValue(row.original.totalEur ?? "");
   }, [row.original.totalEur]);
@@ -262,7 +262,7 @@ export function TotalEurCell({ row, table }: CellProps) {
 }
 
 export function PercentCell({ row, table }: CellProps) {
-  const [value, setValue] = React.useState(row.original.percent ?? "");
+  const [value, setValue] = React.useState<number | "">(row.original.percent ?? "");
   React.useEffect(() => {
     setValue(row.original.percent ?? "");
   }, [row.original.percent]);
