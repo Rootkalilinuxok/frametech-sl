@@ -159,9 +159,8 @@ export function CurrencyCell({ row, table }: CellProps) {
       value={value}
       onChange={(e) => setValue(e.target.value)}
       onBlur={() => {
-        if (value !== row.original.currency) {
-          table.options.meta?.updateData(row.index, "currency", value);
-        }
+        // Togli il controllo per debug
+        table.options.meta?.updateData(row.index, "currency", value);
       }}
     />
   );
