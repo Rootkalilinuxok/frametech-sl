@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+
 import { describe, it, expect, vi, type Mock } from "vitest";
 
 const mockValues: Mock<[], unknown> = vi.fn();
@@ -19,6 +20,8 @@ describe("receipts POST API", () => {
         currency: "EUR",
         total: 10,
         sourceHash: "x",
+        exchangeRate: 1,
+        totalEur: 10,
       }),
     } as unknown as NextRequest;
 
