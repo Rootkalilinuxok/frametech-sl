@@ -5,6 +5,7 @@ import { DataTableColumnHeader } from "@/components/data-table/data-table-column
 import { SectionRowActions } from "@/components/table/row-actions";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 
 /* eslint-disable react-hooks/rules-of-hooks, max-lines */
@@ -352,12 +353,34 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
     maxSize: 180,
   },
   {
-    accessorKey: "exchangeRate",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Cambio" />,
-    cell: ExchangeRateCell,
-    minSize: 80, // "Cambio"
-    maxSize: 180,
+  accessorKey: "exchangeRate",
+  header: ({ column }) => <DataTableColumnHeader column={column} title="Cambio" />,
+  cell: ({ row }) => {
+    const value = row.original.exchangeRate;
+    const currency = row.original.currency;
+    if (!value || value === 0) {
+      if (currency && currency !== "EUR") {
+        return (
+          <span className="flex items-center text-gray-400">
+            <Loader2 className="animate-spin mr-1 h-4 w-4" />
+            <span>Caricamento…</span>
+          </span>
+        );
+      }
+      return null;
+    }
+    return (
+      <span>
+        {Number(value).toLocaleString("it-IT", {
+          minimumFractionDigits: 4,
+          maximumFractionDigits: 4,
+        })}
+      </span>
+    );
   },
+  minSize: 80,
+  maxSize: 180,
+},
   {
     accessorKey: "totalEur",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Totale (€)" />,
