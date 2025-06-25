@@ -18,10 +18,10 @@ export async function POST(req: NextRequest) {
     exchangeRate: data.exchangeRate ?? null,
     totalEur: data.totalEur ?? null,
     percent: data.percent ?? null,
+    percent: null,
     paymentMethod: data.paymentMethod ?? null,
     status: data.status ?? "new",
 
-    // Risolto conflitto: supportiamo entrambe le varianti e fallback su `id`
     sourceHash: data.sourceHash ?? data.source_hash ?? data.id,
     imageUrl: data.imageUrl   ?? data.image_url   ?? null,
   } as typeof receiptsLive.$inferInsert;
