@@ -59,13 +59,25 @@ export function normalizeCountry(input: string): string {
   return key.slice(0, 2);
 }
 
+// Convert arbitrary input to ISO alpha-3 country code
+export function toAlpha3Country(input: string): string {
+  const alpha2 = normalizeCountry(input);
+  const alpha3 = countries.alpha2ToAlpha3(alpha2);
+  return alpha3 ?? alpha2;
+}
+
+// Get currency code (ISO 4217 alpha-3) for a given ISO alpha-3 country code
+export function getCurrencyForCountry(alpha3: string): string {
+  return countryToCurrency[alpha3] ?? "";
+}
+
 // Normalize currency code to ISO 4217 alpha-3
 export function normalizeCurrency(input: string): string {
   if (!input) return "";
   return input.trim().toUpperCase().slice(0, 3);
 }
 
-// Fetch current exchange rate: 1 EUR = ? currency
+// Fetch current exchange rate: how many units of `currency` equal 1 EUR
 export async function fetchExchangeRate(currency: string): Promise<number> {
   if (!currency || normalizeCurrency(currency) === "EUR") return 1;
   try {
