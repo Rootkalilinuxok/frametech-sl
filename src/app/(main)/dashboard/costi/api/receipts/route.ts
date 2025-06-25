@@ -16,12 +16,12 @@ export async function POST(req: NextRequest) {
     currency: data.currency,
     total: data.total,
     tip: data.tip ?? null,
-    exchangeRate: data.exchange_rate ?? null,
-    totalEur: data.total_eur ?? null,
+    exchangeRate: data.exchangeRate ?? null,
+    totalEur: data.totalEur ?? null,
     percent: data.percent ?? null,
-    paymentMethod: data.payment_method ?? null,
+    paymentMethod: data.paymentMethod ?? null,
     status: data.status ?? "new",
-    sourceHash: data.source_hash ?? data.id,
+    sourceHash: data.sourceHash ?? data.id,
   } as typeof receiptsLive.$inferInsert;
 
   await db.insert(receiptsLive).values(row);

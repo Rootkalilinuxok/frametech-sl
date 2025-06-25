@@ -31,10 +31,10 @@ export interface CostiRow {
   currency: string;
   tip?: number;
   total: number;
-  exchange_rate?: number;
-  total_eur: number;
+  exchangeRate?: number;
+  totalEur: number;
   percent?: number;
-  image_url?: string;
+  imageUrl?: string;
 }
 
 interface CellProps {
@@ -47,8 +47,8 @@ interface CellProps {
 // ────────────────────────────────────────────────────────────
 
 export function NameCell({ row, table }: CellProps) {
-  // Usa il campo image_url restituito dal backend (DB)
-  const imageUrl = (row.original as any).image_url;
+  // Usa il campo imageUrl restituito dal backend (DB)
+  const imageUrl = (row.original as any).imageUrl;
   const [value, setValue] = React.useState(row.original.name);
 
   React.useEffect(() => {
@@ -208,10 +208,10 @@ export function TotalCell({ row, table }: CellProps) {
 }
 
 export function ExchangeRateCell({ row, table }: CellProps) {
-  const [value, setValue] = React.useState(row.original.exchange_rate ?? "");
+  const [value, setValue] = React.useState(row.original.exchangeRate ?? "");
   React.useEffect(() => {
-    setValue(row.original.exchange_rate ?? "");
-  }, [row.original.exchange_rate]);
+    setValue(row.original.exchangeRate ?? "");
+  }, [row.original.exchangeRate]);
   return (
     <input
       type="number"
@@ -221,8 +221,8 @@ export function ExchangeRateCell({ row, table }: CellProps) {
       onChange={(e) => setValue(e.target.value)}
       onBlur={() => {
         const num = value === "" ? undefined : Number(value);
-        if (num !== row.original.exchange_rate) {
-          table.options.meta?.updateData(row.index, "exchange_rate", num);
+        if (num !== row.original.exchangeRate) {
+          table.options.meta?.updateData(row.index, "exchangeRate", num);
         }
       }}
     />
@@ -230,10 +230,10 @@ export function ExchangeRateCell({ row, table }: CellProps) {
 }
 
 export function TotalEurCell({ row, table }: CellProps) {
-  const [value, setValue] = React.useState(row.original.total_eur);
+  const [value, setValue] = React.useState(row.original.totalEur);
   React.useEffect(() => {
-    setValue(row.original.total_eur);
-  }, [row.original.total_eur]);
+    setValue(row.original.totalEur);
+  }, [row.original.totalEur]);
   return (
     <input
       type="number"
@@ -241,8 +241,8 @@ export function TotalEurCell({ row, table }: CellProps) {
       value={value}
       onChange={(e) => setValue(Number(e.target.value))}
       onBlur={() => {
-        if (value !== row.original.total_eur) {
-          table.options.meta?.updateData(row.index, "total_eur", value);
+        if (value !== row.original.totalEur) {
+          table.options.meta?.updateData(row.index, "totalEur", value);
         }
       }}
     />
@@ -352,14 +352,14 @@ export const costiColumns: ColumnDef<CostiRow>[] = [
     maxSize: 180,
   },
   {
-    accessorKey: "exchange_rate",
+    accessorKey: "exchangeRate",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Cambio" />,
     cell: ExchangeRateCell,
     minSize: 80, // "Cambio"
     maxSize: 180,
   },
   {
-    accessorKey: "total_eur",
+    accessorKey: "totalEur",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Totale (€)" />,
     cell: TotalEurCell,
     minSize: 90, // "Totale (€)"

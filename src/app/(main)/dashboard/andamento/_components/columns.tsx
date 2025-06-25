@@ -39,8 +39,8 @@ export interface ReceiptRow {
   currency: string; // codice ISO (EUR, USD …)
   tip?: number; // eventuale mancia
   total: number; // importo originale
-  exchange_rate?: number; // cambio verso EUR (1 unit currency = ? EUR)
-  total_eur: number; // importo convertito in €
+  exchangeRate?: number; // cambio verso EUR (1 unit currency = ? EUR)
+  totalEur: number; // importo convertito in €
   percent?: number; // campo libero (+%)
 }
 
@@ -127,15 +127,15 @@ export const dashboardColumns: ColumnDef<ReceiptRow>[] = [
     size: 110,
   },
   {
-    accessorKey: "exchange_rate",
+    accessorKey: "exchangeRate",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Cambio" />,
-    cell: ({ row }) => (row.original.exchange_rate != null ? row.original.exchange_rate.toFixed(4) : "—"),
+    cell: ({ row }) => (row.original.exchangeRate != null ? row.original.exchangeRate.toFixed(4) : "—"),
     size: 90,
   },
   {
-    accessorKey: "total_eur",
+    accessorKey: "totalEur",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Totale (€)" />,
-    cell: ({ row }) => fmtCurr(row.original.total_eur, "EUR"),
+    cell: ({ row }) => fmtCurr(row.original.totalEur, "EUR"),
     size: 120,
   },
   {

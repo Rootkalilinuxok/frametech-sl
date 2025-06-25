@@ -29,10 +29,10 @@ export async function GET(req: NextRequest) {
         currency: receiptsLive.currency,
         tip: receiptsLive.tip,
         total: receiptsLive.total,
-        exchangeRate: receiptsLive.exchange_rate, 
-        totalEur: receiptsLive.total_eur,
+        exchangeRate: receiptsLive.exchangeRate,
+        totalEur: receiptsLive.totalEur,
         percent: receiptsLive.percent,
-        imageUrl: receiptsLive.image_url,         
+        imageUrl: receiptsLive.imageUrl,
       })
       .from(receiptsLive)
       .where(where)

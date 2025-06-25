@@ -5,6 +5,7 @@ import { receiptsLive } from "@/lib/schema";
 export async function POST(req: NextRequest) {
   const data = await req.json();
 
+  // Costruiamo l'oggetto in modo da accettare sia snake_case che camelCase
   const row = {
     id: data.id,
     date: data.date ? new Date(data.date) : undefined,
@@ -14,13 +15,15 @@ export async function POST(req: NextRequest) {
     currency: data.currency,
     total: data.total,
     tip: data.tip ?? null,
-    exchange_rate: data.exchangeRate ?? null, // usa snake_case coerente col DB
-    total_eur: data.totalEur ?? null,
+    exchangeRate: data.exchangeRate ?? null,
+    totalEur: data.totalEur ?? null,
     percent: data.percent ?? null,
-    paymentMethod: data.payment_method ?? null,
+    paymentMethod: data.paymentMethod ?? null,
     status: data.status ?? "new",
-    sourceHash: data.source_hash ?? data.id,
-    image_url: data.image_url ?? null
+
+    // Risolto conflitto: supportiamo entrambe le varianti e fallback su `id`
+    sourceHash: data.sourceHash ?? data.source_hash ?? data.id,
+    imageUrl: data.imageUrl   ?? data.image_url   ?? null,
   } as typeof receiptsLive.$inferInsert;
 
   await db.insert(receiptsLive).values(row);
