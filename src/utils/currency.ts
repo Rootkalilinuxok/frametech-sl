@@ -1,69 +1,97 @@
 // src/utils/currency.ts
 
-// Mappa Paesi → Valute (alpha-2, alpha-3, nomi)
-export const countryToCurrency: Record<string, string> = {
-  AU: "AUD", AUS: "AUD", AUSTRALIA: "AUD",
-  BR: "BRL", BRA: "BRL", BRAZIL: "BRL",
-  CA: "CAD", CAN: "CAD", CANADA: "CAD",
-  CN: "CNY", CHN: "CNY", CHINA: "CNY",
-  FR: "EUR", FRA: "EUR", FRANCE: "EUR",
-  DE: "EUR", DEU: "EUR", GERMANY: "EUR",
-  IN: "INR", IND: "INR", INDIA: "INR",
-  IT: "EUR", ITA: "EUR", ITALY: "EUR",
-  JP: "JPY", JPN: "JPY", JAPAN: "JPY",
-  RU: "RUB", RUS: "RUB", "RUSSIAN FEDERATION": "RUB",
-  CH: "CHF", CHE: "CHF", SWITZERLAND: "CHF",
-  GB: "GBP", GBR: "GBP", "UNITED KINGDOM": "GBP",
-  US: "USD", USA: "USD", "UNITED STATES": "USD",
-  // estendibile con altri paesi
-};
+import countries from "i18n-iso-countries";
+import currencyList from "currency-codes";
+import enLocale from "i18n-iso-countries/langs/en.json";
 
-// Normalizza input paese in ISO alpha-2 (es. "Italy" → "IT")
-export function normalizeCountry(input: string): string {
-  if (!input) return "";
-  const code = input.trim().toUpperCase();
+// Register English locale for country names
+countries.registerLocale(enLocale);
 
-  // Se già presente come chiave, restituisci quella
-  if (countryToCurrency[code]) return code;
+// Build a dynamic map: Country → Currency (ISO 4217)
+export const countryToCurrency: Record<string, string> = {};
 
-  // Alcuni fallback noti (es. alias incompleti)
-  if (["ITALIA"].includes(code)) return "IT";
-  if (["FRANCIA"].includes(code)) return "FR";
-  if (["GERMANIA"].includes(code)) return "DE";
-  if (["SPAGNA", "SPAIN"].includes(code)) return "ES";
-  if (["GIAPPONE"].includes(code)) return "JP";
-  if (["SVIZZERA"].includes(code)) return "CH";
-  if (["STATI UNITI"].includes(code)) return "US";
-  if (["REGNO UNITO", "UK"].includes(code)) return "GB";
+for (const code of currencyList.codes()) {
+  const currency = currencyList.code(code);
+  if (!currency?.countries) continue;
 
-  // Estrai prime due lettere come fallback
-  return code.slice(0, 2);
+  for (const countryName of currency.countries) {
+    // Get ISO alpha-2 from English country name
+    const alpha2 = countries.getAlpha2Code(countryName, "en");
+    if (!alpha2) continue;
+    const alpha3 = countries.alpha2ToAlpha3(alpha2)!;
+    const upperName = countryName.trim().toUpperCase();
+
+    countryToCurrency[alpha2]   = code;
+    countryToCurrency[alpha3]   = code;
+    countryToCurrency[upperName] = code;
+  }
 }
 
-// Normalizza codice valuta (es. "eur" → "EUR")
+// Normalize arbitrary country input to ISO alpha-2
+export function normalizeCountry(input: string): string {
+  if (!input) return "";
+  const key = input.trim().toUpperCase();
+
+  // Direct match on alpha-2, alpha-3 or uppercase name
+  if (countryToCurrency[key]) {
+    if (key.length === 2 && countries.isValid(key)) {
+      return key;
+    }
+    const fromName = countries.getAlpha2Code(key, "en");
+    return fromName ?? key;
+  }
+
+  // Italian-language fallbacks
+  const alias: Record<string, string> = {
+    ITALIA:        "IT",
+    FRANCIA:       "FR",
+    GERMANIA:      "DE",
+    SPAGNA:        "ES",
+    GIAPPONE:      "JP",
+    SVIZZERA:      "CH",
+    "STATI UNITI": "US",
+    "REGNO UNITO": "GB",
+    UK:            "GB",
+  };
+  if (alias[key]) return alias[key];
+
+  // Fallback: first two letters
+  return key.slice(0, 2);
+}
+
+// Normalize currency code to ISO 4217 alpha-3
 export function normalizeCurrency(input: string): string {
   if (!input) return "";
   return input.trim().toUpperCase().slice(0, 3);
 }
 
-// Ottieni il tasso di cambio attuale: 1 EUR = ? altra valuta
+// Fetch current exchange rate: 1 EUR = ? currency
 export async function fetchExchangeRate(currency: string): Promise<number> {
-  if (!currency || currency === "EUR") return 1;
+  if (!currency || normalizeCurrency(currency) === "EUR") return 1;
   try {
-    const url = `https://api.exchangerate.host/convert?from=EUR&to=${currency}&amount=1`;
-    const res = await fetch(url);
+    const to = normalizeCurrency(currency);
+    const res = await fetch(
+      `https://api.exchangerate.host/convert?from=EUR&to=${to}&amount=1`
+    );
     if (!res.ok) return 0;
     const data = await res.json();
-    return data?.info?.rate || data?.result || 0;
+    return data?.info?.rate ?? data?.result ?? 0;
   } catch (err) {
     console.error("Errore fetchExchangeRate:", err);
     return 0;
   }
 }
 
-// Calcola il totale in Euro partendo da totale + mancia / cambio
-export function calcEuro(total: number, tip: number, exchange: number, percent?: number): number {
-  let euro = exchange > 0 ? (Number(total) + Number(tip)) / exchange : 0;
-  if (percent && percent > 0) euro = euro * (1 + percent / 100);
+// Calculate total in EUR given amount, tip, exchange rate and optional markup percent
+export function calcEuro(
+  total: number,
+  tip: number,
+  exchange: number,
+  percent?: number
+): number {
+  let euro = exchange > 0 ? (total + tip) / exchange : 0;
+  if (percent && percent > 0) {
+    euro = euro * (1 + percent / 100);
+  }
   return Number(euro.toFixed(2));
 }
