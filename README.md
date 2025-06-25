@@ -73,3 +73,18 @@ This project includes an **AI watcher script** (`ai-deploy-watcher.js`) that aut
   ```
 
   Ensure the environment variables `VERCEL_TOKEN`, `PROJECT_ID`, and `OPENAI_API_KEY` are set before running the script.
+
+---
+
+## Environment Variables
+
+Copy `.env.example` to `.env.local` (or set these values as repository/Vercel secrets) before running the project.
+
+- `DATABASE_URL` – PostgreSQL connection string
+- `SUPABASE_URL` – Supabase project URL
+- `SUPABASE_KEY` – Supabase service role key
+- `GOOGLE_API_KEY` – Google Cloud Vision API key
+- `OPENAI_API_KEY` – OpenAI API key
+- `VERCEL_TOKEN` – Vercel API token
+- `PROJECT_ID` – Vercel project ID
+- `NEXT_PUBLIC_SITE_URL` – Base URL used by the frontend

@@ -82,11 +82,13 @@ export async function fetchExchangeRate(currency: string): Promise<number> {
   if (!currency || normalizeCurrency(currency) === "EUR") return 1;
   try {
     const to = normalizeCurrency(currency);
-    const res = await fetch(
-      `https://api.exchangerate.host/convert?from=EUR&to=${to}&amount=1`
-    );
+    const url = `https://api.exchangerate.host/convert?from=EUR&to=${to}&amount=1`;
+    console.log("[DEBUG] fetchExchangeRate request", url);
+    const res = await fetch(url);
+    console.log("[DEBUG] fetchExchangeRate response", res.status);
     if (!res.ok) return 0;
     const data = await res.json();
+    console.log("[DEBUG] fetchExchangeRate data", data);
     return data?.info?.rate ?? data?.result ?? 0;
   } catch (err) {
     console.error("Errore fetchExchangeRate:", err);
