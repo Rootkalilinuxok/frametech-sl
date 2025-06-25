@@ -211,7 +211,13 @@ function closeImage() {
       });
 
       if (!res.ok) throw new Error(`Errore OCR (${file.name})`);
-      const dati = await res.json();
+      let dati = await res.json();
+      dati = {
+        ...dati,
+        exchangeRate:
+          dati.exchangeRate ?? dati.exchange_rate ?? null,
+        totalEur: dati.totalEur ?? dati.total_eur ?? null,
+      };
       // Mostra solo l’URL pubblico (NON usare più createObjectURL)
       
 
