@@ -63,7 +63,10 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
     [data]
   );
 
-  // FUNZIONE DI UPDATE per automazioni NAZIONE/VALUTA/CAMBIO/TOTALE €
+  // Aggiorna la riga della tabella mantenendo in sincronia
+  // country, currency, cambio e totale in euro. Tutti i campi
+  // vengono aggiornati in modo ottimista e l'exchange rate
+  // viene recuperato asincronamente quando necessario.
   const updateData = (
     rowIndex: number,
     columnId: string,
@@ -72,68 +75,76 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
     console.log('[DEBUG] updateData', { rowIndex, columnId, value });
     setData((old) => {
       const newData = [...old];
-      let row = { ...newData[rowIndex] };
+      const row = { ...newData[rowIndex] };
 
-      // Aggiorna il valore della cella grezzo
+      // Aggiorna il valore della cella in modo ottimista
       (row as any)[columnId] = value;
 
-      // 1) Se cambio country: converti in alpha-3 e popola currency
+      // Normalizza country/currency se necessario
       if (columnId === "country") {
         const alpha3 = toAlpha3Country(String(value));
         row.country = alpha3;
         row.currency = getCurrencyForCountry(alpha3);
-      }
-      // 2) Se cambio currency manualmente: normalizza alpha-3
-      else if (columnId === "currency") {
+      } else if (columnId === "currency") {
         row.currency = normalizeCurrency(String(value));
       }
 
-      // Quando cambiano country o currency, reset e poi fetch asynchronous
+      // Se cambia la valuta (direttamente o via country) resetta il cambio
       if (columnId === "country" || columnId === "currency") {
-        // Imposta cambio a 1 per EUR, 0 temporaneo altrimenti
         row.exchangeRate = row.currency === "EUR" ? 1 : 0;
-        // Ricalcola Totale € in attesa del fetch
-        row.totalEur = calcEuro(
-          Number(row.total ?? 0),
-          Number(row.tip ?? 0),
-          Number(row.exchangeRate ?? 1),
-          Number(row.percent ?? 0)
-        );
-        newData[rowIndex] = row;
 
-        if (row.currency && row.currency !== "EUR") {
-          console.log("[DEBUG] Richiesta cambio per valuta:", row.currency);
-          console.log("[DEBUG] Chiamo fetchExchangeRate", row.currency);
-          fetchExchangeRate(row.currency).then((rate) => {
-            setData((currData) => {
-              const updated = [...currData];
-              const r = { ...updated[rowIndex] };
-              r.exchangeRate = rate;
-              r.totalEur = calcEuro(
-                Number(r.total ?? 0),
-                Number(r.tip ?? 0),
-                Number(rate),
-                Number(r.percent ?? 0)
-              );
-              updated[rowIndex] = r;
-              return updated;
-            });
-          });
-        }
-      } else {
-        // Ricalcolo Totale € per qualsiasi altra modifica
-        row.totalEur = calcEuro(
-          Number(row.total ?? 0),
-          Number(row.tip ?? 0),
-          Number(row.exchangeRate ?? 1),
-          Number(row.percent ?? 0)
-        );
-        newData[rowIndex] = row;
       }
 
-      return newData;
+      // Ricalcolo sempre il totale in EUR
+      row.totalEur = calcEuro(
+        Number(row.total ?? 0),
+        Number(row.tip ?? 0),
+        Number(row.exchangeRate ?? 1),
+        Number(row.percent ?? 0)
+      );
+
+      newData[rowIndex] = row;
+
+     // Se cambia la valuta (direttamente o via country) resetta il cambio
+if (columnId === "country" || columnId === "currency") {
+  row.exchangeRate = row.currency === "EUR" ? 1 : 0;
+}
+
+// Ricalcolo sempre il totale in EUR
+row.totalEur = calcEuro(
+  Number(row.total ?? 0),
+  Number(row.tip ?? 0),
+  Number(row.exchangeRate ?? 1),
+  Number(row.percent ?? 0)
+);
+
+newData[rowIndex] = row;
+
+// Fetch asincrono del tasso di cambio quando serve
+if (
+  (columnId === "country" || columnId === "currency") &&
+  row.currency &&
+  row.currency !== "EUR"
+) {
+  console.log("[DEBUG] Richiesta cambio per valuta:", row.currency);
+  fetchExchangeRate(row.currency).then((rate) => {
+    setData((currData) => {
+      const updated = [...currData];
+      const r = { ...updated[rowIndex] };
+      r.exchangeRate = rate;
+      r.totalEur = calcEuro(
+        Number(r.total ?? 0),
+        Number(r.tip ?? 0),
+        Number(rate),
+        Number(r.percent ?? 0)
+      );
+      updated[rowIndex] = r;
+      return updated;
     });
-  };
+  });
+}
+
+
 
   // Istanza della tabella
   const table = useDataTableInstance({

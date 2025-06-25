@@ -150,16 +150,25 @@ export function CountryCell({ row, table }: CellProps) {
 
 export function CurrencyCell({ row, table }: CellProps) {
   const [value, setValue] = React.useState(row.original.currency);
+  // Ref per debounce
+  const timer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
   React.useEffect(() => {
     setValue(row.original.currency);
   }, [row.original.currency]);
+
   return (
     <input
       className="input input-sm w-full rounded border px-2 py-1"
       value={value}
       onChange={(e) => {
-        console.log("[DEBUG] CurrencyCell onChange", e.target.value);
-        setValue(e.target.value);
+        const v = e.target.value;
+        setValue(v);
+        console.log("[DEBUG] CurrencyCell onChange", v);
+        if (timer.current) clearTimeout(timer.current);
+        timer.current = setTimeout(() => {
+          table.options.meta?.updateData(row.index, "currency", v);
+        }, 300);
       }}
       onBlur={() => {
         console.log("[DEBUG] CurrencyCell onBlur", value);
@@ -170,6 +179,7 @@ export function CurrencyCell({ row, table }: CellProps) {
     />
   );
 }
+
 
 export function TipCell({ row, table }: CellProps) {
   const [value, setValue] = React.useState<number | "">(row.original.tip ?? "");

@@ -7,12 +7,15 @@ import {
   type TableOptions,
 } from "@tanstack/react-table";
 
-export function useDataTableInstance<TData extends RowData>({
-  data,
-  columns,
-  getRowId,
-  ...tableOptions
-}: TableOptions<TData>) {
+// Generic helper that forwards all options (including `meta`)
+// to the underlying `useReactTable` hook. `TMeta` preserves
+// the type of `table.options.meta` for consumers.
+export function useDataTableInstance<
+  TData extends RowData,
+  TMeta = unknown
+>({ data, columns, getRowId, ...tableOptions }: TableOptions<TData> & {
+  meta?: TMeta;
+}) {
   const table = useReactTable({
     ...tableOptions,
     data,
@@ -22,6 +25,10 @@ export function useDataTableInstance<TData extends RowData>({
     getSortedRowModel: getSortedRowModel(),
     getRowId: getRowId ?? ((row: TData) => String((row as { id: string | number }).id)),
   });
+
+  // L'istanza restituita avrà `table.options.meta` tipizzata
+  // con `TMeta`, così i componenti possono accedere a funzioni
+  // come `updateData` senza cast.
 
   return table;
 }
