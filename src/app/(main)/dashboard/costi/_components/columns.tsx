@@ -176,12 +176,14 @@ export function TipCell({ row, table }: CellProps) {
     <input
       type="number"
       className="input input-sm w-full rounded border px-2 py-1"
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
+      value={value === undefined || value === null ? "" : value}
+      onChange={(e) => {
+        const v = e.target.value === "" ? "" : Number(e.target.value);
+        setValue(v);
+      }}
       onBlur={() => {
-        const num = value === "" ? undefined : Number(value);
-        if (num !== row.original.tip) {
-          table.options.meta?.updateData(row.index, "tip", num);
+        if (value !== row.original.tip) {
+          table.options.meta?.updateData(row.index, "tip", value);
         }
       }}
     />
@@ -189,16 +191,19 @@ export function TipCell({ row, table }: CellProps) {
 }
 
 export function TotalCell({ row, table }: CellProps) {
-  const [value, setValue] = React.useState(row.original.total);
+  const [value, setValue] = React.useState(row.original.total ?? "");
   React.useEffect(() => {
-    setValue(row.original.total);
+    setValue(row.original.total ?? "");
   }, [row.original.total]);
   return (
     <input
       type="number"
       className="input input-sm w-full rounded border px-2 py-1"
-      value={value}
-      onChange={(e) => setValue(Number(e.target.value))}
+      value={value === undefined || value === null ? "" : value}
+      onChange={(e) => {
+        const v = e.target.value === "" ? "" : Number(e.target.value);
+        setValue(v);
+      }}
       onBlur={() => {
         if (value !== row.original.total) {
           table.options.meta?.updateData(row.index, "total", value);
@@ -218,29 +223,35 @@ export function ExchangeRateCell({ row, table }: CellProps) {
       type="number"
       step="0.0001"
       className="input input-sm w-full rounded border px-2 py-1"
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
+      value={value === undefined || value === null ? "" : value}
+      onChange={(e) => {
+        const v = e.target.value === "" ? "" : Number(e.target.value);
+        setValue(v);
+      }}
       onBlur={() => {
-        const num = value === "" ? undefined : Number(value);
-        if (num !== row.original.exchangeRate) {
-          table.options.meta?.updateData(row.index, "exchangeRate", num);
+        if (value !== row.original.exchangeRate) {
+          table.options.meta?.updateData(row.index, "exchangeRate", value);
         }
       }}
     />
   );
 }
 
+
 export function TotalEurCell({ row, table }: CellProps) {
-  const [value, setValue] = React.useState(row.original.totalEur);
+  const [value, setValue] = React.useState(row.original.totalEur ?? "");
   React.useEffect(() => {
-    setValue(row.original.totalEur);
+    setValue(row.original.totalEur ?? "");
   }, [row.original.totalEur]);
   return (
     <input
       type="number"
       className="input input-sm w-full rounded border px-2 py-1"
-      value={value}
-      onChange={(e) => setValue(Number(e.target.value))}
+      value={value === undefined || value === null ? "" : value}
+      onChange={(e) => {
+        const v = e.target.value === "" ? "" : Number(e.target.value);
+        setValue(v);
+      }}
       onBlur={() => {
         if (value !== row.original.totalEur) {
           table.options.meta?.updateData(row.index, "totalEur", value);
