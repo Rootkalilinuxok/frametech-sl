@@ -17,7 +17,6 @@ export async function POST(req: NextRequest) {
     tip: data.tip ?? null,
     exchangeRate: data.exchangeRate ?? null,
     totalEur: data.totalEur ?? null,
-    percent: data.percent ?? null,
     percent: null,
     paymentMethod: data.paymentMethod ?? null,
     status: data.status ?? "new",
