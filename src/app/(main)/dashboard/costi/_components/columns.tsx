@@ -271,12 +271,15 @@ export function PercentCell({ row, table }: CellProps) {
       type="number"
       step="0.01"
       className="input input-sm w-full rounded border px-2 py-1"
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
+      value={value === undefined || value === null ? "" : value}
+      onChange={(e) => {
+        // Corretto! Converti come nelle altre celle
+        const v = e.target.value === "" ? "" : Number(e.target.value);
+        setValue(v);
+      }}
       onBlur={() => {
-        const num = value === "" ? undefined : Number(value);
-        if (num !== row.original.percent) {
-          table.options.meta?.updateData(row.index, "percent", num);
+        if (value !== row.original.percent) {
+          table.options.meta?.updateData(row.index, "percent", value);
         }
       }}
     />
