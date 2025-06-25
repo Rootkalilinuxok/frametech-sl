@@ -69,6 +69,7 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
     columnId: string,
     value: unknown
   ) => {
+    console.log('[DEBUG] updateData', { rowIndex, columnId, value });
     setData((old) => {
       const newData = [...old];
       let row = { ...newData[rowIndex] };
@@ -101,7 +102,8 @@ export function DataTable({ data: initialData }: { data: CostiRow[] }) {
         newData[rowIndex] = row;
 
         if (row.currency && row.currency !== "EUR") {
-         console.log("[DEBUG] Richiesta cambio per valuta:", row.currency);
+          console.log("[DEBUG] Richiesta cambio per valuta:", row.currency);
+          console.log("[DEBUG] Chiamo fetchExchangeRate", row.currency);
           fetchExchangeRate(row.currency).then((rate) => {
             setData((currData) => {
               const updated = [...currData];
